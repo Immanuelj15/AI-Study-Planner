@@ -2,7 +2,9 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database.base import Base
-from database.session import engine
+from database.session import engine, SessionLocal
+from models.models import User
+from services.auth import get_password_hash
 from routes import auth, subjects, agent_pipeline, quiz, dashboard, analytics
 
 # Configure Logging
@@ -18,6 +20,26 @@ app = FastAPI(
     description="Production-Ready FastAPI application powered by Microsoft AutoGen & Groq LLM",
     version="1.0.0"
 )
+
+@app.on_event("startup")
+def seed_demo_user():
+    db = SessionLocal()
+    try:
+        demo = db.query(User).filter(User.email == "demo@studyplanner.ai").first()
+        if not demo:
+            hashed_pw = get_password_hash("password123")
+            demo_user = User(
+                name="Demo Student",
+                email="demo@studyplanner.ai",
+                password=hashed_pw
+            )
+            db.add(demo_user)
+            db.commit()
+            logger.info("Demo user 'demo@studyplanner.ai' created successfully.")
+    except Exception as e:
+        logger.warning(f"Demo user seed notice: {e}")
+    finally:
+        db.close()
 
 # CORS Middleware Setup
 app.add_middleware(
