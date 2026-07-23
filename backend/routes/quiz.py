@@ -45,11 +45,15 @@ def submit_quiz(
         StudyPlan.status == "Pending"
     ).all()
 
+    # Pre-fetch user subjects for accurate matching
+    user_subjects = db.query(Subject).filter(Subject.user_id == current_user.id).all()
+    sub_map = {s.id: s.subject_name for s in user_subjects}
+
     plan_dicts = [
         {
             "id": p.id,
             "subject_id": p.subject_id,
-            "subject_name": subject.subject_name,
+            "subject_name": sub_map.get(p.subject_id, subject.subject_name),
             "study_date": p.study_date,
             "topic": p.topic,
             "hours": p.hours,
@@ -69,7 +73,7 @@ def submit_quiz(
     for item in adaptation.get("updated_plans", []):
         plan_in_db = db.query(StudyPlan).filter(StudyPlan.id == item["id"]).first()
         if plan_in_db:
-            plan_in_db.hours = item["hours"]
+            plan_in_db.hours = float(item["hours"])
             plan_in_db.priority = item["priority"]
             plan_in_db.topic = item["topic"]
             db.commit()

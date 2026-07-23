@@ -20,7 +20,7 @@ class SchedulerAgent:
     def generate_initial_plan(self, subjects: List[Dict[str, Any]], exam_date_str: str, daily_hours: float) -> List[Dict[str, Any]]:
         logger.info(f"[{self.name}] Generating study schedule for {len(subjects)} subjects up to exam: {exam_date_str}")
         
-        system_prompt = "You are an expert Academic Study Planner AI. Output ONLY a valid JSON list of plan items."
+        system_prompt = "You are an expert Academic Study Planner AI. Output ONLY a valid JSON object containing a 'schedule' array."
 
         prompt = f"""
 Generate an adaptive study plan for a student preparing for an exam on {exam_date_str}.
@@ -30,23 +30,29 @@ Subjects: {json.dumps(subjects, indent=2)}
 Calculate dates starting from today and distribute daily hours rationally across subjects.
 Higher difficulty subjects should receive higher priority and more hours.
 
-Return ONLY a JSON array with this exact structure:
-[
-  {{
-    "subject_name": "Subject Name",
-    "study_date": "YYYY-MM-DD",
-    "topic": "Specific Subtopic / Focus Area",
-    "hours": 2.0,
-    "priority": "High / Medium / Low",
-    "status": "Pending"
-  }}
-]
+Return ONLY a JSON object with this exact structure:
+{{
+  "schedule": [
+    {{
+      "subject_name": "Subject Name",
+      "study_date": "YYYY-MM-DD",
+      "topic": "Specific Subtopic / Focus Area",
+      "hours": 2.0,
+      "priority": "High",
+      "status": "Pending"
+    }}
+  ]
+}}
 """
         response_str = call_groq_llm(prompt, system_prompt)
         if response_str:
             try:
                 parsed = json.loads(response_str)
-                if isinstance(parsed, list) and len(parsed) > 0:
+                if isinstance(parsed, dict):
+                    items = parsed.get("schedule") or parsed.get("plans") or parsed.get("study_plan")
+                    if isinstance(items, list) and len(items) > 0:
+                        return items
+                elif isinstance(parsed, list) and len(parsed) > 0:
                     return parsed
             except Exception as e:
                 logger.error(f"Failed to parse schedule JSON from Groq: {e}")
@@ -66,14 +72,16 @@ Return ONLY a JSON array with this exact structure:
 
         updated_count = 0
         for plan in current_plans:
-            if plan.get("subject_name", "").lower() == subject_name.lower() and plan.get("status") == "Pending":
+            p_sub_name = (plan.get("subject_name") or plan.get("subject") or "").strip().lower()
+            if p_sub_name == subject_name.strip().lower() and plan.get("status") == "Pending":
+                current_hrs = float(plan.get("hours", 1.0))
                 if is_weak:
-                    plan["hours"] = round(plan["hours"] * 1.5, 1)
+                    plan["hours"] = round(current_hrs * 1.5, 1)
                     plan["priority"] = "High"
                     plan["topic"] = f"Review Weak Concept: {plan.get('topic', 'Core Topics')}"
                     updated_count += 1
                 elif is_strong:
-                    plan["hours"] = max(0.5, round(plan["hours"] * 0.7, 1))
+                    plan["hours"] = max(0.5, round(current_hrs * 0.7, 1))
                     plan["priority"] = "Low"
                     plan["topic"] = f"Quick Revision: {plan.get('topic', 'Core Topics')}"
                     updated_count += 1
@@ -97,7 +105,6 @@ Return ONLY a JSON array with this exact structure:
         plans = []
         today = datetime.date.today()
         
-        # Default subtopic matrix for popular computer science and study subjects
         subtopics = [
             "Foundational Concepts & Principles",
             "Core Algorithms & Architecture",
@@ -109,12 +116,10 @@ Return ONLY a JSON array with this exact structure:
         if not subjects:
             subjects = [{"subject_name": "General Computer Science", "difficulty": "Medium"}]
 
-        # Create a 7-day schedule
         for day_offset in range(7):
             curr_date = today + datetime.timedelta(days=day_offset)
             date_str = curr_date.strftime("%Y-%m-%d")
             
-            # Select subject cyclically
             sub_info = subjects[day_offset % len(subjects)]
             sub_name = sub_info.get("subject_name", "Subject")
             diff = sub_info.get("difficulty", "Medium")

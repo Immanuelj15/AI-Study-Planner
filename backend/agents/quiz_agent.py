@@ -12,7 +12,7 @@ class QuizAgent:
     - Receive subject, topic, and summary text
     - Generate MCQ, True/False, and Fill in the Blank quizzes
     - Provide difficulty levels (Easy, Medium, Hard)
-    - Output structured JSON list of questions
+    - Output structured JSON question objects
     """
     def __init__(self, name: str = "Quiz_Generator_Agent"):
         self.name = name
@@ -20,7 +20,7 @@ class QuizAgent:
     def execute(self, topic: str, summary_text: str = "", difficulty: str = "Medium", num_questions: int = 5) -> List[Dict[str, Any]]:
         logger.info(f"[{self.name}] Generating {num_questions} quiz questions for topic: {topic} ({difficulty})")
         
-        system_prompt = "You are an expert AI Quiz Master. Output ONLY a valid JSON array of question objects."
+        system_prompt = "You are an expert AI Quiz Master. Output ONLY a valid JSON object containing a 'questions' array."
 
         prompt = f"""
 Generate {num_questions} quiz questions for the topic: "{topic}" (Difficulty: {difficulty}).
@@ -29,25 +29,29 @@ Mix MCQ, True/False, and Fill in the Blank questions.
 Use the provided summary context if available:
 {summary_text[:1000] if summary_text else 'General core domain knowledge.'}
 
-Return ONLY a JSON array with this exact structure:
-[
-  {{
-    "question": "Question text here?",
-    "options": ["Option A", "Option B", "Option C", "Option D"],
-    "answer": "Option A",
-    "explanation": "Detailed explanation why Option A is correct.",
-    "difficulty": "{difficulty}"
-  }}
-]
+Return ONLY a JSON object with this exact structure:
+{{
+  "questions": [
+    {{
+      "question": "Question text here?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Option A",
+      "explanation": "Detailed explanation why Option A is correct.",
+      "difficulty": "{difficulty}"
+    }}
+  ]
+}}
 """
         response_str = call_groq_llm(prompt, system_prompt)
         if response_str:
             try:
                 parsed = json.loads(response_str)
-                if isinstance(parsed, list) and len(parsed) > 0:
+                if isinstance(parsed, dict):
+                    questions_list = parsed.get("questions") or parsed.get("data") or parsed.get("quiz")
+                    if isinstance(questions_list, list) and len(questions_list) > 0:
+                        return questions_list
+                elif isinstance(parsed, list) and len(parsed) > 0:
                     return parsed
-                elif isinstance(parsed, dict) and "questions" in parsed:
-                    return parsed["questions"]
             except Exception as e:
                 logger.error(f"Failed to parse quiz JSON from Groq: {e}")
 

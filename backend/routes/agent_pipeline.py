@@ -139,15 +139,15 @@ def generate_study_plan(
 
     created_plans = []
     for item in plan_items:
-        # Find matching subject ID
-        matching_sub = next((s for s in subject_objs if s["subject_name"].lower() == item["subject_name"].lower()), subject_objs[0])
+        item_sub_name = (item.get("subject_name") or item.get("subject") or "").strip().lower()
+        matching_sub = next((s for s in subject_objs if s["subject_name"].strip().lower() == item_sub_name), subject_objs[0])
         
         plan_obj = StudyPlan(
             user_id=current_user.id,
             subject_id=matching_sub["id"],
-            study_date=item["study_date"],
-            topic=item["topic"],
-            hours=item["hours"],
+            study_date=str(item.get("study_date")),
+            topic=item.get("topic", "General Topic"),
+            hours=float(item.get("hours", 1.0)),
             priority=item.get("priority", "Medium"),
             status="Pending"
         )

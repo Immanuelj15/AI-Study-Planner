@@ -26,7 +26,15 @@ def call_groq_llm(prompt: str, system_prompt: str = "You are an expert AI tutor 
                 max_tokens=2500,
                 response_format={"type": "json_object"}
             )
-            return completion.choices[0].message.content
+            raw_content = completion.choices[0].message.content or ""
+            content = raw_content.strip()
+            if content.startswith("```json"):
+                content = content[7:]
+            if content.startswith("```"):
+                content = content[3:]
+            if content.endswith("```"):
+                content = content[:-3]
+            return content.strip()
         except Exception as e:
             logger.warning(f"Groq API call failed or model unavailable ({str(e)}). Falling back to mock engine.")
 
