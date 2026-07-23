@@ -56,6 +56,18 @@ export default function StudyPlanner() {
     }
   };
 
+  const handleToggleStatus = async (planId) => {
+    try {
+      const res = await agentAPI.togglePlanStatus(planId);
+      addToast(`Session marked as ${res.data.status}!`, 'success');
+      setPlans((prev) =>
+        prev.map((p) => (p.id === planId ? { ...p, status: res.data.status } : p))
+      );
+    } catch (err) {
+      addToast('Failed to update session status.', 'error');
+    }
+  };
+
   if (loading) return <LoadingSkeleton text="Loading Study Schedule..." />;
 
   return (
@@ -120,7 +132,7 @@ export default function StudyPlanner() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {plans.map((item, idx) => (
-              <StudyCard key={idx} item={item} />
+              <StudyCard key={idx} item={item} onToggleStatus={handleToggleStatus} />
             ))}
           </div>
         </div>

@@ -21,7 +21,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
     if (!selectedAnswer) return;
     setIsSubmitted(true);
     
-    const isCorrect = selectedAnswer.trim().toLowerCase() === currentQ.answer.trim().toLowerCase();
+    const isCorrect = String(selectedAnswer || '').trim().toLowerCase() === String(currentQ.answer || '').trim().toLowerCase();
     setUserAnswers((prev) => [
       ...prev,
       {
@@ -44,7 +44,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
       setQuizFinished(true);
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       
-      const correctCount = userAnswers.filter((a) => a.is_correct).length + (selectedAnswer === currentQ.answer ? 1 : 0);
+      const correctCount = userAnswers.filter((a) => a.is_correct).length;
       const wrongCount = questions.length - correctCount;
       const scorePct = roundScore((correctCount / questions.length) * 100);
 
@@ -133,7 +133,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
       <div className="space-y-3">
         {currentQ.options && currentQ.options.map((option, idx) => {
           const isSelected = selectedAnswer === option;
-          const isCorrect = option.trim().toLowerCase() === currentQ.answer.trim().toLowerCase();
+          const isCorrect = String(option || '').trim().toLowerCase() === String(currentQ.answer || '').trim().toLowerCase();
 
           let btnStyle = "bg-slate-900/60 border-slate-800 text-slate-200 hover:border-brand-500/50";
           if (isSelected) {

@@ -39,6 +39,7 @@ export const agentAPI = {
   generateQuiz: (data) => api.post('/generate-quiz', data),
   generatePlan: (data) => api.post('/generate-plan', data),
   getStudyPlan: () => api.get('/study-plan'),
+  togglePlanStatus: (planId) => api.post(`/study-plan/${planId}/toggle`),
 };
 
 export const quizAPI = {

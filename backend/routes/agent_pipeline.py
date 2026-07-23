@@ -193,3 +193,34 @@ def get_study_plan(
         })
 
     return result
+
+
+@router.post("/study-plan/{plan_id}/toggle", response_model=StudyPlanResponse)
+def toggle_study_plan_status(
+    plan_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    plan = db.query(StudyPlan).filter(
+        StudyPlan.id == plan_id,
+        StudyPlan.user_id == current_user.id
+    ).first()
+    if not plan:
+        raise HTTPException(status_code=404, detail="Study plan item not found.")
+
+    plan.status = "Completed" if plan.status == "Pending" else "Pending"
+    db.commit()
+    db.refresh(plan)
+
+    sub = db.query(Subject).filter(Subject.id == plan.subject_id).first()
+    return {
+        "id": plan.id,
+        "user_id": plan.user_id,
+        "subject_id": plan.subject_id,
+        "subject_name": sub.subject_name if sub else "Subject",
+        "study_date": plan.study_date,
+        "topic": plan.topic,
+        "hours": plan.hours,
+        "priority": plan.priority,
+        "status": plan.status
+    }

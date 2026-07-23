@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { dashboardAPI } from '../services/api';
+import { dashboardAPI, agentAPI } from '../services/api';
 import ProgressCard from '../components/ProgressCard';
 import StudyCard from '../components/StudyCard';
 import { WeeklyBarChart } from '../components/AnalyticsChart';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import { useToast } from '../context/ToastContext';
 import { 
   Calendar, 
   Flame, 
@@ -21,6 +22,7 @@ export default function Dashboard() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   useEffect(() => {
     fetchDashboardData();
@@ -34,6 +36,16 @@ export default function Dashboard() {
       console.error("Dashboard error:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (planId) => {
+    try {
+      const res = await agentAPI.togglePlanStatus(planId);
+      addToast(`Session marked as ${res.data.status}!`, 'success');
+      fetchDashboardData();
+    } catch (err) {
+      addToast('Failed to update status.', 'error');
     }
   };
 
@@ -95,7 +107,7 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {todayPlans.map((item, idx) => (
-                <StudyCard key={idx} item={item} />
+                <StudyCard key={idx} item={item} onToggleStatus={handleToggleStatus} />
               ))}
             </div>
           </div>

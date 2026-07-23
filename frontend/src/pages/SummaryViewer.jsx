@@ -58,8 +58,20 @@ export default function SummaryViewer() {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     const splitText = doc.splitTextToSize(summaryData.summary, 180);
-    doc.text(splitText, 14, 30);
-    doc.save(`${summaryData.topic}_Study_Notes.pdf`);
+    
+    let y = 30;
+    const pageHeight = 275;
+    for (let i = 0; i < splitText.length; i++) {
+      if (y > pageHeight) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(splitText[i], 14, y);
+      y += 6;
+    }
+    
+    const cleanFilename = (summaryData.topic || 'Study_Notes').replace(/[^a-zA-Z0-9_-]/g, '_');
+    doc.save(`${cleanFilename}_Notes.pdf`);
     addToast('PDF downloaded successfully!', 'success');
   };
 
