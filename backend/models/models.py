@@ -30,6 +30,7 @@ class Subject(Base):
     study_plans = relationship("StudyPlan", back_populates="subject", cascade="all, delete-orphan")
     summaries = relationship("Summary", back_populates="subject", cascade="all, delete-orphan")
     quizzes = relationship("Quiz", back_populates="subject", cascade="all, delete-orphan")
+    quiz_results = relationship("QuizResult", back_populates="subject", cascade="all, delete-orphan")
 
 
 class StudyPlan(Base):
@@ -77,6 +78,7 @@ class Quiz(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     subject = relationship("Subject", back_populates="quizzes")
+    quiz_results = relationship("QuizResult", back_populates="quiz")
 
 
 class QuizResult(Base):
@@ -93,3 +95,5 @@ class QuizResult(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     user = relationship("User", back_populates="quiz_results")
+    subject = relationship("Subject", back_populates="quiz_results")
+    quiz = relationship("Quiz", back_populates="quiz_results")
