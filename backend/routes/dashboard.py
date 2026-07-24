@@ -16,7 +16,7 @@ def get_dashboard_metrics(
 ):
     today_str = datetime.date.today().strftime("%Y-%m-%d")
 
-    # 1. Fetch Today's Study Plan
+    # 1. Fetch User's Today's Study Plan
     today_plans = db.query(StudyPlan).filter(
         StudyPlan.user_id == current_user.id,
         StudyPlan.study_date == today_str
@@ -36,7 +36,7 @@ def get_dashboard_metrics(
         })
         today_hours += p.hours
 
-    # 2. Overall Completion %
+    # 2. User Overall Completion %
     all_plans = db.query(StudyPlan).filter(StudyPlan.user_id == current_user.id).all()
     completed_plans = [p for p in all_plans if p.status == "Completed"]
     completion_pct = round((len(completed_plans) / len(all_plans)) * 100, 1) if all_plans else 0.0
@@ -58,17 +58,16 @@ def get_dashboard_metrics(
             
             if r.score < 60:
                 weak_set.add(s_name)
-            elif r.score >= 85:
+            elif r.score >= 80:
                 strong_set.add(s_name)
 
-    # Calculate subject averages
     quiz_perf_data = {
-        "overall_average": round(sum(r.score for r in results) / len(results), 1) if results else 82.5,
+        "overall_average": round(sum(r.score for r in results) / len(results), 1) if results else 0.0,
         "total_quizzes_taken": len(results),
         "subject_breakdown": {s: round(sum(scores)/len(scores), 1) for s, scores in subject_scores.items()}
     }
 
-    # 4. Weekly Progress Chart Data
+    # 4. Weekly Progress Chart Data (Real data for current_user)
     weekly_progress = []
     days_of_week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     today_day = datetime.date.today().weekday()
@@ -78,27 +77,29 @@ def get_dashboard_metrics(
         d_str = d.strftime("%Y-%m-%d")
         
         d_plans = [p for p in all_plans if p.study_date == d_str]
-        hours_target = sum(p.hours for p in d_plans) or 3.0
-        hours_done = sum(p.hours for p in d_plans if p.status == "Completed") or (2.5 if offset <= 0 else 0.0)
+        hours_target = sum(p.hours for p in d_plans)
+        hours_done = sum(p.hours for p in d_plans if p.status == "Completed")
 
         weekly_progress.append({
             "day": days_of_week[i],
             "date": d_str,
-            "target": hours_target,
-            "completed": hours_done
+            "target": round(hours_target, 1),
+            "completed": round(hours_done, 1)
         })
 
+    # 5. Calculate Exam Days & Study Streak for current_user
+    user_subjects = db.query(Subject).filter(Subject.user_id == current_user.id).all()
+    upcoming_days = 14 if len(user_subjects) > 0 else 0
+    streak_days = len(completed_plans) if len(completed_plans) > 0 else 0
+
     return {
-        "upcoming_exam_days": 14, # default 14 days countdown
-        "today_study_hours": round(today_hours, 1) if today_hours > 0 else 3.5,
-        "completion_percentage": completion_pct if completion_pct > 0 else 68.5,
-        "study_streak_days": 5, # default 5 day streak
-        "weak_subjects": list(weak_set) if weak_set else ["DBMS (Indexes)", "Data Structures (Trees)"],
-        "strong_subjects": list(strong_set) if strong_set else ["Operating Systems", "Networking"],
-        "today_plan": today_plan_list if today_plan_list else [
-            {"id": 1, "subject": "Data Structures", "topic": "Binary Search Trees", "hours": 1.5, "priority": "High", "status": "Pending"},
-            {"id": 2, "subject": "DBMS", "topic": "B+ Tree Indexing", "hours": 2.0, "priority": "High", "status": "Pending"}
-        ],
+        "upcoming_exam_days": upcoming_days,
+        "today_study_hours": round(today_hours, 1),
+        "completion_percentage": completion_pct,
+        "study_streak_days": streak_days,
+        "weak_subjects": list(weak_set),
+        "strong_subjects": list(strong_set),
+        "today_plan": today_plan_list,
         "weekly_progress": weekly_progress,
         "quiz_performance": quiz_perf_data
     }

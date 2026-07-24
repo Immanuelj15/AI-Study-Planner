@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { dashboardAPI, agentAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import ProgressCard from '../components/ProgressCard';
 import StudyCard from '../components/StudyCard';
 import { WeeklyBarChart } from '../components/AnalyticsChart';
@@ -18,7 +19,9 @@ import {
   Network,
   Target,
   Award,
-  CalendarDays
+  CalendarDays,
+  PlusCircle,
+  BookOpen
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,6 +43,7 @@ const itemVariants = {
 export default function Dashboard() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { addToast } = useToast();
 
@@ -89,13 +93,15 @@ export default function Dashboard() {
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-white/15 to-transparent pointer-events-none"></div>
         <div className="max-w-2xl space-y-3 relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-poppins font-bold">
-            <Zap className="w-[18px] h-[18px] text-yellow-300 animate-pulse" /> Multi-Agent Feedback Loop Active
+            <Zap className="w-[18px] h-[18px] text-yellow-300 animate-pulse" /> Multi-Agent System Ready
           </div>
           <h1 className="font-poppins text-3xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-            AI Multi-Agent Study Command Center
+            Welcome, {user?.name || 'Student'}! 👋
           </h1>
           <p className="font-inter text-blue-50 text-xs lg:text-sm leading-relaxed max-w-xl">
-            Target Exam Countdown: <span className="font-bold text-yellow-300 font-poppins">{metrics?.upcoming_exam_days || 14} Days</span>. 
+            {metrics?.upcoming_exam_days > 0 
+              ? `Target Exam Countdown: ${metrics.upcoming_exam_days} Days.`
+              : 'Add your subjects and exam target date to launch your personalized AI study schedule.'}
             {weakSubjects.length > 0 && ` Extra study hours allocated to ${weakSubjects[0]}.`}
           </p>
 
@@ -106,8 +112,8 @@ export default function Dashboard() {
               onClick={() => navigate('/study-planner')}
               className="px-5 py-2.5 rounded-xl bg-white text-[#2563EB] hover:bg-blue-50 text-xs font-poppins font-bold flex items-center gap-2 shadow-md"
             >
-              <span>Recalculate Schedule</span>
-              <ArrowUpRight className="w-[18px] h-[18px]" />
+              <PlusCircle className="w-[18px] h-[18px]" />
+              <span>{todayPlans.length > 0 ? 'Recalculate Schedule' : 'Create Study Plan'}</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -135,15 +141,38 @@ export default function Dashboard() {
                 <span>Today's Study Schedule</span>
               </div>
               <span className="text-xs font-inter font-semibold text-[#64748B]">
-                {metrics?.today_study_hours || 3.5} hrs total allocated
+                {metrics?.today_study_hours || 0} hrs total allocated
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-stretch">
-              {todayPlans.map((item, idx) => (
-                <StudyCard key={idx} item={item} onToggleStatus={handleToggleStatus} />
-              ))}
-            </div>
+            {todayPlans.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-stretch">
+                {todayPlans.map((item, idx) => (
+                  <StudyCard key={idx} item={item} onToggleStatus={handleToggleStatus} />
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 rounded-2xl bg-[#F8FBFF] border border-[#DBEAFE] text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center mx-auto">
+                  <BookOpen className="w-[30px] h-[30px]" />
+                </div>
+                <div>
+                  <h4 className="font-poppins font-bold text-sm text-[#1E293B]">No Study Plans Generated Yet</h4>
+                  <p className="text-xs text-[#64748B] font-inter mt-1 max-w-sm mx-auto">
+                    Click below to add your subjects and launch the Supervisor Agent pipeline.
+                  </p>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate('/study-planner')}
+                  className="px-5 py-2.5 rounded-xl btn-gradient-primary text-xs font-inter font-bold inline-flex items-center gap-2 shadow-sm shadow-blue-500/20"
+                >
+                  <PlusCircle className="w-[18px] h-[18px]" />
+                  <span>Generate Study Plan</span>
+                </motion.button>
+              </div>
+            )}
           </motion.div>
 
           {/* Weekly Progress Bar Chart (30px Dashboard Header Icon) */}
@@ -175,45 +204,27 @@ export default function Dashboard() {
               <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
                 <div className="flex items-center justify-between font-bold text-[#2563EB]">
                   <span className="flex items-center gap-1.5">
-                    <Network className="w-[18px] h-[18px] text-[#2563EB]" /> Mind Map Revision
+                    <Network className="w-[18px] h-[18px] text-[#2563EB]" /> Mind Map Visualizer
                   </span>
                   <Zap className="w-[18px] h-[18px] text-[#38BDF8]" />
                 </div>
                 <p className="text-[#64748B] leading-relaxed">
-                  Review <span className="text-[#1E293B] font-semibold">Binary Search Tree rotations</span> on the interactive React Flow visual graph before taking your next quiz.
+                  Review concepts on the interactive React Flow visual graph before taking your next quiz.
                 </p>
               </div>
 
               <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
                 <div className="flex items-center justify-between font-bold text-[#22C55E]">
                   <span className="flex items-center gap-1.5">
-                    <Target className="w-[18px] h-[18px] text-[#22C55E]" /> Priority Allocation
+                    <Target className="w-[18px] h-[18px] text-[#22C55E]" /> Adaptive Feedback Loop
                   </span>
                   <Target className="w-[18px] h-[18px] text-[#22C55E]" />
                 </div>
                 <p className="text-[#64748B] leading-relaxed">
-                  Scheduler Agent added <span className="text-[#1E293B] font-semibold">+1.5 hours</span> to DBMS Indexes to boost retention for low-scoring topics.
+                  Scheduler Agent will automatically allocate extra hours for quiz scores below 60%.
                 </p>
               </div>
             </div>
-          </motion.div>
-
-          {/* Mind Map Preview Banner (30px Network Icon) */}
-          <motion.div
-            variants={itemVariants}
-            onClick={() => navigate('/mindmap')}
-            className="glass-card glass-card-hover rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] flex items-center justify-between gap-4 cursor-pointer shadow-soft"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center text-[#2563EB]">
-                <Network className="w-[30px] h-[30px] text-[#2563EB] animate-pulse" />
-              </div>
-              <div>
-                <h4 className="font-poppins font-bold text-[#1E293B] text-sm">Interactive Mind Map Visualizer</h4>
-                <p className="text-xs text-[#64748B] font-inter">Agent 2 generated React Flow visual graphs for concepts & algorithms.</p>
-              </div>
-            </div>
-            <ArrowUpRight className="w-[18px] h-[18px] text-[#2563EB]" />
           </motion.div>
         </div>
 
@@ -236,27 +247,35 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div>
                 <div className="text-[11px] font-inter font-bold text-[#64748B] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <AlertTriangle className="w-[18px] h-[18px] text-[#EF4444]" /> Weak Topics
+                  <AlertTriangle className="w-[18px] h-[18px] text-[#EF4444]" /> Weak Topics (&lt;60%)
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {weakSubjects.map((sub, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-[#FEE2E2] text-[#EF4444] border border-[#FCA5A5] text-xs font-inter font-semibold">
-                      ⚠️ {sub}
-                    </span>
-                  ))}
+                  {weakSubjects.length > 0 ? (
+                    weakSubjects.map((sub, i) => (
+                      <span key={i} className="px-3 py-1 rounded-full bg-[#FEE2E2] text-[#EF4444] border border-[#FCA5A5] text-xs font-inter font-semibold">
+                        ⚠️ {sub}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-xs text-[#64748B] font-inter italic">No weak topics identified yet</span>
+                  )}
                 </div>
               </div>
 
               <div className="pt-3 border-t border-[#E2E8F0]">
                 <div className="text-[11px] font-inter font-bold text-[#64748B] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Award className="w-[18px] h-[18px] text-[#22C55E]" /> Strong Topics
+                  <Award className="w-[18px] h-[18px] text-[#22C55E]" /> Strong Topics (&ge;80%)
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {strongSubjects.map((sub, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC] text-xs font-inter font-semibold">
-                      ✅ {sub}
-                    </span>
-                  ))}
+                  {strongSubjects.length > 0 ? (
+                    strongSubjects.map((sub, i) => (
+                      <span key={i} className="px-3 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC] text-xs font-inter font-semibold">
+                        ✅ {sub}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-xs text-[#64748B] font-inter italic">Take quizzes to reveal your strong topics</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -275,16 +294,8 @@ export default function Dashboard() {
               <div className="flex items-start gap-3 p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
                 <CheckCircle2 className="w-[18px] h-[18px] text-[#22C55E] shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-semibold text-[#1E293B]">Quiz Submitted: Binary Search</div>
-                  <div className="text-[10px] text-[#64748B]">Score: 80% • Agent 4 recalculated schedule</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
-                <Zap className="w-[18px] h-[18px] text-[#2563EB] shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-semibold text-[#1E293B]">Research Notes & Mind Map Created</div>
-                  <div className="text-[10px] text-[#64748B]">Agents 1 & 2 structured notes for B+ Trees</div>
+                  <div className="font-semibold text-[#1E293B]">Account Active: {user?.name}</div>
+                  <div className="text-[10px] text-[#64748B]">Multi-Agent System ready to generate study plans</div>
                 </div>
               </div>
             </div>
