@@ -12,7 +12,7 @@ class SummarizerAgent:
     - Receive research output
     - Convert into beginner-friendly notes (Intro, Concepts, Defs, Examples, Pros, Cons, Applications, Interview Tips, Revision Notes)
     - Generate bullet point summary
-    - Generate React Flow compatible mindmap JSON (nodes & edges)
+    - Generate React Flow compatible mindmap JSON with clear, concept-explaining labels
     """
     def __init__(self, name: str = "Summarizer_Agent"):
         self.name = name
@@ -27,7 +27,9 @@ class SummarizerAgent:
 Given this research data on "{topic}":
 {json.dumps(research_data, indent=2)}
 
-Create comprehensive, beginner-friendly study notes and a React Flow compatible mind map JSON.
+Create comprehensive, beginner-friendly study notes and an educational React Flow mind map JSON.
+For mind map nodes, ensure every sub-node includes a title AND a 1-line concept explanation separated by \\n.
+
 Return ONLY valid JSON with this EXACT structure:
 {{
   "summary": "### Introduction\\nIntroduction text here...\\n\\n### Important Concepts\\nConcept details...\\n\\n### Definitions\\nDetailed definitions...\\n\\n### Examples\\nDetailed examples...\\n\\n### Advantages\\nAdvantages list...\\n\\n### Disadvantages\\nDisadvantages list...\\n\\n### Applications\\nApplications text...\\n\\n### Interview Tips\\nInterview tips...\\n\\n### Revision Notes\\nQuick revision summary...",
@@ -39,19 +41,19 @@ Return ONLY valid JSON with this EXACT structure:
   ],
   "mindmap_json": {{
     "nodes": [
-      {{ "id": "root", "data": {{ "label": "{topic}" }}, "position": {{ "x": 350, "y": 50 }}, "style": {{ "background": "#4f46e5", "color": "#fff", "fontWeight": "bold" }} }},
-      {{ "id": "1", "data": {{ "label": "Definition" }}, "position": {{ "x": 100, "y": 180 }} }},
-      {{ "id": "2", "data": {{ "label": "Core Concepts" }}, "position": {{ "x": 350, "y": 180 }} }},
-      {{ "id": "3", "data": {{ "label": "Applications" }}, "position": {{ "x": 600, "y": 180 }} }},
-      {{ "id": "4", "data": {{ "label": "Complexity & Math" }}, "position": {{ "x": 220, "y": 300 }} }},
-      {{ "id": "5", "data": {{ "label": "Interview Focus" }}, "position": {{ "x": 480, "y": 300 }} }}
+      {{ "id": "root", "data": {{ "label": "🎯 {topic}" }}, "position": {{ "x": 380, "y": 30 }} }},
+      {{ "id": "def", "data": {{ "label": "📖 Core Definition\\nDetailed 1-line definition of {topic}" }}, "position": {{ "x": 80, "y": 170 }} }},
+      {{ "id": "concepts", "data": {{ "label": "💡 Key Invariants\\nCore principles and rules governing {topic}" }}, "position": {{ "x": 380, "y": 170 }} }},
+      {{ "id": "apps", "data": {{ "label": "🚀 Real-World Applications\\nIndustrial use cases in OS and DB indexing" }}, "position": {{ "x": 680, "y": 170 }} }},
+      {{ "id": "math", "data": {{ "label": "⚡ Complexity & Math\\nTime: O(log N) | Space: O(1) Auxiliary" }}, "position": {{ "x": 220, "y": 310 }} }},
+      {{ "id": "interview", "data": {{ "label": "💼 Interview Key Takeaway\\nEdge cases & overflow prevention" }}, "position": {{ "x": 540, "y": 310 }} }}
     ],
     "edges": [
-      {{ "id": "e-root-1", "source": "root", "target": "1", "animated": true }},
-      {{ "id": "e-root-2", "source": "root", "target": "2", "animated": true }},
-      {{ "id": "e-root-3", "source": "root", "target": "3", "animated": true }},
-      {{ "id": "e-2-4", "source": "2", "target": "4" }},
-      {{ "id": "e-2-5", "source": "2", "target": "5" }}
+      {{ "id": "e-root-def", "source": "root", "target": "def", "animated": true }},
+      {{ "id": "e-root-concepts", "source": "root", "target": "concepts", "animated": true }},
+      {{ "id": "e-root-apps", "source": "root", "target": "apps", "animated": true }},
+      {{ "id": "e-concepts-math", "source": "concepts", "target": "math", "animated": true }},
+      {{ "id": "e-concepts-interview", "source": "concepts", "target": "interview", "animated": true }}
     ]
   }}
 }}
@@ -123,46 +125,40 @@ Return ONLY valid JSON with this EXACT structure:
                 {
                     "id": "root",
                     "data": {"label": f"🎯 {topic}"},
-                    "position": {"x": 320, "y": 40},
-                    "style": {"background": "#6366f1", "color": "#ffffff", "borderRadius": "12px", "padding": "12px 20px", "fontWeight": "bold", "fontSize": "16px"}
+                    "position": {"x": 380, "y": 30}
                 },
                 {
                     "id": "def",
-                    "data": {"label": "📖 Definition"},
-                    "position": {"x": 80, "y": 160},
-                    "style": {"background": "#1e293b", "color": "#38bdf8", "border": "1px solid #38bdf8", "borderRadius": "8px", "padding": "10px"}
+                    "data": {"label": f"📖 Core Definition\nDivide & conquer algorithm for {topic}"},
+                    "position": {"x": 80, "y": 170}
                 },
                 {
                     "id": "concepts",
-                    "data": {"label": "💡 Core Concepts"},
-                    "position": {"x": 320, "y": 160},
-                    "style": {"background": "#1e293b", "color": "#a855f7", "border": "1px solid #a855f7", "borderRadius": "8px", "padding": "10px"}
+                    "data": {"label": f"💡 Key Invariants\nCore principles and rules governing {topic}"},
+                    "position": {"x": 380, "y": 170}
                 },
                 {
                     "id": "apps",
-                    "data": {"label": "🚀 Applications"},
-                    "position": {"x": 560, "y": 160},
-                    "style": {"background": "#1e293b", "color": "#22c55e", "border": "1px solid #22c55e", "borderRadius": "8px", "padding": "10px"}
+                    "data": {"label": f"🚀 Real-World Applications\nIndustrial use cases in OS and DB indexing"},
+                    "position": {"x": 680, "y": 170}
                 },
                 {
-                    "id": "formulas",
-                    "data": {"label": "⚡ Complexity / Math"},
-                    "position": {"x": 200, "y": 280},
-                    "style": {"background": "#1e293b", "color": "#f59e0b", "border": "1px solid #f59e0b", "borderRadius": "8px", "padding": "10px"}
+                    "id": "math",
+                    "data": {"label": f"⚡ Complexity & Math\nTime: O(log N) | Space: O(1) Auxiliary"},
+                    "position": {"x": 220, "y": 310}
                 },
                 {
                     "id": "interview",
-                    "data": {"label": "💼 Interview Q&A"},
-                    "position": {"x": 440, "y": 280},
-                    "style": {"background": "#1e293b", "color": "#ec4899", "border": "1px solid #ec4899", "borderRadius": "8px", "padding": "10px"}
+                    "data": {"label": f"💼 Interview Key Takeaway\nEdge cases & overflow prevention"},
+                    "position": {"x": 540, "y": 310}
                 }
             ],
             "edges": [
-                {"id": "e-root-def", "source": "root", "target": "def", "animated": True, "style": {"stroke": "#6366f1"}},
-                {"id": "e-root-concepts", "source": "root", "target": "concepts", "animated": True, "style": {"stroke": "#6366f1"}},
-                {"id": "e-root-apps", "source": "root", "target": "apps", "animated": True, "style": {"stroke": "#6366f1"}},
-                {"id": "e-concepts-formulas", "source": "concepts", "target": "formulas", "style": {"stroke": "#a855f7"}},
-                {"id": "e-concepts-interview", "source": "concepts", "target": "interview", "style": {"stroke": "#a855f7"}}
+                {"id": "e-root-def", "source": "root", "target": "def", "animated": True},
+                {"id": "e-root-concepts", "source": "root", "target": "concepts", "animated": True},
+                {"id": "e-root-apps", "source": "root", "target": "apps", "animated": True},
+                {"id": "e-concepts-math", "source": "concepts", "target": "math", "animated": True},
+                {"id": "e-concepts-interview", "source": "concepts", "target": "interview", "animated": True}
             ]
         }
 
