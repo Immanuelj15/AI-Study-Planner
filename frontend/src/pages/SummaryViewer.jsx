@@ -58,7 +58,9 @@ export default function SummaryViewer() {
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    const splitText = doc.splitTextToSize(summaryData.summary, 180);
+    // Strip raw #, *, _, and ` characters for a clean PDF export!
+    const cleanText = summaryData.summary ? summaryData.summary.replace(/[\#\*\_`]/g, '') : '';
+    const splitText = doc.splitTextToSize(cleanText, 180);
     
     let y = 30;
     const pageHeight = 275;

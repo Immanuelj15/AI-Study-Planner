@@ -4,15 +4,60 @@ import { Volume2, VolumeX, Download, Copy, Check, Sparkles, BookOpen } from 'luc
 import { useSpeech } from '../hooks/useSpeech';
 import { useToast } from '../context/ToastContext';
 
+function renderCleanSummaryContent(summaryText) {
+  if (!summaryText) return null;
+
+  const lines = summaryText.split('\n');
+
+  return lines.map((line, idx) => {
+    const trimmed = line.trim();
+    if (!trimmed) return <div key={idx} className="h-2"></div>;
+
+    // Headings starting with #, ##, ###
+    if (trimmed.startsWith('#')) {
+      const cleanHeading = trimmed.replace(/^[#\s]+/, '').replace(/[\*\_`]/g, '').trim();
+      return (
+        <h3 key={idx} className="font-poppins text-base sm:text-lg font-extrabold text-[#2563EB] mt-5 mb-2.5 border-b border-[#E2E8F0] pb-1.5 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#38BDF8]"></span>
+          <span>{cleanHeading}</span>
+        </h3>
+      );
+    }
+
+    // Clean inline markdown special characters (#, *, _, `) from regular paragraph text
+    const cleanParagraph = trimmed
+      .replace(/[\#\*\_`]/g, '') // Strip literal #, *, _, and ` characters!
+      .trim();
+
+    // Bullet point items starting with -, *, •
+    if (line.trim().startsWith('-') || line.trim().startsWith('*') || line.trim().startsWith('•')) {
+      return (
+        <div key={idx} className="flex items-start gap-2.5 my-1.5 ml-2 text-xs sm:text-sm leading-relaxed text-[#1E293B]">
+          <span className="text-[#2563EB] font-bold text-sm leading-none mt-0.5">•</span>
+          <span>{cleanParagraph}</span>
+        </div>
+      );
+    }
+
+    return (
+      <p key={idx} className="my-2 text-xs sm:text-sm leading-relaxed text-[#1E293B] font-normal">
+        {cleanParagraph}
+      </p>
+    );
+  });
+}
+
 export default function SummaryCard({ summaryText, bulletPoints, topic, onExportPDF }) {
   const { speak, stop, speaking } = useSpeech();
   const { addToast } = useToast();
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(summaryText);
+    // Copy clean text without raw # or markdown special characters
+    const cleanText = summaryText ? summaryText.replace(/[\#\*\_`]/g, '') : '';
+    navigator.clipboard.writeText(cleanText);
     setCopied(true);
-    addToast('Summary copied to clipboard!', 'success');
+    addToast('Clean summary copied to clipboard!', 'success');
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -36,7 +81,7 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => (speaking ? stop() : speak(summaryText))}
+            onClick={() => (speaking ? stop() : speak(summaryText ? summaryText.replace(/[\#\*\_`]/g, '') : ''))}
             className={`px-4 py-2 rounded-xl text-xs font-inter font-bold flex items-center gap-2 transition-all ${
               speaking
                 ? 'bg-[#FEE2E2] text-[#EF4444] border border-[#FCA5A5] animate-pulse'
@@ -53,7 +98,7 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
             whileTap={{ scale: 0.95 }}
             onClick={handleCopy}
             className="p-2 rounded-xl bg-[#F8FBFF] hover:bg-[#EFF6FF] text-[#64748B] hover:text-[#1E293B] border border-[#E2E8F0] transition-colors"
-            title="Copy Notes"
+            title="Copy Clean Notes"
           >
             {copied ? <Check className="w-4 h-4 text-[#22C55E]" /> : <Copy className="w-4 h-4" />}
           </motion.button>
@@ -82,16 +127,16 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
             {bulletPoints.map((pt, idx) => (
               <li key={idx} className="flex items-start gap-2">
                 <span className="text-[#2563EB] font-bold">•</span>
-                <span>{pt}</span>
+                <span>{pt.replace(/[\#\*\_`]/g, '')}</span>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* Main Markdown Content */}
-      <div className="prose prose-slate max-w-none text-[#1E293B] text-sm leading-relaxed whitespace-pre-wrap font-inter bg-[#F8FBFF] p-6 rounded-2xl border border-[#E2E8F0]">
-        {summaryText}
+      {/* Clean Formatted Summary Content (Zero # or special characters) */}
+      <div className="prose prose-slate max-w-none text-[#1E293B] font-inter bg-[#F8FBFF] p-6 lg:p-8 rounded-2xl border border-[#E2E8F0]">
+        {renderCleanSummaryContent(summaryText)}
       </div>
     </motion.div>
   );
