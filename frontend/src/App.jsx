@@ -29,7 +29,7 @@ const ProtectedRoute = ({ children }) => {
 
 const AppLayout = ({ children }) => {
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-grid-pattern text-[#1E293B] flex flex-col font-inter">
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
