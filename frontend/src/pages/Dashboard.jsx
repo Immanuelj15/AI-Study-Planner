@@ -7,15 +7,11 @@ import { WeeklyBarChart } from '../components/AnalyticsChart';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
 import { 
-  Flame, 
-  Sparkles, 
   AlertTriangle, 
   CheckCircle2, 
   Clock,
   ArrowUpRight,
   Zap,
-  BookOpen,
-  Brain,
   TrendingUp,
   Activity,
   Lightbulb,
@@ -83,21 +79,21 @@ export default function Dashboard() {
       animate="visible"
       className="space-y-6 pb-12"
     >
-      {/* 1. Dashboard Welcome Hero Banner (Blue -> Purple Gradient) */}
+      {/* 1. Dashboard Welcome Hero Banner (#2563EB -> #38BDF8 Gradient) */}
       <motion.div
         variants={itemVariants}
-        className="rounded-3xl p-6 lg:p-8 relative overflow-hidden hero-gradient-bg shadow-2xl text-white border border-blue-400/30"
+        className="rounded-3xl p-6 lg:p-8 relative overflow-hidden hero-gradient-bg shadow-md text-white border border-blue-400/30"
       >
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-white/10 to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-white/15 to-transparent pointer-events-none"></div>
         <div className="max-w-2xl space-y-3 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-[#00E5FF] text-xs font-poppins font-bold">
-            <Zap className="w-3.5 h-3.5 text-[#00E5FF] animate-pulse" /> Multi-Agent Feedback Loop Active
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-poppins font-bold">
+            <Zap className="w-3.5 h-3.5 text-yellow-300 animate-pulse" /> Multi-Agent Feedback Loop Active
           </div>
           <h1 className="font-poppins text-3xl lg:text-5xl font-black tracking-tight text-white leading-tight">
             AI Multi-Agent Study Command Center
           </h1>
-          <p className="font-inter text-blue-100 text-xs lg:text-sm leading-relaxed max-w-xl">
-            Target Exam Countdown: <span className="font-bold text-[#00E5FF] font-poppins">{metrics?.upcoming_exam_days || 14} Days</span>. 
+          <p className="font-inter text-blue-50 text-xs lg:text-sm leading-relaxed max-w-xl">
+            Target Exam Countdown: <span className="font-bold text-yellow-300 font-poppins">{metrics?.upcoming_exam_days || 14} Days</span>. 
             {weakSubjects.length > 0 && ` Extra study hours allocated to ${weakSubjects[0]}.`}
           </p>
 
@@ -106,7 +102,7 @@ export default function Dashboard() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => navigate('/study-planner')}
-              className="px-5 py-2.5 rounded-xl btn-gradient-primary text-xs font-poppins font-bold flex items-center gap-2 shadow-lg shadow-cyan-500/20"
+              className="px-5 py-2.5 rounded-xl bg-white text-[#2563EB] hover:bg-blue-50 text-xs font-poppins font-bold flex items-center gap-2 shadow-md"
             >
               <span>Recalculate Schedule</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -115,7 +111,7 @@ export default function Dashboard() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => navigate('/summary')}
-              className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-inter font-bold border border-white/20 transition-colors backdrop-blur-md"
+              className="px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-inter font-bold border border-white/30 transition-colors backdrop-blur-md"
             >
               Research Topic Notes
             </motion.button>
@@ -128,13 +124,13 @@ export default function Dashboard() {
         {/* Left 2 Columns: Schedule, Charts, Recommendations */}
         <div className="lg:col-span-2 space-y-6">
           {/* Today's Study Plan */}
-          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-poppins font-bold text-[#F8FAFC] text-base">
-                <Clock className="w-5 h-5 text-[#06B6D4]" />
+              <div className="flex items-center gap-2 font-poppins font-bold text-[#1E293B] text-base">
+                <Clock className="w-5 h-5 text-[#2563EB]" />
                 <span>Today's Study Schedule</span>
               </div>
-              <span className="text-xs font-inter font-semibold text-[#94A3B8]">
+              <span className="text-xs font-inter font-semibold text-[#64748B]">
                 {metrics?.today_study_hours || 3.5} hrs total allocated
               </span>
             </div>
@@ -147,13 +143,13 @@ export default function Dashboard() {
           </motion.div>
 
           {/* Weekly Progress Bar Chart */}
-          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
             <div className="flex items-center justify-between">
-              <div className="font-poppins font-bold text-[#F8FAFC] text-base flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-[#3B82F6]" />
+              <div className="font-poppins font-bold text-[#1E293B] text-base flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-[#2563EB]" />
                 <span>Weekly Target vs Completed Hours</span>
               </div>
-              <span className="text-xs font-inter text-[#06B6D4] font-bold">Chart.js Visualizer</span>
+              <span className="text-xs font-inter text-[#2563EB] font-bold">Chart.js Visualizer</span>
             </div>
             <div className="h-64">
               <WeeklyBarChart weeklyData={metrics?.weekly_progress} />
@@ -161,30 +157,30 @@ export default function Dashboard() {
           </motion.div>
 
           {/* AI Recommendations Section */}
-          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
-            <div className="flex items-center gap-2 font-poppins font-bold text-[#F8FAFC] text-base">
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
+            <div className="flex items-center gap-2 font-poppins font-bold text-[#1E293B] text-base">
               <Lightbulb className="w-5 h-5 text-[#F59E0B]" />
               <span>AI Multi-Agent Study Recommendations</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-inter">
-              <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#334155] space-y-2">
-                <div className="flex items-center justify-between font-bold text-[#06B6D4]">
+              <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
+                <div className="flex items-center justify-between font-bold text-[#2563EB]">
                   <span>🧠 Mind Map Revision</span>
-                  <Sparkles className="w-3.5 h-3.5 text-[#3B82F6]" />
+                  <Zap className="w-3.5 h-3.5 text-[#38BDF8]" />
                 </div>
-                <p className="text-[#94A3B8] leading-relaxed">
-                  Review <span className="text-[#F8FAFC] font-semibold">Binary Search Tree rotations</span> on the interactive React Flow visual graph before taking your next quiz.
+                <p className="text-[#64748B] leading-relaxed">
+                  Review <span className="text-[#1E293B] font-semibold">Binary Search Tree rotations</span> on the interactive React Flow visual graph before taking your next quiz.
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#334155] space-y-2">
-                <div className="flex items-center justify-between font-bold text-[#10B981]">
+              <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
+                <div className="flex items-center justify-between font-bold text-[#22C55E]">
                   <span>⚡ Priority Allocation</span>
-                  <Target className="w-3.5 h-3.5 text-[#10B981]" />
+                  <Target className="w-3.5 h-3.5 text-[#22C55E]" />
                 </div>
-                <p className="text-[#94A3B8] leading-relaxed">
-                  Scheduler Agent added <span className="text-[#F8FAFC] font-semibold">+1.5 hours</span> to DBMS Indexes to boost retention for low-scoring topics.
+                <p className="text-[#64748B] leading-relaxed">
+                  Scheduler Agent added <span className="text-[#1E293B] font-semibold">+1.5 hours</span> to DBMS Indexes to boost retention for low-scoring topics.
                 </p>
               </div>
             </div>
@@ -194,18 +190,18 @@ export default function Dashboard() {
           <motion.div
             variants={itemVariants}
             onClick={() => navigate('/mindmap')}
-            className="glass-card glass-card-hover rounded-3xl p-6 border border-[#334155] flex items-center justify-between gap-4 cursor-pointer"
+            className="glass-card glass-card-hover rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] flex items-center justify-between gap-4 cursor-pointer shadow-soft"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#3B82F6]/20 border border-[#3B82F6] flex items-center justify-center text-[#06B6D4]">
+              <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center text-[#2563EB]">
                 <GitFork className="w-6 h-6 animate-pulse" />
               </div>
               <div>
-                <h4 className="font-poppins font-bold text-[#F8FAFC] text-sm">Interactive Mind Map Visualizer</h4>
-                <p className="text-xs text-[#94A3B8] font-inter">Agent 2 generated React Flow visual graphs for concepts & algorithms.</p>
+                <h4 className="font-poppins font-bold text-[#1E293B] text-sm">Interactive Mind Map Visualizer</h4>
+                <p className="text-xs text-[#64748B] font-inter">Agent 2 generated React Flow visual graphs for concepts & algorithms.</p>
               </div>
             </div>
-            <ArrowUpRight className="w-5 h-5 text-[#3B82F6]" />
+            <ArrowUpRight className="w-5 h-5 text-[#2563EB]" />
           </motion.div>
         </div>
 
@@ -217,32 +213,32 @@ export default function Dashboard() {
           </motion.div>
 
           {/* Weak & Strong Subject Badges */}
-          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
-            <h3 className="text-sm font-poppins font-bold text-[#F8FAFC] flex items-center gap-2">
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
+            <h3 className="text-sm font-poppins font-bold text-[#1E293B] flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-[#F59E0B]" /> Topic Mastery Feedback
             </h3>
 
             <div className="space-y-4">
               <div>
-                <div className="text-[11px] font-inter font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
+                <div className="text-[11px] font-inter font-bold text-[#64748B] uppercase tracking-wider mb-2">
                   Weak Topics (Increased Study Hours)
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {weakSubjects.map((sub, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/30 text-xs font-inter font-semibold">
+                    <span key={i} className="px-3 py-1 rounded-full bg-[#FEE2E2] text-[#EF4444] border border-[#FCA5A5] text-xs font-inter font-semibold">
                       ⚠️ {sub}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-[#334155]">
-                <div className="text-[11px] font-inter font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
+              <div className="pt-3 border-t border-[#E2E8F0]">
+                <div className="text-[11px] font-inter font-bold text-[#64748B] uppercase tracking-wider mb-2">
                   Strong Topics (Optimized Revision)
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {strongSubjects.map((sub, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30 text-xs font-inter font-semibold">
+                    <span key={i} className="px-3 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC] text-xs font-inter font-semibold">
                       ✅ {sub}
                     </span>
                   ))}
@@ -252,26 +248,26 @@ export default function Dashboard() {
           </motion.div>
 
           {/* Recent Activities Feed */}
-          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
-            <div className="flex items-center gap-2 font-poppins font-bold text-[#F8FAFC] text-sm">
-              <Activity className="w-4 h-4 text-[#06B6D4]" />
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
+            <div className="flex items-center gap-2 font-poppins font-bold text-[#1E293B] text-sm">
+              <Activity className="w-4 h-4 text-[#2563EB]" />
               <span>Recent AI Activities</span>
             </div>
 
             <div className="space-y-3 text-xs font-inter">
-              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-[#1E293B] border border-[#334155]">
-                <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+                <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-semibold text-[#F8FAFC]">Quiz Submitted: Binary Search</div>
-                  <div className="text-[10px] text-[#94A3B8]">Score: 80% • Agent 4 recalculated schedule</div>
+                  <div className="font-semibold text-[#1E293B]">Quiz Submitted: Binary Search</div>
+                  <div className="text-[10px] text-[#64748B]">Score: 80% • Agent 4 recalculated schedule</div>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-[#1E293B] border border-[#334155]">
-                <Brain className="w-4 h-4 text-[#3B82F6] shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+                <Zap className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-semibold text-[#F8FAFC]">Research Notes & Mind Map Created</div>
-                  <div className="text-[10px] text-[#94A3B8]">Agents 1 & 2 structured notes for B+ Trees</div>
+                  <div className="font-semibold text-[#1E293B]">Research Notes & Mind Map Created</div>
+                  <div className="text-[10px] text-[#64748B]">Agents 1 & 2 structured notes for B+ Trees</div>
                 </div>
               </div>
             </div>

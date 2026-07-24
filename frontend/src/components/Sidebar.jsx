@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -13,7 +13,6 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
-  Brain,
   Bot
 } from 'lucide-react';
 
@@ -33,10 +32,10 @@ export default function Sidebar() {
 
   return (
     <motion.aside
-      initial={{ x: -50, opacity: 0 }}
+      initial={{ x: -30, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className={`glass-card border-r border-[#334155] p-3.5 flex flex-col justify-between hidden md:flex transition-all duration-300 min-h-[calc(100vh-65px)] ${
+      className={`glass-card border-r border-[#E2E8F0] p-3.5 flex flex-col justify-between hidden md:flex transition-all duration-300 min-h-[calc(100vh-65px)] bg-[#FFFFFF] ${
         collapsed ? 'w-20' : 'w-64'
       }`}
     >
@@ -44,13 +43,13 @@ export default function Sidebar() {
         {/* Toggle Collapse Header */}
         <div className="flex items-center justify-between px-2 py-1">
           {!collapsed && (
-            <span className="text-[10px] font-poppins font-bold tracking-widest text-[#94A3B8] uppercase">
+            <span className="text-[10px] font-poppins font-bold tracking-widest text-[#64748B] uppercase">
               Core Platform
             </span>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-xl bg-[#1E293B] hover:bg-[#334155] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors mx-auto"
+            className="p-1.5 rounded-xl bg-[#F8FBFF] hover:bg-[#EFF6FF] text-[#64748B] hover:text-[#2563EB] border border-[#E2E8F0] transition-colors mx-auto"
             title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           >
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -68,8 +67,8 @@ export default function Sidebar() {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-inter font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'btn-gradient-primary text-white shadow-lg shadow-blue-500/25 font-bold scale-[1.02]'
-                      : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B]/70'
+                      ? 'bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE] font-bold shadow-sm shadow-blue-500/10 scale-[1.02]'
+                      : 'text-[#64748B] hover:text-[#1E293B] hover:bg-[#F8FBFF]'
                   } ${collapsed ? 'justify-center' : ''}`
                 }
               >
@@ -81,23 +80,23 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Multi-Agent System Active Status Box */}
+      {/* Multi-Agent Active Status Box */}
       {!collapsed ? (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 rounded-2xl bg-gradient-to-br from-[#3B82F6]/20 via-purple-600/20 to-[#06B6D4]/10 border border-[#3B82F6]/30 text-xs"
+          className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-xs"
         >
-          <div className="flex items-center gap-2 text-[#06B6D4] font-poppins font-bold mb-1.5">
-            <Sparkles className="w-4 h-4 animate-spin text-[#00E5FF]" />
+          <div className="flex items-center gap-2 text-[#2563EB] font-poppins font-bold mb-1.5">
+            <Sparkles className="w-4 h-4 animate-spin text-[#0EA5E9]" />
             <span>4 AI Agents Active</span>
           </div>
-          <p className="text-[#94A3B8] font-inter text-[11px] leading-relaxed">
+          <p className="text-[#64748B] font-inter text-[11px] leading-relaxed">
             Research, Summarizer, Quiz Master, & Adaptive Scheduler running.
           </p>
         </motion.div>
       ) : (
-        <div className="w-10 h-10 rounded-2xl bg-[#3B82F6]/20 border border-[#3B82F6]/40 flex items-center justify-center text-[#06B6D4] mx-auto">
+        <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center text-[#2563EB] mx-auto">
           <Bot className="w-5 h-5 animate-pulse" />
         </div>
       )}

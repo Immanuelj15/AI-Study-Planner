@@ -18,14 +18,14 @@ const agentsList = [
     name: 'Research Agent',
     description: 'Searching Learning Resources & Academic Concepts...',
     icon: Search,
-    color: '#3B82F6',
+    color: '#2563EB',
   },
   {
     id: 'summarizer',
     name: 'Summarizer Agent',
     description: 'Generating Beginner-Friendly Notes & Revision Bullet Points...',
     icon: FileText,
-    color: '#06B6D4',
+    color: '#0EA5E9',
   },
   {
     id: 'mindmap',
@@ -46,7 +46,7 @@ const agentsList = [
     name: 'Scheduler Agent',
     description: 'Optimizing Adaptive Study Matrix & Allocated Hours...',
     icon: CalendarDays,
-    color: '#10B981',
+    color: '#22C55E',
   },
 ];
 
@@ -64,22 +64,22 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
   return (
     <div className="max-w-2xl mx-auto my-10 space-y-6">
       {/* Header Banner */}
-      <div className="glass-card rounded-3xl p-6 text-center space-y-3 border border-[#334155] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10 animate-pulse"></div>
+      <div className="glass-card rounded-3xl p-6 text-center space-y-3 border border-[#E2E8F0] relative overflow-hidden bg-[#FFFFFF]">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 via-sky-50/50 to-indigo-50/50 animate-pulse"></div>
         <div className="relative z-10 flex items-center justify-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-r from-[#3B82F6] to-[#06B6D4] flex items-center justify-center shadow-lg shadow-blue-500/30">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#38BDF8] flex items-center justify-center shadow-md shadow-blue-500/20">
             <Bot className="w-6 h-6 text-white animate-bounce" />
           </div>
           <div>
-            <h3 className="font-poppins text-lg font-bold text-[#F8FAFC] tracking-tight">{text}</h3>
-            <p className="text-xs text-[#94A3B8] font-inter">Executing 4 Microsoft AutoGen AI Agents synchronously</p>
+            <h3 className="font-poppins text-lg font-bold text-[#1E293B] tracking-tight">{text}</h3>
+            <p className="text-xs text-[#64748B] font-inter">Executing 4 Microsoft AutoGen AI Agents synchronously</p>
           </div>
         </div>
 
         {/* Global Progress Bar */}
-        <div className="w-full h-1.5 bg-[#1E293B] rounded-full overflow-hidden mt-3 relative">
+        <div className="w-full h-1.5 bg-[#EFF6FF] rounded-full overflow-hidden mt-3 relative border border-[#DBEAFE]">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#3B82F6] via-[#8B5CF6] to-[#06B6D4]"
+            className="h-full bg-gradient-to-r from-[#2563EB] via-[#38BDF8] to-[#22C55E]"
             initial={{ width: '5%' }}
             animate={{ width: `${((activeStep + 1) / agentsList.length) * 100}%` }}
             transition={{ duration: 0.5 }}
@@ -90,9 +90,9 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
       {/* Agents Sequential Pipeline Cards */}
       <div className="space-y-3 relative">
         {/* Animated Connecting Line */}
-        <div className="absolute left-[27px] top-6 bottom-6 w-0.5 bg-[#334155] z-0">
+        <div className="absolute left-[27px] top-6 bottom-6 w-0.5 bg-[#E2E8F0] z-0">
           <motion.div
-            className="w-full bg-gradient-to-b from-[#3B82F6] to-[#10B981]"
+            className="w-full bg-gradient-to-b from-[#2563EB] to-[#22C55E]"
             initial={{ height: '0%' }}
             animate={{ height: `${(activeStep / (agentsList.length - 1)) * 100}%` }}
             transition={{ duration: 0.5 }}
@@ -112,10 +112,10 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
               transition={{ delay: index * 0.1 }}
               className={`relative z-10 p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between gap-4 ${
                 isActive
-                  ? 'bg-[#1E293B] border-[#3B82F6] shadow-lg shadow-blue-500/20 ai-glow-shadow'
+                  ? 'bg-[#EFF6FF] border-[#2563EB] shadow-md shadow-blue-500/10 ai-glow-shadow'
                   : isCompleted
-                  ? 'bg-[#1E293B]/60 border-[#10B981]/40 opacity-90'
-                  : 'glass-card border-[#334155]/60 opacity-40'
+                  ? 'bg-[#F0FDF4] border-[#22C55E]/40 opacity-95'
+                  : 'bg-[#FFFFFF] border-[#E2E8F0] opacity-50'
               }`}
             >
               <div className="flex items-center gap-4">
@@ -123,10 +123,10 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
                 <div
                   className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
                     isActive
-                      ? 'bg-[#3B82F6]/20 border-[#3B82F6] text-[#00E5FF] animate-pulse'
+                      ? 'bg-[#2563EB]/10 border-[#2563EB] text-[#2563EB] animate-pulse'
                       : isCompleted
-                      ? 'bg-[#10B981]/20 border-[#10B981] text-[#10B981]'
-                      : 'bg-[#1E293B] border-[#334155] text-[#94A3B8]'
+                      ? 'bg-[#22C55E]/10 border-[#22C55E] text-[#22C55E]'
+                      : 'bg-[#F8FBFF] border-[#E2E8F0] text-[#64748B]'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -135,28 +135,28 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
                 {/* Text Labels */}
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="font-poppins text-sm font-bold text-[#F8FAFC]">{agent.name}</h4>
+                    <h4 className="font-poppins text-sm font-bold text-[#1E293B]">{agent.name}</h4>
                     {isActive && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#3B82F6]/20 text-[#00E5FF] border border-[#3B82F6]/40 flex items-center gap-1">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/30 flex items-center gap-1">
                         <Sparkles className="w-3 h-3 animate-spin" /> Processing
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-[#94A3B8] font-inter mt-0.5">{agent.description}</p>
+                  <p className="text-xs text-[#64748B] font-inter mt-0.5">{agent.description}</p>
                 </div>
               </div>
 
               {/* Status Indicator */}
               <div>
                 {isCompleted ? (
-                  <div className="flex items-center gap-1 text-xs font-bold text-[#10B981] bg-[#10B981]/10 px-3 py-1 rounded-full border border-[#10B981]/30">
+                  <div className="flex items-center gap-1 text-xs font-bold text-[#22C55E] bg-[#22C55E]/10 px-3 py-1 rounded-full border border-[#22C55E]/30">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>✔ Completed</span>
                   </div>
                 ) : isActive ? (
-                  <Loader2 className="w-5 h-5 text-[#3B82F6] animate-spin" />
+                  <Loader2 className="w-5 h-5 text-[#2563EB] animate-spin" />
                 ) : (
-                  <span className="text-[11px] font-semibold text-[#94A3B8]">Pending</span>
+                  <span className="text-[11px] font-semibold text-[#64748B]">Pending</span>
                 )}
               </div>
             </motion.div>

@@ -17,47 +17,45 @@
     font-family: 'Inter', sans-serif;
   }
 
-  /* Glassmorphism Design System */
+  /* Light Theme Educational SaaS Card Design */
   .glass-card {
-    background: rgba(30, 41, 59, 0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid #334155;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 20px -2px rgba(37, 99, 235, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
   }
 
   .glass-card-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .glass-card-hover:hover {
-    background: rgba(30, 41, 59, 0.85);
-    border-color: #3B82F6;
+    background: #FFFFFF;
+    border-color: #2563EB;
     transform: translateY(-4px);
-    box-shadow: 0 15px 35px -5px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 12px 30px -4px rgba(37, 99, 235, 0.15), 0 4px 12px -2px rgba(0, 0, 0, 0.05);
   }
 
   .glass-input {
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid #334155;
-    color: #F8FAFC;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    color: #1E293B;
     transition: all 0.2s ease;
   }
   .glass-input:focus {
     outline: none;
-    border-color: #3B82F6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
   }
 
-  /* Gradients */
+  /* Rounded Gradient Buttons: #2563EB -> #38BDF8 */
   .btn-gradient-primary {
-    background: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%);
+    background: linear-gradient(135deg, #2563EB 0%, #38BDF8 100%);
     color: #ffffff;
     font-weight: 600;
     transition: all 0.25s ease;
   }
   .btn-gradient-primary:hover {
-    background: linear-gradient(135deg, #2563EB 0%, #0891B2 100%);
-    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+    background: linear-gradient(135deg, #1D4ED8 0%, #0284C7 100%);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
     transform: translateY(-1px) scale(1.02);
   }
   .btn-gradient-primary:active {
@@ -65,30 +63,30 @@
   }
 
   .hero-gradient-bg {
-    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+    background: linear-gradient(135deg, #2563EB 0%, #38BDF8 100%);
   }
 
   .ai-glow-gradient {
-    background: linear-gradient(135deg, #00E5FF 0%, #3B82F6 100%);
+    background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%);
   }
 
   .ai-glow-shadow {
-    box-shadow: 0 0 25px rgba(0, 229, 255, 0.35), 0 0 50px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 25px rgba(37, 99, 235, 0.25), 0 0 45px rgba(56, 189, 248, 0.2);
   }
 }
 
-/* Custom Scrollbars */
+/* Custom Scrollbars for Light Theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0F172A;
+  background: #F8FBFF;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #94A3B8;
 }

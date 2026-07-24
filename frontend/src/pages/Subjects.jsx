@@ -4,7 +4,7 @@ import { subjectsAPI } from '../services/api';
 import SubjectCard from '../components/SubjectCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
-import { Plus, BookOpen, Sparkles } from 'lucide-react';
+import { Plus, BookOpen } from 'lucide-react';
 
 export default function Subjects() {
   const [subjects, setSubjects] = useState([]);
@@ -58,12 +58,12 @@ export default function Subjects() {
       className="space-y-6 pb-12"
     >
       {/* Header & Add Subject Form */}
-      <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#334155] space-y-6 shadow-2xl">
+      <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-6 shadow-soft bg-[#FFFFFF]">
         <div>
-          <h1 className="font-poppins text-2xl font-black text-[#F8FAFC] flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-[#06B6D4]" /> Manage Study Subjects
+          <h1 className="font-poppins text-2xl font-black text-[#1E293B] flex items-center gap-2">
+            <BookOpen className="w-6 h-6 text-[#2563EB]" /> Manage Study Subjects
           </h1>
-          <p className="text-[#94A3B8] font-inter text-xs mt-1">
+          <p className="text-[#64748B] font-inter text-xs mt-1">
             Configure subjects and difficulty parameters for Agent 4 Scheduler & Agent 3 Quiz Master.
           </p>
         </div>
@@ -75,13 +75,13 @@ export default function Subjects() {
             placeholder="Subject Name (e.g. Operating Systems)..."
             value={newSubject}
             onChange={(e) => setNewSubject(e.target.value)}
-            className="sm:col-span-1 glass-input py-3 px-4 rounded-2xl text-xs font-inter"
+            className="sm:col-span-1 glass-input py-3 px-4 rounded-2xl text-xs font-inter bg-[#F8FBFF]"
           />
 
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
-            className="glass-input py-3 px-4 rounded-2xl text-xs font-inter bg-[#1E293B]"
+            className="glass-input py-3 px-4 rounded-2xl text-xs font-inter bg-[#F8FBFF]"
           >
             <option value="Easy">Difficulty: Easy</option>
             <option value="Medium">Difficulty: Medium</option>
@@ -93,7 +93,7 @@ export default function Subjects() {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={submitting}
-            className="py-3 px-5 rounded-2xl btn-gradient-primary text-xs font-inter font-bold flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
+            className="py-3 px-5 rounded-2xl btn-gradient-primary text-xs font-inter font-bold flex items-center justify-center gap-2 shadow-sm shadow-blue-500/20"
           >
             <Plus className="w-4 h-4" /> Add Subject
           </motion.button>
@@ -108,7 +108,7 @@ export default function Subjects() {
           ))}
         </div>
       ) : (
-        <div className="glass-card rounded-3xl p-12 text-center text-[#94A3B8] font-inter text-xs border border-[#334155] space-y-2">
+        <div className="glass-card rounded-3xl p-12 text-center text-[#64748B] font-inter text-xs border border-[#E2E8F0] space-y-2 bg-[#FFFFFF]">
           <BookOpen className="w-8 h-8 text-[#94A3B8]/60 mx-auto" />
           <p>No subjects added yet. Enter a subject above to get started!</p>
         </div>

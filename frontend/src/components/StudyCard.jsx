@@ -3,9 +3,9 @@ import { motion } from 'framer-motion';
 import { Clock, CheckCircle2 } from 'lucide-react';
 
 const priorityColors = {
-  High: 'bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30',
-  Medium: 'bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/30',
-  Low: 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30',
+  High: 'bg-[#FEE2E2] text-[#EF4444] border-[#FCA5A5]',
+  Medium: 'bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]',
+  Low: 'bg-[#DCFCE7] text-[#15803D] border-[#86EFAC]',
 };
 
 export default function StudyCard({ item, onToggleStatus }) {
@@ -14,18 +14,18 @@ export default function StudyCard({ item, onToggleStatus }) {
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      className={`p-4 rounded-2xl border transition-all duration-200 ${
+      className={`p-4.5 rounded-2xl border transition-all duration-200 ${
         isCompleted
-          ? 'bg-[#1E293B]/40 border-[#334155]/40 opacity-60'
-          : 'glass-card border-[#334155] hover:border-[#3B82F6]/50 shadow-md'
+          ? 'bg-[#F8FBFF] border-[#E2E8F0] opacity-65'
+          : 'glass-card glass-card-hover border-[#E2E8F0] bg-[#FFFFFF]'
       }`}
     >
       <div className="flex items-start justify-between gap-3 mb-2">
         <div>
-          <span className="text-[11px] font-inter font-bold text-[#06B6D4] tracking-wider uppercase">
+          <span className="text-[11px] font-inter font-bold text-[#2563EB] tracking-wider uppercase">
             {item.subject_name || item.subject}
           </span>
-          <h4 className={`font-poppins text-sm font-bold text-[#F8FAFC] mt-0.5 ${isCompleted ? 'line-through' : ''}`}>
+          <h4 className={`font-poppins text-sm font-bold text-[#1E293B] mt-0.5 ${isCompleted ? 'line-through' : ''}`}>
             {item.topic}
           </h4>
         </div>
@@ -34,9 +34,9 @@ export default function StudyCard({ item, onToggleStatus }) {
         </span>
       </div>
 
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#334155]/60 text-xs font-inter">
-        <div className="flex items-center gap-1.5 text-[#94A3B8] font-medium">
-          <Clock className="w-3.5 h-3.5 text-[#3B82F6]" />
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#E2E8F0]/80 text-xs font-inter">
+        <div className="flex items-center gap-1.5 text-[#64748B] font-medium">
+          <Clock className="w-3.5 h-3.5 text-[#2563EB]" />
           <span>{item.hours} hrs allocated</span>
         </div>
 
@@ -46,8 +46,8 @@ export default function StudyCard({ item, onToggleStatus }) {
           onClick={() => onToggleStatus && onToggleStatus(item.id)}
           className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all ${
             isCompleted
-              ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30'
-              : 'bg-[#1E293B] hover:bg-[#334155] text-[#F8FAFC] border border-[#334155]'
+              ? 'bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC]'
+              : 'bg-[#F8FBFF] hover:bg-[#EFF6FF] text-[#1E293B] border border-[#E2E8F0]'
           }`}
         >
           <CheckCircle2 className="w-3.5 h-3.5" />

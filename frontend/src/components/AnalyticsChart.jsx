@@ -36,16 +36,16 @@ export function WeeklyBarChart({ weeklyData }) {
       {
         label: 'Target Hours',
         data: targets,
-        backgroundColor: 'rgba(59, 130, 246, 0.25)',
-        borderColor: '#3B82F6',
+        backgroundColor: 'rgba(219, 234, 254, 0.7)',
+        borderColor: '#93C5FD',
         borderWidth: 1.5,
         borderRadius: 8,
       },
       {
         label: 'Completed Hours',
         data: completed,
-        backgroundColor: 'rgba(6, 182, 212, 0.75)',
-        borderColor: '#06B6D4',
+        backgroundColor: 'rgba(37, 99, 235, 0.85)',
+        borderColor: '#2563EB',
         borderWidth: 1.5,
         borderRadius: 8,
       },
@@ -55,27 +55,27 @@ export function WeeklyBarChart({ weeklyData }) {
   const options = {
     responsive: true,
     animation: {
-      duration: 1500,
+      duration: 1200,
       easing: 'easeOutQuart',
     },
     plugins: {
       legend: {
         position: 'top',
-        labels: { color: '#94A3B8', font: { size: 11, family: 'Inter' } }
+        labels: { color: '#64748B', font: { size: 11, family: 'Inter' } }
       },
       tooltip: {
-        backgroundColor: '#1E293B',
-        titleColor: '#F8FAFC',
-        bodyColor: '#94A3B8',
-        borderColor: '#334155',
+        backgroundColor: '#FFFFFF',
+        titleColor: '#1E293B',
+        bodyColor: '#64748B',
+        borderColor: '#E2E8F0',
         borderWidth: 1,
         padding: 10,
         cornerRadius: 12,
       }
     },
     scales: {
-      x: { ticks: { color: '#94A3B8', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(51, 65, 85, 0.4)' } },
-      y: { ticks: { color: '#94A3B8', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(51, 65, 85, 0.4)' } }
+      x: { ticks: { color: '#64748B', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(226, 232, 240, 0.6)' } },
+      y: { ticks: { color: '#64748B', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
     }
   };
 
@@ -93,12 +93,12 @@ export function SubjectDoughnutChart({ masteryData }) {
         label: 'Mastery %',
         data: scores,
         backgroundColor: [
-          'rgba(59, 130, 246, 0.85)',
+          'rgba(37, 99, 235, 0.85)',
           'rgba(239, 68, 68, 0.85)',
-          'rgba(16, 185, 129, 0.85)',
-          'rgba(139, 92, 246, 0.85)',
+          'rgba(34, 197, 94, 0.85)',
+          'rgba(56, 189, 248, 0.85)',
         ],
-        borderColor: '#0F172A',
+        borderColor: '#FFFFFF',
         borderWidth: 3,
       },
     ],
@@ -107,13 +107,13 @@ export function SubjectDoughnutChart({ masteryData }) {
   const options = {
     responsive: true,
     animation: {
-      duration: 1500,
+      duration: 1200,
       animateRotate: true,
     },
     plugins: {
       legend: {
         position: 'bottom',
-        labels: { color: '#94A3B8', font: { size: 11, family: 'Inter' } }
+        labels: { color: '#64748B', font: { size: 11, family: 'Inter' } }
       }
     }
   };
@@ -128,11 +128,11 @@ export function MonthlyProgressChart() {
       {
         label: 'Monthly Accuracy Trend %',
         data: [65, 74, 82, 88],
-        borderColor: '#06B6D4',
-        backgroundColor: 'rgba(6, 182, 212, 0.15)',
+        borderColor: '#2563EB',
+        backgroundColor: 'rgba(37, 99, 235, 0.1)',
         fill: true,
         tension: 0.4,
-        pointBackgroundColor: '#00E5FF',
+        pointBackgroundColor: '#38BDF8',
         pointRadius: 5,
       }
     ]
@@ -141,11 +141,11 @@ export function MonthlyProgressChart() {
   const options = {
     responsive: true,
     plugins: {
-      legend: { labels: { color: '#94A3B8', font: { size: 11, family: 'Inter' } } }
+      legend: { labels: { color: '#64748B', font: { size: 11, family: 'Inter' } } }
     },
     scales: {
-      x: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } },
-      y: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.3)' } }
+      x: { ticks: { color: '#64748B' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } },
+      y: { ticks: { color: '#64748B' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
     }
   };
 

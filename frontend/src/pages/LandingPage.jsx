@@ -1,27 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Bot, Sparkles, BookOpen, GitFork, HelpCircle, Calendar, ArrowRight, Shield, Zap, Brain, CheckCircle2 } from 'lucide-react';
+import { Sparkles, BookOpen, GitFork, HelpCircle, Calendar, ArrowRight, Brain } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0F172A] text-[#F8FAFC] flex flex-col justify-between selection:bg-[#3B82F6] selection:text-white font-inter">
+    <div className="min-h-screen bg-[#F8FBFF] text-[#1E293B] flex flex-col justify-between selection:bg-[#2563EB] selection:text-white font-inter">
       {/* Top Header */}
-      <header className="px-6 lg:px-12 py-5 flex items-center justify-between glass-card border-b border-[#334155]">
+      <header className="px-6 lg:px-12 py-4 flex items-center justify-between bg-[#FFFFFF] border-b border-[#E2E8F0] shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#3B82F6] via-purple-600 to-[#06B6D4] flex items-center justify-center shadow-lg shadow-blue-500/30">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#38BDF8] flex items-center justify-center shadow-md shadow-blue-500/20">
             <Brain className="w-6 h-6 text-white" />
           </div>
-          <span className="font-poppins font-black text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-[#06B6D4]">
-            Study<span className="text-[#3B82F6]">Agent</span>
+          <span className="font-poppins font-black text-xl tracking-tight text-[#1E293B]">
+            Study<span className="text-[#2563EB]">Agent</span>
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <Link to="/login" className="text-xs font-inter font-bold text-[#94A3B8] hover:text-[#F8FAFC] transition-colors">
+          <Link to="/login" className="text-xs font-inter font-bold text-[#64748B] hover:text-[#1E293B] transition-colors">
             Sign In
           </Link>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link to="/register" className="px-4 py-2.5 rounded-xl btn-gradient-primary text-xs font-inter font-bold shadow-md shadow-blue-500/20">
+            <Link to="/register" className="px-4.5 py-2.5 rounded-2xl btn-gradient-primary text-xs font-inter font-bold shadow-sm shadow-blue-500/20">
               Get Started Free
             </Link>
           </motion.div>
@@ -34,19 +34,19 @@ export default function LandingPage() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#3B82F6]/10 border border-[#3B82F6]/30 text-[#00E5FF] text-xs font-inter font-bold mx-auto shadow-inner"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold mx-auto shadow-sm"
         >
-          <Sparkles className="w-4 h-4 text-[#06B6D4] animate-spin" /> Microsoft AutoGen & Groq LLM Multi-Agent System
+          <Sparkles className="w-4 h-4 text-[#38BDF8] animate-spin" /> Microsoft AutoGen & Groq LLM Multi-Agent System
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.5 }}
-          className="font-poppins text-4xl sm:text-6xl font-black tracking-tight leading-tight max-w-4xl mx-auto"
+          className="font-poppins text-4xl sm:text-6xl font-black tracking-tight leading-tight max-w-4xl mx-auto text-[#1E293B]"
         >
           Supercharge Your Learning with <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] via-[#3B82F6] to-[#7C3AED]">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#0EA5E9] to-[#38BDF8]">
             4 Autonomous AI Agents
           </span>
         </motion.h1>
@@ -55,7 +55,7 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-[#94A3B8] font-inter text-base sm:text-lg max-w-2xl mx-auto leading-relaxed"
+          className="text-[#64748B] font-inter text-base sm:text-lg max-w-2xl mx-auto leading-relaxed"
         >
           Research complex topics, structure markdown notes, generate React Flow mind maps, solve adaptive quizzes, and automatically recalculate study schedules based on quiz feedback.
         </motion.p>
@@ -69,7 +69,7 @@ export default function LandingPage() {
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               to="/register"
-              className="px-8 py-4 rounded-2xl btn-gradient-primary text-sm font-poppins font-bold flex items-center gap-2 shadow-xl shadow-cyan-500/25"
+              className="px-8 py-4 rounded-2xl btn-gradient-primary text-sm font-poppins font-bold flex items-center gap-2 shadow-md shadow-blue-500/25"
             >
               <span>Launch AI Study Planner</span>
               <ArrowRight className="w-4 h-4" />
@@ -78,7 +78,7 @@ export default function LandingPage() {
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               to="/login"
-              className="px-8 py-4 rounded-2xl bg-[#1E293B] hover:bg-[#334155] border border-[#334155] text-[#F8FAFC] text-sm font-inter font-bold transition-colors"
+              className="px-8 py-4 rounded-2xl bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E2E8F0] text-[#1E293B] text-sm font-inter font-bold transition-colors shadow-sm"
             >
               Demo Sign In
             </Link>
@@ -92,13 +92,13 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             whileHover={{ y: -4 }}
-            className="glass-card glass-card-hover p-6 rounded-3xl border border-[#334155] space-y-3"
+            className="glass-card glass-card-hover p-6 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3 shadow-soft"
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#3B82F6]/15 border border-[#3B82F6]/30 text-[#3B82F6] flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] flex items-center justify-center font-bold">
               <BookOpen className="w-6 h-6" />
             </div>
-            <h3 className="font-poppins text-base font-bold text-[#F8FAFC]">1. Research Agent</h3>
-            <p className="text-[#94A3B8] font-inter text-xs leading-relaxed">
+            <h3 className="font-poppins text-base font-bold text-[#1E293B]">1. Research Agent</h3>
+            <p className="text-[#64748B] font-inter text-xs leading-relaxed">
               Extracts concepts, definitions, formulas, and interview points from Groq LLMs.
             </p>
           </motion.div>
@@ -108,13 +108,13 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
             whileHover={{ y: -4 }}
-            className="glass-card glass-card-hover p-6 rounded-3xl border border-[#334155] space-y-3"
+            className="glass-card glass-card-hover p-6 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3 shadow-soft"
           >
-            <div className="w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-100 text-purple-600 flex items-center justify-center font-bold">
               <GitFork className="w-6 h-6" />
             </div>
-            <h3 className="font-poppins text-base font-bold text-[#F8FAFC]">2. Summarizer Agent</h3>
-            <p className="text-[#94A3B8] font-inter text-xs leading-relaxed">
+            <h3 className="font-poppins text-base font-bold text-[#1E293B]">2. Summarizer Agent</h3>
+            <p className="text-[#64748B] font-inter text-xs leading-relaxed">
               Creates notes, bullet points, and React Flow mind map JSON graph structures.
             </p>
           </motion.div>
@@ -124,13 +124,13 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
             whileHover={{ y: -4 }}
-            className="glass-card glass-card-hover p-6 rounded-3xl border border-[#334155] space-y-3"
+            className="glass-card glass-card-hover p-6 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3 shadow-soft"
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#06B6D4]/15 border border-[#06B6D4]/30 text-[#06B6D4] flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-2xl bg-sky-50 border border-sky-100 text-sky-600 flex items-center justify-center font-bold">
               <HelpCircle className="w-6 h-6" />
             </div>
-            <h3 className="font-poppins text-base font-bold text-[#F8FAFC]">3. Quiz Generator</h3>
-            <p className="text-[#94A3B8] font-inter text-xs leading-relaxed">
+            <h3 className="font-poppins text-base font-bold text-[#1E293B]">3. Quiz Generator</h3>
+            <p className="text-[#64748B] font-inter text-xs leading-relaxed">
               Generates MCQ, True/False, and Fill-in-Blank quizzes with detailed explanations.
             </p>
           </motion.div>
@@ -140,13 +140,13 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
             whileHover={{ y: -4 }}
-            className="glass-card glass-card-hover p-6 rounded-3xl border border-[#334155] space-y-3"
+            className="glass-card glass-card-hover p-6 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3 shadow-soft"
           >
-            <div className="w-12 h-12 rounded-2xl bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] flex items-center justify-center font-bold">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
               <Calendar className="w-6 h-6" />
             </div>
-            <h3 className="font-poppins text-base font-bold text-[#F8FAFC]">4. Scheduler Agent</h3>
-            <p className="text-[#94A3B8] font-inter text-xs leading-relaxed">
+            <h3 className="font-poppins text-base font-bold text-[#1E293B]">4. Scheduler Agent</h3>
+            <p className="text-[#64748B] font-inter text-xs leading-relaxed">
               Recalculates study plans automatically based on quiz score performance.
             </p>
           </motion.div>
@@ -154,8 +154,8 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="px-6 py-6 border-t border-[#334155] text-center text-xs font-inter text-[#94A3B8]">
-        © 2026 AI Multi-Agent Study Planner. Modern SaaS UI built with React, Vite, Framer Motion, & Tailwind CSS.
+      <footer className="px-6 py-6 border-t border-[#E2E8F0] bg-[#FFFFFF] text-center text-xs font-inter text-[#64748B]">
+        © 2026 AI Multi-Agent Study Planner. Modern Educational AI Platform built with React, Vite, Framer Motion, & Tailwind CSS.
       </footer>
     </div>
   );
