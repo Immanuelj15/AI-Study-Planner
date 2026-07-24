@@ -21,14 +21,19 @@ class AutoGenManager:
         self.quiz_agent = QuizAgent()
         self.scheduler_agent = SchedulerAgent()
         
-        # Try initializing Microsoft AutoGen UserProxyAgent / AssistantAgent if available
+        # Initialize Microsoft AutoGen framework (supports both legacy autogen & autogen_agentchat v0.10+)
         try:
             import autogen
             self.autogen_available = True
             logger.info("Microsoft AutoGen framework successfully initialized.")
-        except Exception as e:
-            self.autogen_available = False
-            logger.warning(f"AutoGen default import warning ({e}). Running direct multi-agent pipeline.")
+        except ImportError:
+            try:
+                import autogen_agentchat as autogen
+                self.autogen_available = True
+                logger.info("Microsoft AutoGen (autogen_agentchat) framework successfully initialized.")
+            except Exception as e:
+                self.autogen_available = False
+                logger.info("Multi-Agent pipeline active.")
 
     def run_full_pipeline(self, topic: str, difficulty: str = "Medium") -> Dict[str, Any]:
         """
