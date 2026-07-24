@@ -58,27 +58,29 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* 2. Global AI Research Search Bar */}
+      {/* 2. Global AI Research Search Bar (Generous Padding & Zero Text Overlap) */}
       <form onSubmit={handleSearch} className="hidden md:flex items-center relative max-w-lg w-full mx-6">
         <div className="relative w-full flex items-center">
           <Search className="w-4 h-4 absolute left-3.5 text-[#64748B] pointer-events-none" />
           <input
             type="text"
-            placeholder="Ask AI to research topics (e.g. Operating Systems, B+ Trees)..."
+            placeholder="Ask AI to research topics (e.g. Operating Systems)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full py-2.5 pl-10 pr-28 rounded-full text-xs font-inter font-medium text-[#1E293B] placeholder-[#64748B] bg-[#F8FBFF] border border-[#E2E8F0] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition-all shadow-inner"
+            className="w-full py-2.5 pl-10 pr-36 rounded-full text-xs font-inter font-medium text-[#1E293B] placeholder-[#64748B] bg-[#F8FBFF] border border-[#E2E8F0] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition-all shadow-inner"
           />
-          <div className="absolute right-24 hidden lg:flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#E2E8F0]/60 text-[10px] font-mono font-bold text-[#64748B]">
+          {/* Keyboard Shortcut Pill (Positioned cleanly with right-28) */}
+          <div className="absolute right-28 hidden lg:flex items-center gap-0.5 px-2 py-0.5 rounded-lg bg-[#E2E8F0]/80 border border-[#CBD5E1]/60 text-[10px] font-mono font-bold text-[#475569] shadow-2xs">
             <Command className="w-2.5 h-2.5" /> K
           </div>
+          {/* Research Pill Button */}
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             type="submit"
-            className="absolute right-1.5 py-1.5 px-3.5 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white rounded-full text-[11px] font-inter font-bold flex items-center gap-1 shadow-sm shadow-blue-500/20"
+            className="absolute right-1.5 py-1.5 px-4 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white rounded-full text-[11px] font-inter font-bold flex items-center gap-1.5 shadow-sm shadow-blue-500/20"
           >
-            <Sparkles className="w-3 h-3 text-yellow-200" /> Research
+            <Sparkles className="w-3.5 h-3.5 text-yellow-200" /> Research
           </motion.button>
         </div>
       </form>
