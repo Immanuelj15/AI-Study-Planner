@@ -12,8 +12,7 @@ import {
   Target, 
   CheckCircle2, 
   Filter,
-  Layers,
-  Flame
+  Layers
 } from 'lucide-react';
 
 export default function StudyPlanner() {
@@ -230,7 +229,7 @@ export default function StudyPlanner() {
         </div>
       )}
 
-      {/* 3. Schedule Matrix Sessions Grid */}
+      {/* 3. Schedule Matrix Sessions Grid (Equal Heights & 24px Gap) */}
       {filteredPlans.length > 0 ? (
         <div className="space-y-4">
           <div className="flex items-center justify-between text-xs font-inter font-bold text-[#64748B]">
@@ -240,7 +239,7 @@ export default function StudyPlanner() {
             <span className="text-[#2563EB]">Adaptive AutoGen Schedule</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             {filteredPlans.map((item, idx) => (
               <StudyCard key={idx} item={item} onToggleStatus={handleToggleStatus} />
             ))}
