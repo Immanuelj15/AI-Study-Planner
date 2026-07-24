@@ -21,6 +21,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Automatic failover interceptor if proxy or port 8000/8001 returns connection error
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if ((error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const currentUrl = originalRequest.baseURL || '';
+      const fallbackTarget = currentUrl.includes('8001') ? 'http://127.0.0.1:8000' : 'http://127.0.0.1:8001';
+      originalRequest.baseURL = fallbackTarget;
+      return axios(originalRequest);
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authAPI = {
   register: (userData) => api.post('/register', userData),
   login: (credentials) => api.post('/login', credentials),
