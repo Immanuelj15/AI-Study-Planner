@@ -96,7 +96,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-grid-pattern text-[#1E293B] flex flex-col justify-between selection:bg-[#2563EB] selection:text-white font-inter">
+    <div className="min-h-screen bg-gradient-to-b from-[#F8FBFF] via-[#FFFFFF] to-[#EFF6FF] text-[#1E293B] flex flex-col justify-between selection:bg-[#2563EB] selection:text-white font-inter">
       {/* 1. Header */}
       <header className="sticky top-0 z-50 px-6 lg:px-12 py-3.5 flex items-center justify-between bg-[#FFFFFF]/90 backdrop-blur-md border-b border-[#E2E8F0] shadow-xs">
         <div className="flex items-center gap-3">
@@ -203,7 +203,7 @@ export default function LandingPage() {
           </div>
 
           {/* Grid Mockup Content */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left items-stretch">
             <div className="p-4.5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] space-y-2">
               <div className="flex items-center justify-between font-bold text-xs text-[#2563EB]">
                 <span>📖 Today's Plan</span>
@@ -234,7 +234,7 @@ export default function LandingPage() {
         </motion.div>
 
         {/* 4. Stat Counters Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center max-w-5xl mx-auto py-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center max-w-5xl mx-auto py-6 items-stretch">
           <div className="glass-card p-6 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] shadow-soft space-y-1">
             <div className="font-poppins text-3xl lg:text-4xl font-black text-[#2563EB]">99.4%</div>
             <div className="text-xs font-inter font-bold text-[#64748B]">AI Note Accuracy</div>
@@ -263,14 +263,14 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left items-stretch">
             {featureList.map((item, idx) => {
               const Icon = item.icon;
               return (
                 <motion.div
                   key={idx}
                   whileHover={{ y: -4 }}
-                  className="glass-card glass-card-hover p-6.5 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3.5 shadow-soft flex flex-col justify-between"
+                  className="glass-card glass-card-hover p-6.5 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3.5 shadow-soft flex flex-col justify-between h-full"
                 >
                   <div className="space-y-3">
                     <div
@@ -298,15 +298,17 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-left items-stretch">
             {stepsList.map((st, idx) => (
-              <div key={idx} className="glass-card p-6 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3 shadow-soft relative overflow-hidden">
+              <div key={idx} className="glass-card p-6 rounded-3xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3 shadow-soft relative overflow-hidden flex flex-col justify-between h-full">
                 <div className="font-poppins font-black text-3xl text-[#2563EB]/20 absolute right-4 top-4">{st.step}</div>
-                <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] flex items-center justify-center font-poppins font-black text-xs">
-                  {st.step}
+                <div className="space-y-3">
+                  <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] flex items-center justify-center font-poppins font-black text-xs">
+                    {st.step}
+                  </div>
+                  <h4 className="font-poppins font-bold text-sm text-[#1E293B]">{st.title}</h4>
+                  <p className="text-xs text-[#64748B] font-inter leading-relaxed">{st.desc}</p>
                 </div>
-                <h4 className="font-poppins font-bold text-sm text-[#1E293B]">{st.title}</h4>
-                <p className="text-xs text-[#64748B] font-inter leading-relaxed">{st.desc}</p>
               </div>
             ))}
           </div>
