@@ -24,7 +24,7 @@ class QuizAgent:
 
         prompt = f"""
 Generate {num_questions} quiz questions for the topic: "{topic}" (Difficulty: {difficulty}).
-Mix MCQ, True/False, and Fill in the Blank questions.
+Mix MCQ, True/False, and Fill in the Blank questions. For all questions (including Fill in the Blank), ALWAYS include 4 choices in the "options" array.
 
 Use the provided summary context if available:
 {summary_text[:1000] if summary_text else 'General core domain knowledge.'}

@@ -130,49 +130,77 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
       {/* Question Title */}
       <h3 className="font-poppins text-lg font-bold text-[#F8FAFC] leading-snug">{currentQ.question}</h3>
 
-      {/* Options List */}
-      <div className="space-y-3">
-        {currentQ.options && currentQ.options.map((option, idx) => {
-          const isSelected = selectedAnswer === option;
-          const isCorrect = String(option || '').trim().toLowerCase() === String(currentQ.answer || '').trim().toLowerCase();
+      {/* Options List (MCQ) or Text Input (Fill-in-the-blank) */}
+      {Array.isArray(currentQ.options) && currentQ.options.length > 0 ? (
+        <div className="space-y-3">
+          {currentQ.options.map((option, idx) => {
+            const isSelected = selectedAnswer === option;
+            const isCorrect = String(option || '').trim().toLowerCase() === String(currentQ.answer || '').trim().toLowerCase();
 
-          let cardStyle = "bg-[#1E293B]/70 border-[#334155] text-[#F8FAFC] hover:border-[#3B82F6]/60";
-          if (isSelected) {
-            cardStyle = "bg-[#3B82F6]/20 border-[#3B82F6] text-white font-semibold shadow-md shadow-blue-500/20";
-          }
-          if (isSubmitted) {
-            if (isCorrect) {
-              cardStyle = "bg-[#10B981]/20 border-[#10B981] text-[#10B981] font-bold shadow-lg shadow-emerald-500/30 scale-[1.01]";
-            } else if (isSelected && !isCorrect) {
-              cardStyle = "bg-[#EF4444]/20 border-[#EF4444] text-[#EF4444] font-bold animate-shake";
+            let cardStyle = "bg-[#1E293B]/70 border-[#334155] text-[#F8FAFC] hover:border-[#3B82F6]/60";
+            if (isSelected) {
+              cardStyle = "bg-[#3B82F6]/20 border-[#3B82F6] text-white font-semibold shadow-md shadow-blue-500/20";
             }
-          }
+            if (isSubmitted) {
+              if (isCorrect) {
+                cardStyle = "bg-[#10B981]/20 border-[#10B981] text-[#10B981] font-bold shadow-lg shadow-emerald-500/30 scale-[1.01]";
+              } else if (isSelected && !isCorrect) {
+                cardStyle = "bg-[#EF4444]/20 border-[#EF4444] text-[#EF4444] font-bold animate-shake";
+              }
+            }
 
-          return (
-            <motion.button
-              key={idx}
-              whileHover={{ scale: isSubmitted ? 1 : 1.01 }}
-              whileTap={{ scale: isSubmitted ? 1 : 0.98 }}
-              onClick={() => handleSelectOption(option)}
-              className={`w-full text-left p-4 rounded-2xl border text-sm font-inter transition-all duration-200 flex items-center justify-between ${cardStyle}`}
-            >
-              <span>{option}</span>
-              <AnimatePresence>
-                {isSubmitted && isCorrect && (
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                    <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
-                  </motion.div>
-                )}
-                {isSubmitted && isSelected && !isCorrect && (
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                    <XCircle className="w-5 h-5 text-[#EF4444]" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
-          );
-        })}
-      </div>
+            return (
+              <motion.button
+                key={idx}
+                whileHover={{ scale: isSubmitted ? 1 : 1.01 }}
+                whileTap={{ scale: isSubmitted ? 1 : 0.98 }}
+                onClick={() => handleSelectOption(option)}
+                className={`w-full text-left p-4 rounded-2xl border text-sm font-inter transition-all duration-200 flex items-center justify-between ${cardStyle}`}
+              >
+                <span>{option}</span>
+                <AnimatePresence>
+                  {isSubmitted && isCorrect && (
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                      <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
+                    </motion.div>
+                  )}
+                  {isSubmitted && isSelected && !isCorrect && (
+                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                      <XCircle className="w-5 h-5 text-[#EF4444]" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            );
+          })}
+        </div>
+      ) : (
+        /* Fill-in-the-blank / Short Answer Text Input Box */
+        <div className="space-y-3">
+          <label className="text-xs font-inter font-bold text-[#06B6D4] flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-[#3B82F6]" /> Type your answer in the box below:
+          </label>
+          <input
+            type="text"
+            disabled={isSubmitted}
+            value={selectedAnswer || ''}
+            onChange={(e) => handleSelectOption(e.target.value)}
+            placeholder="Type answer here (e.g. DBMS)..."
+            className={`w-full glass-input py-3.5 px-4 rounded-2xl text-sm font-inter transition-all ${
+              isSubmitted
+                ? String(selectedAnswer || '').trim().toLowerCase() === String(currentQ.answer || '').trim().toLowerCase()
+                  ? 'border-[#10B981] bg-[#10B981]/15 text-[#10B981] font-bold'
+                  : 'border-[#EF4444] bg-[#EF4444]/15 text-[#EF4444] font-bold animate-shake'
+                : 'focus:border-[#3B82F6]'
+            }`}
+          />
+          {isSubmitted && (
+            <div className="text-xs font-inter font-semibold text-[#94A3B8] pt-1">
+              Correct Answer: <span className="text-[#10B981] font-bold">{currentQ.answer}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Explanation Box */}
       <AnimatePresence>
@@ -198,7 +226,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
             onClick={handleSubmitAnswer}
-            disabled={!selectedAnswer}
+            disabled={!selectedAnswer || !String(selectedAnswer).trim()}
             className="px-6 py-2.5 rounded-xl btn-gradient-primary text-xs font-inter font-bold disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20"
           >
             Submit Answer
