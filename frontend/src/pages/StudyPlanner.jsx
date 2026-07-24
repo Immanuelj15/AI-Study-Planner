@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { agentAPI, subjectsAPI } from '../services/api';
 import StudyCard from '../components/StudyCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
-import { CalendarDays, Sparkles, RefreshCw } from 'lucide-react';
+import { 
+  CalendarDays, 
+  Sparkles, 
+  RefreshCw, 
+  Clock, 
+  Target, 
+  CheckCircle2, 
+  Filter,
+  Layers,
+  Flame
+} from 'lucide-react';
 
 export default function StudyPlanner() {
   const [plans, setPlans] = useState([]);
@@ -13,6 +23,12 @@ export default function StudyPlanner() {
   const [generating, setGenerating] = useState(false);
   const [examDate, setExamDate] = useState('2026-08-15');
   const [dailyHours, setDailyHours] = useState(3.5);
+  
+  // Filter States
+  const [selectedSubject, setSelectedSubject] = useState('ALL');
+  const [selectedPriority, setSelectedPriority] = useState('ALL');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -25,10 +41,10 @@ export default function StudyPlanner() {
         agentAPI.getStudyPlan(),
         subjectsAPI.getSubjects()
       ]);
-      setPlans(plansRes.data);
-      setSubjects(subsRes.data);
+      setPlans(plansRes.data || []);
+      setSubjects(subsRes.data || []);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching study planner data:", err);
     } finally {
       setLoading(false);
     }
@@ -48,8 +64,8 @@ export default function StudyPlanner() {
         daily_hours: parseFloat(dailyHours),
         subjects: subjectNames
       });
-      setPlans(res.data);
-      addToast("Scheduler Agent generated your adaptive plan!", "success");
+      setPlans(res.data || []);
+      addToast("Scheduler Agent calculated your adaptive study matrix!", "success");
     } catch (err) {
       addToast("Failed to generate study plan.", "error");
     } finally {
@@ -69,7 +85,24 @@ export default function StudyPlanner() {
     }
   };
 
-  if (loading) return <LoadingSkeleton text="Loading Study Schedule..." />;
+  // Filtered Plans Logic
+  const filteredPlans = useMemo(() => {
+    return plans.filter((item) => {
+      const itemSubject = item.subject_name || item.subject || '';
+      const matchesSubject = selectedSubject === 'ALL' || itemSubject.toLowerCase() === selectedSubject.toLowerCase();
+      const matchesPriority = selectedPriority === 'ALL' || item.priority === selectedPriority;
+      const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
+      return matchesSubject && matchesPriority && matchesStatus;
+    });
+  }, [plans, selectedSubject, selectedPriority, statusFilter]);
+
+  // Derived Metrics
+  const totalHours = useMemo(() => plans.reduce((acc, curr) => acc + (curr.hours || 0), 0), [plans]);
+  const completedCount = useMemo(() => plans.filter((p) => p.status === 'Completed').length, [plans]);
+  const highPriorityCount = useMemo(() => plans.filter((p) => p.priority === 'High').length, [plans]);
+  const completionPercentage = plans.length > 0 ? Math.round((completedCount / plans.length) * 100) : 0;
+
+  if (loading) return <LoadingSkeleton text="Loading Adaptive Study Schedule..." />;
 
   return (
     <motion.div
@@ -77,20 +110,39 @@ export default function StudyPlanner() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6 pb-12"
     >
-      {/* Header & Controls */}
+      {/* 1. Header & Adaptive Generator Control Center */}
       <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-6 shadow-soft bg-[#FFFFFF]">
-        <div>
-          <h1 className="font-poppins text-2xl font-black text-[#1E293B] flex items-center gap-2">
-            <CalendarDays className="w-6 h-6 text-[#2563EB]" /> Agent 4 Adaptive Scheduler
-          </h1>
-          <p className="text-[#64748B] font-inter text-xs mt-1">
-            Configure exam target date & daily study hours. Agent 4 dynamically recalculates allocated study hours based on quiz scores.
-          </p>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
+              <Sparkles className="w-4 h-4 text-[#38BDF8]" /> Agent 4 Adaptive Scheduler
+            </div>
+            <h1 className="font-poppins text-2xl lg:text-3xl font-black text-[#1E293B] mt-1">
+              Adaptive Study Matrix
+            </h1>
+            <p className="text-[#64748B] font-inter text-xs mt-1 max-w-xl">
+              Configures study hours based on exam target date and dynamically adjusts priorities according to your quiz performance.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="px-3.5 py-1.5 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold flex items-center gap-1.5">
+              <Clock className="w-4 h-4" />
+              <span>{totalHours} Total Hours</span>
+            </div>
+            <div className="px-3.5 py-1.5 rounded-2xl bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D] text-xs font-inter font-bold flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>{completionPercentage}% Done</span>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleGeneratePlan} className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4.5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
-          <div className="space-y-1">
-            <label className="text-xs font-inter font-bold text-[#1E293B]">Exam Target Date</label>
+        {/* Form Controls */}
+        <form onSubmit={handleGeneratePlan} className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+          <div className="space-y-1.5">
+            <label className="text-xs font-inter font-bold text-[#1E293B] flex items-center gap-1.5">
+              <Target className="w-3.5 h-3.5 text-[#2563EB]" /> Exam Target Date
+            </label>
             <input
               type="date"
               required
@@ -100,8 +152,10 @@ export default function StudyPlanner() {
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="text-xs font-inter font-bold text-[#1E293B]">Daily Available Hours</label>
+          <div className="space-y-1.5">
+            <label className="text-xs font-inter font-bold text-[#1E293B] flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-[#2563EB]" /> Daily Available Hours
+            </label>
             <input
               type="number"
               step="0.5"
@@ -129,24 +183,78 @@ export default function StudyPlanner() {
         </form>
       </div>
 
-      {/* Plan Timeline Grid */}
-      {plans.length > 0 ? (
+      {/* 2. Interactive Filter Bar */}
+      {plans.length > 0 && (
+        <div className="glass-card rounded-2xl p-4 border border-[#E2E8F0] bg-[#FFFFFF] flex flex-wrap items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#1E293B]">
+            <Filter className="w-4 h-4 text-[#2563EB]" />
+            <span>Filter Sessions:</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Subject Filter */}
+            <select
+              value={selectedSubject}
+              onChange={(e) => setSelectedSubject(e.target.value)}
+              className="glass-input py-1.5 px-3 rounded-xl text-xs font-inter bg-[#F8FBFF]"
+            >
+              <option value="ALL">All Subjects ({subjects.length})</option>
+              {subjects.map((sub) => (
+                <option key={sub.id} value={sub.subject_name}>{sub.subject_name}</option>
+              ))}
+            </select>
+
+            {/* Priority Filter */}
+            <select
+              value={selectedPriority}
+              onChange={(e) => setSelectedPriority(e.target.value)}
+              className="glass-input py-1.5 px-3 rounded-xl text-xs font-inter bg-[#F8FBFF]"
+            >
+              <option value="ALL">All Priorities</option>
+              <option value="High">High Priority ({highPriorityCount})</option>
+              <option value="Medium">Medium Priority</option>
+              <option value="Low">Low Priority</option>
+            </select>
+
+            {/* Status Filter */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="glass-input py-1.5 px-3 rounded-xl text-xs font-inter bg-[#F8FBFF]"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="Pending">Pending Sessions</option>
+              <option value="Completed">Completed ({completedCount})</option>
+            </select>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Schedule Matrix Sessions Grid */}
+      {filteredPlans.length > 0 ? (
         <div className="space-y-4">
           <div className="flex items-center justify-between text-xs font-inter font-bold text-[#64748B]">
-            <span>Generated Adaptive Schedule Matrix ({plans.length} sessions)</span>
-            <span className="text-[#2563EB]">Sorted by Priority & Date</span>
+            <span className="flex items-center gap-1.5">
+              <Layers className="w-4 h-4 text-[#2563EB]" /> Displaying {filteredPlans.length} of {plans.length} Study Sessions
+            </span>
+            <span className="text-[#2563EB]">Adaptive AutoGen Schedule</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {plans.map((item, idx) => (
+            {filteredPlans.map((item, idx) => (
               <StudyCard key={idx} item={item} onToggleStatus={handleToggleStatus} />
             ))}
           </div>
         </div>
       ) : (
-        <div className="glass-card rounded-3xl p-12 text-center text-[#64748B] font-inter text-xs border border-[#E2E8F0] space-y-2 bg-[#FFFFFF]">
-          <CalendarDays className="w-8 h-8 text-[#94A3B8]/60 mx-auto" />
-          <p>No study plan generated yet. Click "Generate New Plan" above to create an adaptive schedule!</p>
+        <div className="glass-card rounded-3xl p-12 text-center text-[#64748B] font-inter text-xs border border-[#E2E8F0] space-y-3 bg-[#FFFFFF] shadow-soft">
+          <CalendarDays className="w-10 h-10 text-[#94A3B8]/60 mx-auto" />
+          <h3 className="font-poppins text-base font-bold text-[#1E293B]">No Study Sessions Found</h3>
+          <p className="max-w-md mx-auto">
+            {plans.length === 0 
+              ? "No study plan has been generated yet. Set your exam date above and click 'Generate New Plan'." 
+              : "No sessions match your selected filter criteria. Try resetting your subject or priority filters."}
+          </p>
         </div>
       )}
     </motion.div>
