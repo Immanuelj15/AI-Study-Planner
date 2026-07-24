@@ -3,11 +3,13 @@ import { motion } from 'framer-motion';
 import { dashboardAPI } from '../services/api';
 import { WeeklyBarChart, SubjectDoughnutChart, MonthlyProgressChart } from '../components/AnalyticsChart';
 import LoadingSkeleton from '../components/LoadingSkeleton';
-import { BarChart3, TrendingUp, Award, Target, Flame, Activity } from 'lucide-react';
+import { BarChart3, TrendingUp, Award, Target, Flame, Activity, BookOpen, PlusCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Analytics() {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAnalytics();
@@ -26,12 +28,7 @@ export default function Analytics() {
 
   if (loading) return <LoadingSkeleton text="Loading Performance Analytics..." />;
 
-  const subjectMastery = metrics?.subject_mastery || [
-    { subject: "Data Structures", mastery_score: 88 },
-    { subject: "DBMS", mastery_score: 52 },
-    { subject: "Operating Systems", mastery_score: 92 },
-    { subject: "Networks", mastery_score: 78 }
-  ];
+  const subjectMastery = metrics?.subject_mastery || metrics?.topic_mastery || [];
 
   return (
     <motion.div
@@ -57,9 +54,11 @@ export default function Analytics() {
             <Award className="w-4 h-4 text-[#2563EB]" />
           </div>
           <div className="font-poppins text-2xl font-black text-[#1E293B]">
-            {metrics?.average_quiz_score || 82}%
+            {metrics?.average_quiz_score ?? 0}%
           </div>
-          <div className="text-[10px] font-inter text-[#22C55E] font-bold">↑ +5% vs Last Week</div>
+          <div className="text-[10px] font-inter text-[#64748B] font-bold">
+            {metrics?.quizzes_taken > 0 ? '↑ AutoGen Calibrated' : 'No Quizzes Taken Yet'}
+          </div>
         </div>
 
         <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF]">
@@ -68,9 +67,11 @@ export default function Analytics() {
             <Target className="w-4 h-4 text-[#22C55E]" />
           </div>
           <div className="font-poppins text-2xl font-black text-[#1E293B]">
-            {metrics?.quizzes_taken || 18}
+            {metrics?.quizzes_taken ?? 0}
           </div>
-          <div className="text-[10px] font-inter text-[#64748B]">100% AutoGen Calibrated</div>
+          <div className="text-[10px] font-inter text-[#64748B]">
+            {metrics?.quizzes_taken > 0 ? '100% Calibrated' : '0 Quizzes Completed'}
+          </div>
         </div>
 
         <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF]">
@@ -79,9 +80,11 @@ export default function Analytics() {
             <Flame className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
           </div>
           <div className="font-poppins text-2xl font-black text-[#1E293B]">
-            {metrics?.study_streak || 5} Days
+            {metrics?.study_streak ?? 0} Days
           </div>
-          <div className="text-[10px] font-inter text-[#D97706] font-bold">🔥 On Fire!</div>
+          <div className="text-[10px] font-inter text-[#D97706] font-bold">
+            {metrics?.study_streak > 0 ? '🔥 On Fire!' : 'Start Your First Session'}
+          </div>
         </div>
 
         <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF]">
@@ -90,9 +93,11 @@ export default function Analytics() {
             <Activity className="w-4 h-4 text-[#38BDF8]" />
           </div>
           <div className="font-poppins text-2xl font-black text-[#1E293B]">
-            {metrics?.total_study_hours || 42.5} hrs
+            {metrics?.total_study_hours ?? 0} hrs
           </div>
-          <div className="text-[10px] font-inter text-[#2563EB] font-bold">Optimal Velocity</div>
+          <div className="text-[10px] font-inter text-[#2563EB] font-bold">
+            {metrics?.total_study_hours > 0 ? 'Optimal Velocity' : '0 Hours Completed'}
+          </div>
         </div>
       </div>
 
@@ -111,7 +116,7 @@ export default function Analytics() {
           </div>
         </div>
 
-        {/* Subject Mastery Doughnut Chart */}
+        {/* Subject Mastery Breakdown Chart */}
         <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
           <div className="flex items-center justify-between">
             <h3 className="font-poppins font-bold text-[#1E293B] text-sm flex items-center gap-2">
@@ -119,9 +124,28 @@ export default function Analytics() {
             </h3>
             <span className="text-xs font-inter text-[#22C55E] font-bold">Mastery %</span>
           </div>
-          <div className="h-64 flex items-center justify-center">
-            <SubjectDoughnutChart masteryData={subjectMastery} />
-          </div>
+
+          {subjectMastery.length > 0 ? (
+            <div className="h-64 flex items-center justify-center">
+              <SubjectDoughnutChart masteryData={subjectMastery} />
+            </div>
+          ) : (
+            <div className="h-64 flex flex-col items-center justify-center p-6 bg-[#F8FBFF] rounded-2xl border border-[#DBEAFE] text-center space-y-3">
+              <BookOpen className="w-10 h-10 text-[#2563EB]" />
+              <div>
+                <h4 className="font-poppins font-bold text-sm text-[#1E293B]">No Subject Analytics Available</h4>
+                <p className="text-xs text-[#64748B] font-inter mt-1 max-w-xs mx-auto">
+                  Add subjects and take quizzes to populate your mastery breakdown chart.
+                </p>
+              </div>
+              <button
+                onClick={() => navigate('/study-planner')}
+                className="px-4 py-2 rounded-xl btn-gradient-primary text-xs font-inter font-bold flex items-center gap-1.5 shadow-sm"
+              >
+                <PlusCircle className="w-4 h-4" /> Add Subjects
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Monthly Progress Trend Line Chart */}

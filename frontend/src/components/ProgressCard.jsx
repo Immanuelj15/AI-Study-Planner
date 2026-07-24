@@ -3,11 +3,12 @@ import { motion } from 'framer-motion';
 import { Award, Flame, Target } from 'lucide-react';
 
 export default function ProgressCard({ metrics }) {
-  const completion = metrics?.completion_percentage || 68.5;
-  const streak = metrics?.study_streak_days || 5;
+  const completion = metrics?.completion_percentage ?? 0;
+  const streak = metrics?.study_streak_days ?? 0;
+  const examTarget = metrics?.upcoming_exam_days ?? 0;
 
   return (
-    <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] space-y-6 bg-[#FFFFFF]">
+    <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] space-y-6 bg-[#FFFFFF] shadow-soft">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-poppins font-bold text-[#1E293B]">Overall Progress Overview</h3>
         <span className="px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] text-[11px] font-inter font-bold border border-[#DBEAFE]">
@@ -61,7 +62,7 @@ export default function ProgressCard({ metrics }) {
               <Target className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-sm font-poppins font-black text-[#1E293B]">14 Days</div>
+              <div className="text-sm font-poppins font-black text-[#1E293B]">{examTarget} Days</div>
               <div className="text-[10px] text-[#64748B]">Exam Target</div>
             </div>
           </div>

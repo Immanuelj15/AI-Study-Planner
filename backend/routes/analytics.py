@@ -1,4 +1,3 @@
-import datetime
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database.session import get_db
@@ -16,44 +15,55 @@ def get_analytics_data(
     subjects = db.query(Subject).filter(Subject.user_id == current_user.id).all()
     plans = db.query(StudyPlan).filter(StudyPlan.user_id == current_user.id).all()
 
-    # Topic Mastery
+    # Topic Mastery for current_user
     mastery = []
+    subject_mastery = []
     for sub in subjects:
         sub_results = [r for r in results if r.subject_id == sub.id]
-        avg_score = round(sum(r.score for r in sub_results) / len(sub_results), 1) if sub_results else 75.0
+        avg_score = round(sum(r.score for r in sub_results) / len(sub_results), 1) if sub_results else 0.0
         mastery.append({
             "subject": sub.subject_name,
             "mastery_score": avg_score,
             "difficulty": sub.difficulty
         })
+        subject_mastery.append({
+            "subject": sub.subject_name,
+            "mastery_score": avg_score
+        })
 
-    if not mastery:
-        mastery = [
-            {"subject": "Data Structures", "mastery_score": 88.0, "difficulty": "Medium"},
-            {"subject": "DBMS", "mastery_score": 52.0, "difficulty": "Hard"},
-            {"subject": "Operating Systems", "mastery_score": 92.0, "difficulty": "Medium"},
-            {"subject": "Computer Networks", "mastery_score": 78.0, "difficulty": "Easy"}
-        ]
-
-    # Time distribution per subject
+    # Time distribution per subject for current_user
     time_dist = {}
+    total_hours = 0.0
     for p in plans:
         sub = db.query(Subject).filter(Subject.id == p.subject_id).first()
         name = sub.subject_name if sub else "General"
-        time_dist[name] = time_dist.get(name, 0.0) + p.hours
+        time_dist[name] = round(time_dist.get(name, 0.0) + (p.hours if p.status == "Completed" else 0.0), 1)
+        if p.status == "Completed":
+            total_hours += p.hours
 
-    if not time_dist:
-        time_dist = {
-            "Data Structures": 12.5,
-            "DBMS": 16.0,
-            "Operating Systems": 8.0,
-            "Computer Networks": 6.5
-        }
+    avg_quiz_score = round(sum(r.score for r in results) / len(results), 1) if results else 0.0
+    completed_plans = [p for p in plans if p.status == "Completed"]
+    streak_days = len(completed_plans) if len(completed_plans) > 0 else 0
+
+    # Weekly data for charts
+    weekly_data = []
+    days_of_week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    for i in range(7):
+        weekly_data.append({
+            "day": days_of_week[i],
+            "target": 0.0,
+            "completed": 0.0
+        })
 
     return {
         "topic_mastery": mastery,
+        "subject_mastery": subject_mastery,
         "time_distribution": time_dist,
-        "total_study_hours": sum(time_dist.values()),
-        "total_quizzes_completed": len(results) or 8,
-        "average_accuracy": 81.4
+        "total_study_hours": round(total_hours, 1),
+        "quizzes_taken": len(results),
+        "quizzes_completed": len(results),
+        "average_quiz_score": avg_quiz_score,
+        "average_accuracy": avg_quiz_score,
+        "study_streak": streak_days,
+        "weekly_data": weekly_data
     }
