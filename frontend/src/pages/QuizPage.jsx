@@ -1,88 +1,114 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import { agentAPI, quizAPI } from '../services/api';
 import QuizComponent from '../components/QuizComponent';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
-import { HelpCircle, Sparkles } from 'lucide-react';
+import { HelpCircle, Search, Sparkles } from 'lucide-react';
 
 export default function QuizPage() {
   const [searchParams] = useSearchParams();
   const topicParam = searchParams.get('topic') || 'Binary Search';
   const subjectIdParam = parseInt(searchParams.get('subject_id') || '1');
 
-  const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [difficulty, setDifficulty] = useState('Medium');
+  const [topic, setTopic] = useState(topicParam);
+  const [questions, setQuestions] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchQuiz(topicParam, difficulty);
-  }, [topicParam, difficulty]);
+    fetchQuiz(topicParam, subjectIdParam);
+  }, [topicParam, subjectIdParam]);
 
-  const fetchQuiz = async (topicName, diff) => {
+  const fetchQuiz = async (searchTopic, subId) => {
     setLoading(true);
     try {
       const res = await agentAPI.generateQuiz({
-        subject_id: subjectIdParam,
-        topic: topicName,
-        difficulty: diff,
+        subject_id: subId,
+        topic: searchTopic,
+        difficulty: 'Medium',
         num_questions: 5
       });
       setQuestions(res.data);
     } catch (err) {
       console.error(err);
-      addToast('Error generating quiz.', 'error');
+      addToast('Error generating practice quiz.', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (topic.trim()) {
+      fetchQuiz(topic.trim(), subjectIdParam);
     }
   };
 
   const handleCompleteQuiz = async (resultData) => {
     try {
       const res = await quizAPI.submitQuiz(resultData);
-      addToast(res.data.updated_schedule_summary || 'Quiz submitted!', 'success');
+      addToast(`Quiz submitted! Scheduler Agent updated your plan: ${res.data.scheduler_feedback}`, 'success');
     } catch (err) {
       console.error(err);
-      addToast('Error saving quiz results.', 'error');
+      addToast('Failed to record quiz submission.', 'error');
     }
   };
 
-  if (loading) return <LoadingSkeleton text={`Agent 3 Generating Quiz for '${topicParam}'...`} />;
-
   return (
-    <div className="space-y-6 pb-12">
-      {/* Quiz Configuration Header */}
-      <div className="glass-card rounded-3xl p-6 border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6 pb-12"
+    >
+      {/* Search Header */}
+      <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#334155] space-y-4 shadow-2xl">
         <div>
-          <h1 className="text-xl font-black text-slate-100 flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-brand-cyan" /> Agent 3 Quiz Master
+          <h1 className="font-poppins text-2xl font-black text-[#F8FAFC] flex items-center gap-2">
+            <HelpCircle className="w-6 h-6 text-[#EC4899]" /> Agent 3 Practice Quiz Engine
           </h1>
-          <p className="text-slate-400 text-xs mt-0.5">Topic: <span className="text-slate-200 font-bold">{topicParam}</span></p>
+          <p className="text-[#94A3B8] font-inter text-xs mt-1">
+            Agent 3 generates 5 calibrated MCQs. Scores automatically trigger Agent 4 to recalculate study hours for weak concepts.
+          </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-xs font-bold text-slate-400">Difficulty:</label>
-          <select
-            value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
-            className="glass-input py-1.5 px-3 rounded-xl text-xs bg-slate-900"
+        <form onSubmit={handleSearchSubmit} className="flex gap-3 max-w-xl">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-[#94A3B8] absolute left-3.5 top-3" />
+            <input
+              type="text"
+              required
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              className="w-full glass-input py-2.5 pl-10 pr-4 rounded-2xl text-xs font-inter"
+              placeholder="Enter topic for quiz (e.g., Binary Search)..."
+            />
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            type="submit"
+            disabled={loading}
+            className="px-5 py-2.5 rounded-2xl btn-gradient-primary text-xs font-inter font-bold flex items-center gap-1.5 shadow-md shadow-blue-500/20"
           >
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
-          </select>
-        </div>
+            <Sparkles className="w-4 h-4" />
+            <span>Generate Quiz</span>
+          </motion.button>
+        </form>
       </div>
 
-      {/* Main Solver Component */}
-      <QuizComponent
-        questions={questions}
-        onCompleteQuiz={handleCompleteQuiz}
-        subjectId={subjectIdParam}
-        topic={topicParam}
-      />
-    </div>
+      {/* Quiz Interface or Sequential Processing Skeleton */}
+      {loading ? (
+        <LoadingSkeleton text={`Agent 3 Calibrating Practice Questions for '${topic}'...`} />
+      ) : questions && questions.length > 0 ? (
+        <QuizComponent
+          questions={questions}
+          onCompleteQuiz={handleCompleteQuiz}
+          subjectId={subjectIdParam}
+          topic={topic}
+        />
+      ) : null}
+    </motion.div>
   );
 }

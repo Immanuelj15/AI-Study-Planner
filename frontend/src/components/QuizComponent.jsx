@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, HelpCircle, ArrowRight, RotateCcw, Award } from 'lucide-react';
+import { CheckCircle2, XCircle, HelpCircle, ArrowRight, Award, Sparkles, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function QuizComponent({ questions, onCompleteQuiz, subjectId, topic }) {
@@ -40,13 +40,12 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
       setSelectedAnswer(null);
       setIsSubmitted(false);
     } else {
-      // Quiz finished
       setQuizFinished(true);
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
       
       const correctCount = userAnswers.filter((a) => a.is_correct).length;
       const wrongCount = questions.length - correctCount;
-      const scorePct = roundScore((correctCount / questions.length) * 100);
+      const scorePct = Math.round((correctCount / questions.length) * 100);
 
       if (onCompleteQuiz) {
         onCompleteQuiz({
@@ -61,49 +60,45 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
     }
   };
 
-  function roundScore(val) {
-    return Math.round(val * 10) / 10;
-  }
-
   if (quizFinished) {
     const finalCorrect = userAnswers.filter((a) => a.is_correct).length;
     const finalScore = Math.round((finalCorrect / questions.length) * 100);
 
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-card rounded-2xl p-8 border border-slate-800 text-center space-y-6 max-w-xl mx-auto"
+        className="glass-card rounded-3xl p-8 border border-[#334155] text-center space-y-6 max-w-xl mx-auto shadow-2xl"
       >
-        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-brand-600 via-brand-purple to-brand-cyan mx-auto flex items-center justify-center shadow-xl shadow-brand-500/30">
-          <Award className="w-8 h-8 text-white" />
+        <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#3B82F6] via-purple-600 to-[#06B6D4] mx-auto flex items-center justify-center shadow-xl shadow-blue-500/30">
+          <Award className="w-10 h-10 text-white animate-bounce" />
         </div>
 
         <div>
-          <h2 className="text-2xl font-black text-slate-100">Quiz Complete!</h2>
-          <p className="text-slate-400 text-xs mt-1">Adaptive feedback loop processed your performance.</p>
+          <h2 className="font-poppins text-3xl font-black text-[#F8FAFC]">Quiz Completed!</h2>
+          <p className="text-[#94A3B8] font-inter text-xs mt-1">Multi-Agent feedback loop processed your results.</p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-around">
+        <div className="p-6 rounded-2xl bg-[#1E293B] border border-[#334155] flex items-center justify-around">
           <div>
-            <div className="text-3xl font-extrabold text-brand-cyan">{finalScore}%</div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase mt-1">Score</div>
+            <div className="font-poppins text-4xl font-extrabold text-[#06B6D4]">{finalScore}%</div>
+            <div className="text-[10px] font-inter font-bold text-[#94A3B8] uppercase mt-1">Score</div>
           </div>
-          <div className="w-px h-10 bg-slate-800"></div>
+          <div className="w-px h-10 bg-[#334155]"></div>
           <div>
-            <div className="text-3xl font-extrabold text-emerald-400">{finalCorrect}</div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase mt-1">Correct</div>
+            <div className="font-poppins text-4xl font-extrabold text-[#10B981]">{finalCorrect}</div>
+            <div className="text-[10px] font-inter font-bold text-[#94A3B8] uppercase mt-1">Correct</div>
           </div>
-          <div className="w-px h-10 bg-slate-800"></div>
+          <div className="w-px h-10 bg-[#334155]"></div>
           <div>
-            <div className="text-3xl font-extrabold text-rose-400">{questions.length - finalCorrect}</div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase mt-1">Wrong</div>
+            <div className="font-poppins text-4xl font-extrabold text-[#EF4444]">{questions.length - finalCorrect}</div>
+            <div className="text-[10px] font-inter font-bold text-[#94A3B8] uppercase mt-1">Wrong</div>
           </div>
         </div>
 
-        <div className="text-xs text-slate-300 bg-brand-500/10 border border-brand-500/30 p-4 rounded-xl leading-relaxed">
+        <div className="text-xs font-inter text-[#F8FAFC] bg-[#3B82F6]/10 border border-[#3B82F6]/30 p-4 rounded-2xl leading-relaxed">
           {finalScore < 60
-            ? "⚠️ Weak score detected. Scheduler Agent has automatically allocated extra study hours to your schedule."
+            ? "⚠️ Weak score detected. Scheduler Agent has automatically allocated +50% extra study time to your schedule."
             : "🎉 Excellent mastery! Scheduler Agent has optimized your revision frequency for strong concepts."}
         </div>
       </motion.div>
@@ -111,23 +106,29 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
   }
 
   return (
-    <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-6 max-w-2xl mx-auto">
-      {/* Progress Bar */}
-      <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="glass-card rounded-3xl p-6 lg:p-8 border border-[#334155] space-y-6 max-w-2xl mx-auto shadow-2xl"
+    >
+      {/* Progress Header */}
+      <div className="flex items-center justify-between text-xs font-inter font-bold text-[#94A3B8]">
         <span>Question {currentIndex + 1} of {questions.length}</span>
-        <span className="px-2.5 py-0.5 rounded-full bg-brand-500/10 text-brand-cyan border border-brand-500/30">
+        <span className="px-3 py-1 rounded-full bg-[#3B82F6]/10 text-[#06B6D4] border border-[#3B82F6]/30 font-poppins">
           {currentQ.difficulty || 'Medium'}
         </span>
       </div>
-      <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-brand-600 to-brand-cyan transition-all duration-300"
-          style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
-        ></div>
+      <div className="w-full h-2 bg-[#1E293B] rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-[#3B82F6] to-[#06B6D4]"
+          initial={{ width: '0%' }}
+          animate={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
+          transition={{ duration: 0.3 }}
+        />
       </div>
 
-      {/* Question Text */}
-      <h3 className="text-lg font-bold text-slate-100 leading-snug">{currentQ.question}</h3>
+      {/* Question Title */}
+      <h3 className="font-poppins text-lg font-bold text-[#F8FAFC] leading-snug">{currentQ.question}</h3>
 
       {/* Options List */}
       <div className="space-y-3">
@@ -135,66 +136,85 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
           const isSelected = selectedAnswer === option;
           const isCorrect = String(option || '').trim().toLowerCase() === String(currentQ.answer || '').trim().toLowerCase();
 
-          let btnStyle = "bg-slate-900/60 border-slate-800 text-slate-200 hover:border-brand-500/50";
+          let cardStyle = "bg-[#1E293B]/70 border-[#334155] text-[#F8FAFC] hover:border-[#3B82F6]/60";
           if (isSelected) {
-            btnStyle = "bg-brand-600/20 border-brand-500 text-white font-semibold";
+            cardStyle = "bg-[#3B82F6]/20 border-[#3B82F6] text-white font-semibold shadow-md shadow-blue-500/20";
           }
           if (isSubmitted) {
             if (isCorrect) {
-              btnStyle = "bg-emerald-500/20 border-emerald-500 text-emerald-300 font-semibold";
+              cardStyle = "bg-[#10B981]/20 border-[#10B981] text-[#10B981] font-bold shadow-lg shadow-emerald-500/30 scale-[1.01]";
             } else if (isSelected && !isCorrect) {
-              btnStyle = "bg-rose-500/20 border-rose-500 text-rose-300 font-semibold";
+              cardStyle = "bg-[#EF4444]/20 border-[#EF4444] text-[#EF4444] font-bold animate-shake";
             }
           }
 
           return (
-            <button
+            <motion.button
               key={idx}
+              whileHover={{ scale: isSubmitted ? 1 : 1.01 }}
+              whileTap={{ scale: isSubmitted ? 1 : 0.98 }}
               onClick={() => handleSelectOption(option)}
-              className={`w-full text-left p-4 rounded-xl border text-sm transition-all flex items-center justify-between ${btnStyle}`}
+              className={`w-full text-left p-4 rounded-2xl border text-sm font-inter transition-all duration-200 flex items-center justify-between ${cardStyle}`}
             >
               <span>{option}</span>
-              {isSubmitted && isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
-              {isSubmitted && isSelected && !isCorrect && <XCircle className="w-5 h-5 text-rose-400" />}
-            </button>
+              <AnimatePresence>
+                {isSubmitted && isCorrect && (
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                    <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
+                  </motion.div>
+                )}
+                {isSubmitted && isSelected && !isCorrect && (
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                    <XCircle className="w-5 h-5 text-[#EF4444]" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           );
         })}
       </div>
 
-      {/* Explanation Box when Submitted */}
-      {isSubmitted && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-4 rounded-xl bg-slate-900/80 border border-slate-700 text-xs space-y-1"
-        >
-          <div className="font-bold text-brand-cyan flex items-center gap-1.5">
-            <HelpCircle className="w-4 h-4" /> Explanation
-          </div>
-          <p className="text-slate-300 leading-relaxed">{currentQ.explanation}</p>
-        </motion.div>
-      )}
+      {/* Explanation Box */}
+      <AnimatePresence>
+        {isSubmitted && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="p-4 rounded-2xl bg-[#1E293B] border border-[#334155] text-xs font-inter space-y-1"
+          >
+            <div className="font-poppins font-bold text-[#06B6D4] flex items-center gap-1.5">
+              <HelpCircle className="w-4 h-4 text-[#3B82F6]" /> Answer Explanation
+            </div>
+            <p className="text-[#94A3B8] leading-relaxed">{currentQ.explanation}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Action Footer */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+      {/* Actions */}
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#334155]">
         {!isSubmitted ? (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.96 }}
             onClick={handleSubmitAnswer}
             disabled={!selectedAnswer}
-            className="px-5 py-2.5 rounded-xl gradient-btn text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 rounded-xl btn-gradient-primary text-xs font-inter font-bold disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-500/20"
           >
             Submit Answer
-          </button>
+          </motion.button>
         ) : (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.96 }}
             onClick={handleNext}
-            className="px-5 py-2.5 rounded-xl gradient-btn text-xs font-bold flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl btn-gradient-primary text-xs font-inter font-bold flex items-center gap-2 shadow-md shadow-blue-500/20"
           >
             <span>{currentIndex < questions.length - 1 ? 'Next Question' : 'View Results'}</span>
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </motion.button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

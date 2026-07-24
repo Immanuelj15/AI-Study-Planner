@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { dashboardAPI, agentAPI } from '../services/api';
 import ProgressCard from '../components/ProgressCard';
 import StudyCard from '../components/StudyCard';
@@ -6,17 +7,37 @@ import { WeeklyBarChart } from '../components/AnalyticsChart';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
 import { 
-  Calendar, 
   Flame, 
   Sparkles, 
   AlertTriangle, 
-  CheckCircle, 
+  CheckCircle2, 
   Clock,
   ArrowUpRight,
   Zap,
-  BookOpen
+  BookOpen,
+  Brain,
+  TrendingUp,
+  Activity,
+  Lightbulb,
+  GitFork,
+  Target
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+};
 
 export default function Dashboard() {
   const [metrics, setMetrics] = useState(null);
@@ -49,59 +70,72 @@ export default function Dashboard() {
     }
   };
 
-  if (loading) return <LoadingSkeleton text="Loading Adaptive Dashboard..." />;
+  if (loading) return <LoadingSkeleton text="Loading Adaptive AI Dashboard..." />;
 
   const todayPlans = metrics?.today_plan || [];
   const weakSubjects = metrics?.weak_subjects || [];
   const strongSubjects = metrics?.strong_subjects || [];
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* Top Welcome Banner */}
-      <div className="glass-card rounded-3xl p-6 lg:p-8 border border-slate-800 relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-900 to-brand-600/20">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6 pb-12"
+    >
+      {/* 1. Dashboard Welcome Hero Banner (Blue -> Purple Gradient) */}
+      <motion.div
+        variants={itemVariants}
+        className="rounded-3xl p-6 lg:p-8 relative overflow-hidden hero-gradient-bg shadow-2xl text-white border border-blue-400/30"
+      >
+        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-white/10 to-transparent pointer-events-none"></div>
         <div className="max-w-2xl space-y-3 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-cyan text-xs font-bold">
-            <Zap className="w-3.5 h-3.5 text-brand-purple" /> Multi-Agent Feedback Loop Active
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-[#00E5FF] text-xs font-poppins font-bold">
+            <Zap className="w-3.5 h-3.5 text-[#00E5FF] animate-pulse" /> Multi-Agent Feedback Loop Active
           </div>
-          <h1 className="text-2xl lg:text-4xl font-extrabold text-slate-100 tracking-tight">
-            Your Adaptive Study Command Center
+          <h1 className="font-poppins text-3xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+            AI Multi-Agent Study Command Center
           </h1>
-          <p className="text-slate-400 text-xs lg:text-sm leading-relaxed">
-            Upcoming Exam in <span className="text-brand-cyan font-bold">{metrics?.upcoming_exam_days || 14} days</span>. 
-            {weakSubjects.length > 0 && ` Extra focus allocated to ${weakSubjects[0]}.`}
+          <p className="font-inter text-blue-100 text-xs lg:text-sm leading-relaxed max-w-xl">
+            Target Exam Countdown: <span className="font-bold text-[#00E5FF] font-poppins">{metrics?.upcoming_exam_days || 14} Days</span>. 
+            {weakSubjects.length > 0 && ` Extra study hours allocated to ${weakSubjects[0]}.`}
           </p>
 
-          <div className="flex items-center gap-3 pt-2">
-            <button
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => navigate('/study-planner')}
-              className="px-5 py-2.5 rounded-xl gradient-btn text-xs font-bold flex items-center gap-2 shadow-lg shadow-brand-500/20"
+              className="px-5 py-2.5 rounded-xl btn-gradient-primary text-xs font-poppins font-bold flex items-center gap-2 shadow-lg shadow-cyan-500/20"
             >
               <span>Recalculate Schedule</span>
               <ArrowUpRight className="w-4 h-4" />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => navigate('/summary')}
-              className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors"
+              className="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-inter font-bold border border-white/20 transition-colors backdrop-blur-md"
             >
               Research Topic Notes
-            </button>
+            </motion.button>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Columns: Schedule & Charts */}
+        {/* Left 2 Columns: Schedule, Charts, Recommendations */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Today's Study Schedule */}
-          <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+          {/* Today's Study Plan */}
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-bold text-slate-100 text-base">
-                <Clock className="w-5 h-5 text-brand-cyan" />
-                <span>Today's Study Plan</span>
+              <div className="flex items-center gap-2 font-poppins font-bold text-[#F8FAFC] text-base">
+                <Clock className="w-5 h-5 text-[#06B6D4]" />
+                <span>Today's Study Schedule</span>
               </div>
-              <span className="text-xs font-semibold text-slate-400">
-                {metrics?.today_study_hours || 3.5} hrs total
+              <span className="text-xs font-inter font-semibold text-[#94A3B8]">
+                {metrics?.today_study_hours || 3.5} hrs total allocated
               </span>
             </div>
 
@@ -110,61 +144,140 @@ export default function Dashboard() {
                 <StudyCard key={idx} item={item} onToggleStatus={handleToggleStatus} />
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Weekly Progress Bar Chart */}
-          <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
             <div className="flex items-center justify-between">
-              <div className="font-bold text-slate-100 text-base">Weekly Target vs Completed Hours</div>
-              <span className="text-xs text-brand-cyan font-bold">Chart.js Visualization</span>
+              <div className="font-poppins font-bold text-[#F8FAFC] text-base flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-[#3B82F6]" />
+                <span>Weekly Target vs Completed Hours</span>
+              </div>
+              <span className="text-xs font-inter text-[#06B6D4] font-bold">Chart.js Visualizer</span>
             </div>
             <div className="h-64">
               <WeeklyBarChart weeklyData={metrics?.weekly_progress} />
             </div>
-          </div>
+          </motion.div>
+
+          {/* AI Recommendations Section */}
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
+            <div className="flex items-center gap-2 font-poppins font-bold text-[#F8FAFC] text-base">
+              <Lightbulb className="w-5 h-5 text-[#F59E0B]" />
+              <span>AI Multi-Agent Study Recommendations</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-inter">
+              <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#334155] space-y-2">
+                <div className="flex items-center justify-between font-bold text-[#06B6D4]">
+                  <span>🧠 Mind Map Revision</span>
+                  <Sparkles className="w-3.5 h-3.5 text-[#3B82F6]" />
+                </div>
+                <p className="text-[#94A3B8] leading-relaxed">
+                  Review <span className="text-[#F8FAFC] font-semibold">Binary Search Tree rotations</span> on the interactive React Flow visual graph before taking your next quiz.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#334155] space-y-2">
+                <div className="flex items-center justify-between font-bold text-[#10B981]">
+                  <span>⚡ Priority Allocation</span>
+                  <Target className="w-3.5 h-3.5 text-[#10B981]" />
+                </div>
+                <p className="text-[#94A3B8] leading-relaxed">
+                  Scheduler Agent added <span className="text-[#F8FAFC] font-semibold">+1.5 hours</span> to DBMS Indexes to boost retention for low-scoring topics.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Mind Map Preview Banner */}
+          <motion.div
+            variants={itemVariants}
+            onClick={() => navigate('/mindmap')}
+            className="glass-card glass-card-hover rounded-3xl p-6 border border-[#334155] flex items-center justify-between gap-4 cursor-pointer"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#3B82F6]/20 border border-[#3B82F6] flex items-center justify-center text-[#06B6D4]">
+                <GitFork className="w-6 h-6 animate-pulse" />
+              </div>
+              <div>
+                <h4 className="font-poppins font-bold text-[#F8FAFC] text-sm">Interactive Mind Map Visualizer</h4>
+                <p className="text-xs text-[#94A3B8] font-inter">Agent 2 generated React Flow visual graphs for concepts & algorithms.</p>
+              </div>
+            </div>
+            <ArrowUpRight className="w-5 h-5 text-[#3B82F6]" />
+          </motion.div>
         </div>
 
-        {/* Right Column: Progress Card, Weak/Strong Badges */}
+        {/* Right Column: Progress Card, Weak/Strong Badges, Recent Activities */}
         <div className="space-y-6">
-          {/* Circular Completion Ring */}
-          <ProgressCard metrics={metrics} />
+          {/* Circular Completion Progress Ring */}
+          <motion.div variants={itemVariants}>
+            <ProgressCard metrics={metrics} />
+          </motion.div>
 
-          {/* Weak & Strong Subjects */}
-          <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-400" /> Topic Mastery Feedback
+          {/* Weak & Strong Subject Badges */}
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
+            <h3 className="text-sm font-poppins font-bold text-[#F8FAFC] flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-[#F59E0B]" /> Topic Mastery Feedback
             </h3>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div>
-                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                  Weak Topics (Increased Study Time)
+                <div className="text-[11px] font-inter font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
+                  Weak Topics (Increased Study Hours)
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {weakSubjects.map((sub, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-semibold">
+                    <span key={i} className="px-3 py-1 rounded-full bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/30 text-xs font-inter font-semibold">
                       ⚠️ {sub}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-800">
-                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+              <div className="pt-3 border-t border-[#334155]">
+                <div className="text-[11px] font-inter font-bold text-[#94A3B8] uppercase tracking-wider mb-2">
                   Strong Topics (Optimized Revision)
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {strongSubjects.map((sub, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-semibold">
+                    <span key={i} className="px-3 py-1 rounded-full bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30 text-xs font-inter font-semibold">
                       ✅ {sub}
                     </span>
                   ))}
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
+
+          {/* Recent Activities Feed */}
+          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#334155] space-y-4">
+            <div className="flex items-center gap-2 font-poppins font-bold text-[#F8FAFC] text-sm">
+              <Activity className="w-4 h-4 text-[#06B6D4]" />
+              <span>Recent AI Activities</span>
+            </div>
+
+            <div className="space-y-3 text-xs font-inter">
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-[#1E293B] border border-[#334155]">
+                <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-semibold text-[#F8FAFC]">Quiz Submitted: Binary Search</div>
+                  <div className="text-[10px] text-[#94A3B8]">Score: 80% • Agent 4 recalculated schedule</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-2.5 rounded-2xl bg-[#1E293B] border border-[#334155]">
+                <Brain className="w-4 h-4 text-[#3B82F6] shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-semibold text-[#F8FAFC]">Research Notes & Mind Map Created</div>
+                  <div className="text-[10px] text-[#94A3B8]">Agents 1 & 2 structured notes for B+ Trees</div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
