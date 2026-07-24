@@ -87,9 +87,18 @@ def get_dashboard_metrics(
             "completed": round(hours_done, 1)
         })
 
-    # 5. Calculate Exam Days & Study Streak for current_user
-    user_subjects = db.query(Subject).filter(Subject.user_id == current_user.id).all()
-    upcoming_days = 14 if len(user_subjects) > 0 else 0
+    # 5. Calculate Real Exam Countdown & Study Streak for current_user
+    upcoming_days = 0
+    if all_plans:
+        try:
+            max_date_str = max(p.study_date for p in all_plans)
+            target_date = datetime.datetime.strptime(max_date_str, "%Y-%m-%d").date()
+            today = datetime.date.today()
+            delta = (target_date - today).days
+            upcoming_days = max(0, delta)
+        except Exception:
+            upcoming_days = 0
+
     streak_days = len(completed_plans) if len(completed_plans) > 0 else 0
 
     return {
