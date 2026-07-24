@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Flame, LogOut, User, Search, Sparkles, Brain, Bot, Command } from 'lucide-react';
+import { Sun, Moon, Flame, LogOut, Search, Sparkles, Bot, Command } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Navbar() {
@@ -33,17 +33,21 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-40 w-full transition-all duration-300 px-4 lg:px-8 py-3.5 flex items-center justify-between border-b ${
+      className={`sticky top-0 z-40 w-full transition-all duration-300 px-4 lg:px-8 py-3 flex items-center justify-between border-b ${
         isScrolled
           ? 'bg-[#FFFFFF]/95 border-[#E2E8F0] backdrop-blur-md shadow-sm'
           : 'bg-[#FFFFFF]/80 border-[#E2E8F0]/80 backdrop-blur-sm'
       }`}
     >
-      {/* 1. Brand Logo & System Status */}
+      {/* 1. Brand Logo with Custom Logo Image */}
       <div className="flex items-center gap-4">
         <Link to="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#2563EB] via-[#0EA5E9] to-[#38BDF8] flex items-center justify-center shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform relative">
-            <Brain className="w-5 h-5 text-white" />
+          <div className="relative group-hover:scale-105 transition-transform">
+            <img 
+              src="/logo.png" 
+              alt="StudyAgent Logo" 
+              className="w-10 h-10 rounded-2xl object-cover shadow-md border border-[#DBEAFE]" 
+            />
             <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#22C55E] border-2 border-white animate-pulse"></div>
           </div>
           <div className="flex flex-col">
@@ -58,7 +62,7 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* 2. Global AI Research Search Bar (Generous Padding & Zero Text Overlap) */}
+      {/* 2. Global AI Research Search Bar */}
       <form onSubmit={handleSearch} className="hidden md:flex items-center relative max-w-lg w-full mx-6">
         <div className="relative w-full flex items-center">
           <Search className="w-4 h-4 absolute left-3.5 text-[#64748B] pointer-events-none" />
@@ -69,11 +73,9 @@ export default function Navbar() {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full py-2.5 pl-10 pr-36 rounded-full text-xs font-inter font-medium text-[#1E293B] placeholder-[#64748B] bg-[#F8FBFF] border border-[#E2E8F0] focus:outline-none focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/15 transition-all shadow-inner"
           />
-          {/* Keyboard Shortcut Pill (Positioned cleanly with right-28) */}
           <div className="absolute right-28 hidden lg:flex items-center gap-0.5 px-2 py-0.5 rounded-lg bg-[#E2E8F0]/80 border border-[#CBD5E1]/60 text-[10px] font-mono font-bold text-[#475569] shadow-2xs">
             <Command className="w-2.5 h-2.5" /> K
           </div>
-          {/* Research Pill Button */}
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
@@ -87,13 +89,11 @@ export default function Navbar() {
 
       {/* 3. Right Status Controls & User Profile */}
       <div className="flex items-center gap-3">
-        {/* Study Streak Pill */}
         <div className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#D97706] text-xs font-inter font-bold shadow-xs">
           <Flame className="w-4 h-4 fill-[#F59E0B] text-[#D97706] animate-bounce" />
           <span>5 Day Streak</span>
         </div>
 
-        {/* Theme Toggle Button */}
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.94 }}
@@ -104,7 +104,6 @@ export default function Navbar() {
           {darkMode ? <Sun className="w-4 h-4 text-[#F59E0B]" /> : <Moon className="w-4 h-4 text-[#64748B]" />}
         </motion.button>
 
-        {/* User Account / Sign In */}
         {user ? (
           <div className="flex items-center gap-2.5">
             <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-xs">

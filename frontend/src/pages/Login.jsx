@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { Mail, Lock, ArrowRight, Brain } from 'lucide-react';
+import { Mail, Lock, ArrowRight } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('demo@studyplanner.ai');
@@ -28,18 +28,22 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FBFF] flex items-center justify-center p-6 selection:bg-[#2563EB] font-inter">
+    <div className="min-h-screen bg-grid-pattern flex items-center justify-center p-6 selection:bg-[#2563EB] font-inter">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="glass-card rounded-3xl p-8 border border-[#E2E8F0] max-w-md w-full space-y-6 shadow-soft bg-[#FFFFFF]"
       >
-        <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#38BDF8] mx-auto flex items-center justify-center shadow-md shadow-blue-500/20">
-            <Brain className="w-8 h-8 text-white" />
+        <div className="text-center space-y-3">
+          <img 
+            src="/logo.png" 
+            alt="StudyAgent Logo" 
+            className="w-16 h-16 rounded-2xl mx-auto object-cover shadow-md border border-[#DBEAFE]" 
+          />
+          <div>
+            <h2 className="font-poppins text-2xl font-black text-[#1E293B]">Welcome Back</h2>
+            <p className="text-[#64748B] font-inter text-xs mt-1">Sign in to access your AI Multi-Agent Study Command Center.</p>
           </div>
-          <h2 className="font-poppins text-2xl font-black text-[#1E293B]">Welcome Back</h2>
-          <p className="text-[#64748B] font-inter text-xs">Sign in to access your AI Multi-Agent Study Command Center.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
