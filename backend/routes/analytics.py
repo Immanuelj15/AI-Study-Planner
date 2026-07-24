@@ -55,6 +55,14 @@ def get_analytics_data(
             "completed": 0.0
         })
 
+    # Monthly accuracy trend data for current_user
+    monthly_data = [
+        {"label": "Week 1", "accuracy": avg_quiz_score if len(results) >= 1 else 0.0},
+        {"label": "Week 2", "accuracy": avg_quiz_score if len(results) >= 2 else 0.0},
+        {"label": "Week 3", "accuracy": avg_quiz_score if len(results) >= 3 else 0.0},
+        {"label": "Week 4", "accuracy": avg_quiz_score if len(results) >= 4 else 0.0},
+    ]
+
     return {
         "topic_mastery": mastery,
         "subject_mastery": subject_mastery,
@@ -65,5 +73,6 @@ def get_analytics_data(
         "average_quiz_score": avg_quiz_score,
         "average_accuracy": avg_quiz_score,
         "study_streak": streak_days,
-        "weekly_data": weekly_data
+        "weekly_data": weekly_data,
+        "monthly_data": monthly_data
     }

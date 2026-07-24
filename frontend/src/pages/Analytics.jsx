@@ -111,7 +111,7 @@ export default function Analytics() {
             </h3>
             <span className="text-xs font-inter text-[#2563EB] font-bold">Chart.js</span>
           </div>
-          <div className="h-64">
+          <div className="h-64 relative overflow-hidden">
             <WeeklyBarChart weeklyData={metrics?.weekly_data} />
           </div>
         </div>
@@ -125,8 +125,8 @@ export default function Analytics() {
             <span className="text-xs font-inter text-[#22C55E] font-bold">Mastery %</span>
           </div>
 
-          {subjectMastery.length > 0 ? (
-            <div className="h-64 flex items-center justify-center">
+          {subjectMastery.length > 0 && subjectMastery.some(m => m.mastery_score > 0) ? (
+            <div className="h-64 flex items-center justify-center relative overflow-hidden">
               <SubjectDoughnutChart masteryData={subjectMastery} />
             </div>
           ) : (
@@ -156,8 +156,8 @@ export default function Analytics() {
             </h3>
             <span className="text-xs font-inter text-[#38BDF8] font-bold">4-Week Timeline</span>
           </div>
-          <div className="h-64">
-            <MonthlyProgressChart />
+          <div className="h-64 relative overflow-hidden">
+            <MonthlyProgressChart monthlyData={metrics?.monthly_data} />
           </div>
         </div>
       </div>

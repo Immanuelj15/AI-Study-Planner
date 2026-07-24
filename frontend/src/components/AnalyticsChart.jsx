@@ -26,9 +26,10 @@ ChartJS.register(
 );
 
 export function WeeklyBarChart({ weeklyData }) {
-  const labels = weeklyData ? weeklyData.map((d) => d.day) : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const targets = weeklyData ? weeklyData.map((d) => d.target) : [3, 4, 3.5, 4, 3, 2.5, 3];
-  const completed = weeklyData ? weeklyData.map((d) => d.completed) : [2.5, 3.8, 3.0, 4.0, 2.0, 2.5, 1.5];
+  const hasData = Array.isArray(weeklyData) && weeklyData.length > 0;
+  const labels = hasData ? weeklyData.map((d) => d.day) : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const targets = hasData ? weeklyData.map((d) => d.target || 0) : [0, 0, 0, 0, 0, 0, 0];
+  const completed = hasData ? weeklyData.map((d) => d.completed || 0) : [0, 0, 0, 0, 0, 0, 0];
 
   const data = {
     labels,
@@ -36,26 +37,27 @@ export function WeeklyBarChart({ weeklyData }) {
       {
         label: 'Target Hours',
         data: targets,
-        backgroundColor: 'rgba(219, 234, 254, 0.7)',
+        backgroundColor: 'rgba(219, 234, 254, 0.8)',
         borderColor: '#93C5FD',
         borderWidth: 1.5,
-        borderRadius: 8,
+        borderRadius: 6,
       },
       {
         label: 'Completed Hours',
         data: completed,
-        backgroundColor: 'rgba(37, 99, 235, 0.85)',
+        backgroundColor: 'rgba(37, 99, 235, 0.9)',
         borderColor: '#2563EB',
         borderWidth: 1.5,
-        borderRadius: 8,
+        borderRadius: 6,
       },
     ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     animation: {
-      duration: 1200,
+      duration: 800,
       easing: 'easeOutQuart',
     },
     plugins: {
@@ -75,16 +77,21 @@ export function WeeklyBarChart({ weeklyData }) {
     },
     scales: {
       x: { ticks: { color: '#64748B', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(226, 232, 240, 0.6)' } },
-      y: { ticks: { color: '#64748B', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
+      y: { min: 0, ticks: { color: '#64748B', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
     }
   };
 
-  return <Bar data={data} options={options} />;
+  return (
+    <div className="w-full h-full relative min-h-[220px]">
+      <Bar data={data} options={options} />
+    </div>
+  );
 }
 
 export function SubjectDoughnutChart({ masteryData }) {
-  const labels = masteryData ? masteryData.map((m) => m.subject) : ['Data Structures', 'DBMS', 'OS', 'Networks'];
-  const scores = masteryData ? masteryData.map((m) => m.mastery_score) : [88, 52, 92, 78];
+  const hasData = Array.isArray(masteryData) && masteryData.length > 0;
+  const labels = hasData ? masteryData.map((m) => m.subject) : ['No Subjects Yet'];
+  const scores = hasData ? masteryData.map((m) => m.mastery_score || 0) : [0];
 
   const data = {
     labels,
@@ -92,23 +99,26 @@ export function SubjectDoughnutChart({ masteryData }) {
       {
         label: 'Mastery %',
         data: scores,
-        backgroundColor: [
-          'rgba(37, 99, 235, 0.85)',
-          'rgba(239, 68, 68, 0.85)',
-          'rgba(34, 197, 94, 0.85)',
-          'rgba(56, 189, 248, 0.85)',
-        ],
+        backgroundColor: hasData
+          ? [
+              'rgba(37, 99, 235, 0.85)',
+              'rgba(239, 68, 68, 0.85)',
+              'rgba(34, 197, 94, 0.85)',
+              'rgba(56, 189, 248, 0.85)',
+              'rgba(139, 92, 246, 0.85)',
+            ]
+          : ['rgba(226, 232, 240, 0.8)'],
         borderColor: '#FFFFFF',
-        borderWidth: 3,
+        borderWidth: 2,
       },
     ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     animation: {
-      duration: 1200,
-      animateRotate: true,
+      duration: 800,
     },
     plugins: {
       legend: {
@@ -118,36 +128,49 @@ export function SubjectDoughnutChart({ masteryData }) {
     }
   };
 
-  return <Doughnut data={data} options={options} />;
+  return (
+    <div className="w-full h-full relative min-h-[220px]">
+      <Doughnut data={data} options={options} />
+    </div>
+  );
 }
 
-export function MonthlyProgressChart() {
+export function MonthlyProgressChart({ monthlyData }) {
+  const hasData = Array.isArray(monthlyData) && monthlyData.length > 0;
+  const labels = hasData ? monthlyData.map((m) => m.label) : ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+  const dataPoints = hasData ? monthlyData.map((m) => m.accuracy || 0) : [0, 0, 0, 0];
+
   const data = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    labels,
     datasets: [
       {
         label: 'Monthly Accuracy Trend %',
-        data: [65, 74, 82, 88],
+        data: dataPoints,
         borderColor: '#2563EB',
-        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+        backgroundColor: 'rgba(37, 99, 235, 0.08)',
         fill: true,
-        tension: 0.4,
+        tension: 0.3,
         pointBackgroundColor: '#38BDF8',
-        pointRadius: 5,
+        pointRadius: 4,
       }
     ]
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { labels: { color: '#64748B', font: { size: 11, family: 'Inter' } } }
     },
     scales: {
-      x: { ticks: { color: '#64748B' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } },
-      y: { ticks: { color: '#64748B' }, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
+      x: { ticks: { color: '#64748B', font: { size: 10 } }, grid: { color: 'rgba(226, 232, 240, 0.6)' } },
+      y: { min: 0, max: 100, ticks: { color: '#64748B', font: { size: 10 } }, grid: { color: 'rgba(226, 232, 240, 0.6)' } }
     }
   };
 
-  return <Line data={data} options={options} />;
+  return (
+    <div className="w-full h-full relative min-h-[220px] max-h-[250px] overflow-hidden">
+      <Line data={data} options={options} />
+    </div>
+  );
 }
