@@ -1,8 +1,21 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Volume2, VolumeX, Download, Copy, Check, Sparkles, BookOpen } from 'lucide-react';
+import { 
+  Volume2, 
+  VolumeX, 
+  Download, 
+  Copy, 
+  Check, 
+  Sparkles, 
+  ListChecks, 
+  Star, 
+  BookMarked, 
+  Briefcase,
+  Network
+} from 'lucide-react';
 import { useSpeech } from '../hooks/useSpeech';
 import { useToast } from '../context/ToastContext';
+import { useNavigate } from 'react-router-dom';
 
 function renderCleanSummaryContent(summaryText) {
   if (!summaryText) return null;
@@ -16,9 +29,14 @@ function renderCleanSummaryContent(summaryText) {
     // Headings starting with #, ##, ###
     if (trimmed.startsWith('#')) {
       const cleanHeading = trimmed.replace(/^[#\s]+/, '').replace(/[\*\_`]/g, '').trim();
+      let IconComponent = Star;
+      if (cleanHeading.toLowerCase().includes('example')) IconComponent = BookMarked;
+      if (cleanHeading.toLowerCase().includes('interview')) IconComponent = Briefcase;
+      if (cleanHeading.toLowerCase().includes('concept')) IconComponent = Star;
+
       return (
-        <h3 key={idx} className="font-poppins text-base sm:text-lg font-extrabold text-[#2563EB] mt-5 mb-2.5 border-b border-[#E2E8F0] pb-1.5 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#38BDF8]"></span>
+        <h3 key={idx} className="font-poppins text-base sm:text-lg font-extrabold text-[#2563EB] mt-6 mb-3 border-b border-[#E2E8F0] pb-2 flex items-center gap-2">
+          <IconComponent className="w-[18px] h-[18px] text-[#2563EB]" />
           <span>{cleanHeading}</span>
         </h3>
       );
@@ -26,13 +44,13 @@ function renderCleanSummaryContent(summaryText) {
 
     // Clean inline markdown special characters (#, *, _, `) from regular paragraph text
     const cleanParagraph = trimmed
-      .replace(/[\#\*\_`]/g, '') // Strip literal #, *, _, and ` characters!
+      .replace(/[\#\*\_`]/g, '')
       .trim();
 
     // Bullet point items starting with -, *, •
     if (line.trim().startsWith('-') || line.trim().startsWith('*') || line.trim().startsWith('•')) {
       return (
-        <div key={idx} className="flex items-start gap-2.5 my-1.5 ml-2 text-xs sm:text-sm leading-relaxed text-[#1E293B]">
+        <div key={idx} className="flex items-start gap-2.5 my-2 ml-2 text-xs sm:text-sm leading-relaxed text-[#1E293B]">
           <span className="text-[#2563EB] font-bold text-sm leading-none mt-0.5">•</span>
           <span>{cleanParagraph}</span>
         </div>
@@ -50,10 +68,10 @@ function renderCleanSummaryContent(summaryText) {
 export default function SummaryCard({ summaryText, bulletPoints, topic, onExportPDF }) {
   const { speak, stop, speaking } = useSpeech();
   const { addToast } = useToast();
+  const navigate = useNavigate();
   const [copied, setCopied] = React.useState(false);
 
   const handleCopy = () => {
-    // Copy clean text without raw # or markdown special characters
     const cleanText = summaryText ? summaryText.replace(/[\#\*\_`]/g, '') : '';
     navigator.clipboard.writeText(cleanText);
     setCopied(true);
@@ -71,25 +89,35 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#E2E8F0]">
         <div>
           <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
-            <Sparkles className="w-4 h-4 text-[#38BDF8]" /> Agent 2 Summarizer Notes
+            <Sparkles className="w-[18px] h-[18px] text-[#38BDF8]" /> Agent 2 Summarizer Notes
           </div>
           <h2 className="font-poppins text-2xl font-black text-[#1E293B] mt-1">{topic}</h2>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
+          {/* Mind Map Shortcut */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate(`/mindmap?topic=${encodeURIComponent(topic)}`)}
+            className="px-3.5 py-2 rounded-xl bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold flex items-center gap-1.5 border border-[#DBEAFE]"
+          >
+            <Network className="w-[18px] h-[18px] text-[#2563EB]" /> Mind Map
+          </motion.button>
+
           {/* Text to Speech Voice Button */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => (speaking ? stop() : speak(summaryText ? summaryText.replace(/[\#\*\_`]/g, '') : ''))}
-            className={`px-4 py-2 rounded-xl text-xs font-inter font-bold flex items-center gap-2 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-inter font-bold flex items-center gap-1.5 transition-all ${
               speaking
                 ? 'bg-[#FEE2E2] text-[#EF4444] border border-[#FCA5A5] animate-pulse'
                 : 'bg-[#F8FBFF] hover:bg-[#EFF6FF] text-[#1E293B] border border-[#E2E8F0]'
             }`}
           >
-            {speaking ? <VolumeX className="w-4 h-4 text-[#EF4444]" /> : <Volume2 className="w-4 h-4 text-[#2563EB]" />}
-            <span>{speaking ? 'Stop Voice' : 'Voice Summary'}</span>
+            {speaking ? <VolumeX className="w-[18px] h-[18px] text-[#EF4444]" /> : <Volume2 className="w-[18px] h-[18px] text-[#2563EB]" />}
+            <span>{speaking ? 'Stop Voice' : 'Voice'}</span>
           </motion.button>
 
           {/* Copy Button */}
@@ -98,12 +126,12 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
             whileTap={{ scale: 0.95 }}
             onClick={handleCopy}
             className="p-2 rounded-xl bg-[#F8FBFF] hover:bg-[#EFF6FF] text-[#64748B] hover:text-[#1E293B] border border-[#E2E8F0] transition-colors"
-            title="Copy Clean Notes"
+            title="Copy Notes"
           >
-            {copied ? <Check className="w-4 h-4 text-[#22C55E]" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-[18px] h-[18px] text-[#22C55E]" /> : <Copy className="w-[18px] h-[18px]" />}
           </motion.button>
 
-          {/* PDF Export Button */}
+          {/* PDF Export Button (18px icon) */}
           {onExportPDF && (
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -111,19 +139,19 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
               onClick={onExportPDF}
               className="px-4 py-2 rounded-xl btn-gradient-primary text-xs font-inter font-bold flex items-center gap-1.5 shadow-sm shadow-blue-500/20"
             >
-              <Download className="w-4 h-4" /> Export PDF
+              <Download className="w-[18px] h-[18px]" /> Export PDF
             </motion.button>
           )}
         </div>
       </div>
 
-      {/* Bullet Points Quick Revision Box */}
+      {/* Bullet Points Quick Revision Box (ListChecks 18px) */}
       {bulletPoints && bulletPoints.length > 0 && (
         <div className="p-5 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-3">
-          <h4 className="text-xs font-poppins font-extrabold text-[#2563EB] uppercase tracking-wider flex items-center gap-1.5">
-            <BookOpen className="w-4 h-4 text-[#2563EB]" /> Quick Revision Bullets
+          <h4 className="text-xs font-poppins font-extrabold text-[#2563EB] uppercase tracking-wider flex items-center gap-2">
+            <ListChecks className="w-[18px] h-[18px] text-[#2563EB]" /> Quick Revision Bullets
           </h4>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs font-inter text-[#1E293B]">
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-inter text-[#1E293B]">
             {bulletPoints.map((pt, idx) => (
               <li key={idx} className="flex items-start gap-2">
                 <span className="text-[#2563EB] font-bold">•</span>
@@ -134,7 +162,7 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
         </div>
       )}
 
-      {/* Clean Formatted Summary Content (Zero # or special characters) */}
+      {/* Clean Formatted Summary Content */}
       <div className="prose prose-slate max-w-none text-[#1E293B] font-inter bg-[#F8FBFF] p-6 lg:p-8 rounded-2xl border border-[#E2E8F0]">
         {renderCleanSummaryContent(summaryText)}
       </div>

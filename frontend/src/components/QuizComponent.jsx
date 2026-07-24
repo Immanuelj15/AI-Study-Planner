@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, HelpCircle, ArrowRight, Award, Sparkles } from 'lucide-react';
+import { CheckCircle2, XCircle, CircleHelp, ArrowRight, Trophy, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function QuizComponent({ questions, onCompleteQuiz, subjectId, topic }) {
@@ -71,7 +71,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
         className="glass-card rounded-3xl p-8 border border-[#E2E8F0] text-center space-y-6 max-w-xl mx-auto shadow-soft bg-[#FFFFFF]"
       >
         <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#2563EB] via-[#0EA5E9] to-[#38BDF8] mx-auto flex items-center justify-center shadow-md shadow-blue-500/20">
-          <Award className="w-10 h-10 text-white animate-bounce" />
+          <Trophy className="w-[36px] h-[36px] text-white animate-bounce" />
         </div>
 
         <div>
@@ -86,12 +86,18 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
           </div>
           <div className="w-px h-10 bg-[#E2E8F0]"></div>
           <div>
-            <div className="font-poppins text-4xl font-extrabold text-[#22C55E]">{finalCorrect}</div>
+            <div className="font-poppins text-4xl font-extrabold text-[#22C55E] flex items-center justify-center gap-1">
+              <CheckCircle2 className="w-6 h-6 text-[#22C55E]" />
+              <span>{finalCorrect}</span>
+            </div>
             <div className="text-[10px] font-inter font-bold text-[#64748B] uppercase mt-1">Correct</div>
           </div>
           <div className="w-px h-10 bg-[#E2E8F0]"></div>
           <div>
-            <div className="font-poppins text-4xl font-extrabold text-[#EF4444]">{questions.length - finalCorrect}</div>
+            <div className="font-poppins text-4xl font-extrabold text-[#EF4444] flex items-center justify-center gap-1">
+              <XCircle className="w-6 h-6 text-[#EF4444]" />
+              <span>{questions.length - finalCorrect}</span>
+            </div>
             <div className="text-[10px] font-inter font-bold text-[#64748B] uppercase mt-1">Wrong</div>
           </div>
         </div>
@@ -113,7 +119,10 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
     >
       {/* Progress Header */}
       <div className="flex items-center justify-between text-xs font-inter font-bold text-[#64748B]">
-        <span>Question {currentIndex + 1} of {questions.length}</span>
+        <span className="flex items-center gap-1.5">
+          <CircleHelp className="w-[18px] h-[18px] text-[#2563EB]" />
+          Question {currentIndex + 1} of {questions.length}
+        </span>
         <span className="px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE] font-poppins">
           {currentQ.difficulty || 'Medium'}
         </span>
@@ -130,7 +139,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
       {/* Question Title */}
       <h3 className="font-poppins text-lg font-bold text-[#1E293B] leading-snug">{currentQ.question}</h3>
 
-      {/* Options List (MCQ) or Text Input (Fill-in-the-blank) */}
+      {/* Options List (MCQ) or Text Input */}
       {Array.isArray(currentQ.options) && currentQ.options.length > 0 ? (
         <div className="space-y-3">
           {currentQ.options.map((option, idx) => {
@@ -185,7 +194,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
             disabled={isSubmitted}
             value={selectedAnswer || ''}
             onChange={(e) => handleSelectOption(e.target.value)}
-            placeholder="Type answer here (e.g. DBMS)..."
+            placeholder="Type answer here..."
             className={`w-full glass-input py-3.5 px-4 rounded-2xl text-sm font-inter transition-all ${
               isSubmitted
                 ? String(selectedAnswer || '').trim().toLowerCase() === String(currentQ.answer || '').trim().toLowerCase()
@@ -195,8 +204,8 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
             }`}
           />
           {isSubmitted && (
-            <div className="text-xs font-inter font-semibold text-[#64748B] pt-1">
-              Correct Answer: <span className="text-[#22C55E] font-bold">{currentQ.answer}</span>
+            <div className="text-xs font-inter font-semibold text-[#64748B] pt-1 flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-[#22C55E]" /> Correct Answer: <span className="text-[#22C55E] font-bold">{currentQ.answer}</span>
             </div>
           )}
         </div>
@@ -212,7 +221,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
             className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-xs font-inter space-y-1"
           >
             <div className="font-poppins font-bold text-[#2563EB] flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4 text-[#2563EB]" /> Answer Explanation
+              <CircleHelp className="w-[18px] h-[18px] text-[#2563EB]" /> Answer Explanation
             </div>
             <p className="text-[#1E293B] leading-relaxed">{currentQ.explanation}</p>
           </motion.div>
@@ -239,7 +248,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
             className="px-6 py-2.5 rounded-xl btn-gradient-primary text-xs font-inter font-bold flex items-center gap-2 shadow-sm shadow-blue-500/20"
           >
             <span>{currentIndex < questions.length - 1 ? 'Next Question' : 'View Results'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-[18px] h-[18px]" />
           </motion.button>
         )}
       </div>
