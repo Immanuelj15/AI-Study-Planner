@@ -21,7 +21,8 @@ import {
   Award,
   CalendarDays,
   PlusCircle,
-  BookOpen
+  BookOpen,
+  Heart
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -65,14 +66,14 @@ export default function Dashboard() {
   const handleToggleStatus = async (planId) => {
     try {
       const res = await agentAPI.togglePlanStatus(planId);
-      addToast(`Session marked as ${res.data.status}!`, 'success');
+      addToast(`Session marked as ${res.data.status}! Great work! 🎉`, 'success');
       fetchDashboardData();
     } catch (err) {
-      addToast('Failed to update status.', 'error');
+      addToast('Something went wrong. Please try again.', 'error');
     }
   };
 
-  if (loading) return <LoadingSkeleton text="Loading Adaptive AI Dashboard..." />;
+  if (loading) return <LoadingSkeleton text="Preparing your study dashboard..." />;
 
   const todayPlans = metrics?.today_plan || [];
   const weakSubjects = metrics?.weak_subjects || [];
@@ -83,7 +84,7 @@ export default function Dashboard() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6 pb-12"
+      className="space-y-6 pb-12 font-inter"
     >
       {/* 1. Dashboard Welcome Hero Banner (#2563EB -> #38BDF8 Gradient) */}
       <motion.div
@@ -93,35 +94,35 @@ export default function Dashboard() {
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-white/15 to-transparent pointer-events-none"></div>
         <div className="max-w-2xl space-y-3 relative z-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-poppins font-bold">
-            <Zap className="w-[18px] h-[18px] text-yellow-300 animate-pulse" /> Multi-Agent System Ready
+            <Heart className="w-[18px] h-[18px] text-white fill-white" /> Your Study Companion Ready
           </div>
           <h1 className="font-poppins text-3xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-            Welcome, {user?.name || 'Student'}! 👋
+            Welcome back, {user?.name || 'Student'}! 👋
           </h1>
           <p className="font-inter text-blue-50 text-xs lg:text-sm leading-relaxed max-w-xl">
             {metrics?.upcoming_exam_days > 0 
-              ? `Target Exam Countdown: ${metrics.upcoming_exam_days} Days.`
-              : 'Add your subjects and exam target date to launch your personalized AI study schedule.'}
-            {weakSubjects.length > 0 && ` Extra study hours allocated to ${weakSubjects[0]}.`}
+              ? `You're making steady progress. Your target exam is in ${metrics.upcoming_exam_days} Days. Keep going!`
+              : 'Add your subjects and target exam date to create your personalized study plan.'}
+            {weakSubjects.length > 0 && ` We've scheduled a little extra review time for ${weakSubjects[0]}.`}
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => navigate('/study-planner')}
               className="px-5 py-2.5 rounded-xl bg-white text-[#2563EB] hover:bg-blue-50 text-xs font-poppins font-bold flex items-center gap-2 shadow-md"
             >
               <PlusCircle className="w-[18px] h-[18px]" />
-              <span>{todayPlans.length > 0 ? 'Recalculate Schedule' : 'Create Study Plan'}</span>
+              <span>{todayPlans.length > 0 ? 'Update My Study Plan' : 'Build My Study Plan'}</span>
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => navigate('/summary')}
               className="px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-inter font-bold border border-white/30 transition-colors backdrop-blur-md"
             >
-              Research Topic Notes
+              Read Class Notes
             </motion.button>
           </div>
         </div>
@@ -138,10 +139,10 @@ export default function Dashboard() {
                 <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center">
                   <Clock3 className="w-[22px] h-[22px] text-[#2563EB]" />
                 </div>
-                <span>Today's Study Schedule</span>
+                <span>Today's Goal & Schedule</span>
               </div>
               <span className="text-xs font-inter font-semibold text-[#64748B]">
-                {metrics?.today_study_hours || 0} hrs total allocated
+                {metrics?.today_study_hours || 0} hours planned today
               </span>
             </div>
 
@@ -157,71 +158,69 @@ export default function Dashboard() {
                   <BookOpen className="w-[30px] h-[30px]" />
                 </div>
                 <div>
-                  <h4 className="font-poppins font-bold text-sm text-[#1E293B]">No Study Plans Generated Yet</h4>
+                  <h4 className="font-poppins font-bold text-sm text-[#1E293B]">No study plan yet. Let's create one together!</h4>
                   <p className="text-xs text-[#64748B] font-inter mt-1 max-w-sm mx-auto">
-                    Click below to add your subjects and launch the Supervisor Agent pipeline.
+                    Add your subjects and exam date to generate easy-to-understand notes, mind maps, and practice quizzes.
                   </p>
                 </div>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => navigate('/study-planner')}
-                  className="px-5 py-2.5 rounded-xl btn-gradient-primary text-xs font-inter font-bold inline-flex items-center gap-2 shadow-sm shadow-blue-500/20"
+                  className="px-5 py-2.5 rounded-xl bg-[#2563EB] text-white text-xs font-inter font-bold inline-flex items-center gap-2 shadow-sm"
                 >
                   <PlusCircle className="w-[18px] h-[18px]" />
-                  <span>Generate Study Plan</span>
+                  <span>Build My Study Plan</span>
                 </motion.button>
               </div>
             )}
           </motion.div>
 
-          {/* Weekly Progress Bar Chart (30px Dashboard Header Icon) */}
+          {/* Weekly Progress Bar Chart */}
           <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
             <div className="flex items-center justify-between">
               <div className="font-poppins font-bold text-[#1E293B] text-base flex items-center gap-3">
                 <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center">
                   <TrendingUp className="w-[30px] h-[30px] text-[#2563EB]" />
                 </div>
-                <span>Weekly Target vs Completed Hours</span>
+                <span>Weekly Progress Overview</span>
               </div>
-              <span className="text-xs font-inter text-[#2563EB] font-bold">Chart.js Visualizer</span>
+              <span className="text-xs font-inter text-[#2563EB] font-bold">Planned vs Completed</span>
             </div>
             <div className="h-64">
               <WeeklyBarChart weeklyData={metrics?.weekly_progress} />
             </div>
           </motion.div>
 
-          {/* AI Recommendations Section */}
+          {/* Today's Study Suggestions Section */}
           <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
             <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-base">
               <div className="w-11 h-11 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center">
                 <Lightbulb className="w-[30px] h-[30px] text-[#D97706]" />
               </div>
-              <span>AI Multi-Agent Recommendations</span>
+              <span>Today's Study Suggestions</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-inter">
               <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
                 <div className="flex items-center justify-between font-bold text-[#2563EB]">
                   <span className="flex items-center gap-1.5">
-                    <Network className="w-[18px] h-[18px] text-[#2563EB]" /> Mind Map Visualizer
+                    <Network className="w-[18px] h-[18px] text-[#2563EB]" /> Visual Concept Map
                   </span>
-                  <Zap className="w-[18px] h-[18px] text-[#38BDF8]" />
                 </div>
                 <p className="text-[#64748B] leading-relaxed">
-                  Review concepts on the interactive React Flow visual graph before taking your next quiz.
+                  Review concepts on the interactive diagram before taking your practice quiz.
                 </p>
               </div>
 
               <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
                 <div className="flex items-center justify-between font-bold text-[#22C55E]">
                   <span className="flex items-center gap-1.5">
-                    <Target className="w-[18px] h-[18px] text-[#22C55E]" /> Adaptive Feedback Loop
+                    <Target className="w-[18px] h-[18px] text-[#22C55E]" /> Adaptive Support
                   </span>
-                  <Target className="w-[18px] h-[18px] text-[#22C55E]" />
                 </div>
                 <p className="text-[#64748B] leading-relaxed">
-                  Scheduler Agent will automatically allocate extra hours for quiz scores below 60%.
+                  We'll automatically schedule extra revision time for topics you want to strengthen.
                 </p>
               </div>
             </div>
@@ -235,67 +234,67 @@ export default function Dashboard() {
             <ProgressCard metrics={metrics} />
           </motion.div>
 
-          {/* Weak & Strong Subject Badges (30px AlertTriangle Icon) */}
+          {/* Subject Review Topics */}
           <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
             <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-sm">
               <div className="w-11 h-11 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center">
                 <AlertTriangle className="w-[30px] h-[30px] text-[#D97706]" />
               </div>
-              <span>Topic Mastery Feedback</span>
+              <span>Topics to Review</span>
             </div>
 
             <div className="space-y-4">
               <div>
                 <div className="text-[11px] font-inter font-bold text-[#64748B] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <AlertTriangle className="w-[18px] h-[18px] text-[#EF4444]" /> Weak Topics (&lt;60%)
+                  <AlertTriangle className="w-[18px] h-[18px] text-[#EF4444]" /> Needs Extra Practice
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {weakSubjects.length > 0 ? (
                     weakSubjects.map((sub, i) => (
                       <span key={i} className="px-3 py-1 rounded-full bg-[#FEE2E2] text-[#EF4444] border border-[#FCA5A5] text-xs font-inter font-semibold">
-                        ⚠️ {sub}
+                        📘 {sub}
                       </span>
                     ))
                   ) : (
-                    <span className="text-xs text-[#64748B] font-inter italic">No weak topics identified yet</span>
+                    <span className="text-xs text-[#64748B] font-inter italic">You're doing great! No review topics flagged yet.</span>
                   )}
                 </div>
               </div>
 
               <div className="pt-3 border-t border-[#E2E8F0]">
                 <div className="text-[11px] font-inter font-bold text-[#64748B] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Award className="w-[18px] h-[18px] text-[#22C55E]" /> Strong Topics (&ge;80%)
+                  <Award className="w-[18px] h-[18px] text-[#22C55E]" /> Solid Concept Mastery
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {strongSubjects.length > 0 ? (
                     strongSubjects.map((sub, i) => (
                       <span key={i} className="px-3 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC] text-xs font-inter font-semibold">
-                        ✅ {sub}
+                        ✨ {sub}
                       </span>
                     ))
                   ) : (
-                    <span className="text-xs text-[#64748B] font-inter italic">Take quizzes to reveal your strong topics</span>
+                    <span className="text-xs text-[#64748B] font-inter italic">Practice quizzes to highlight your strong topics</span>
                   )}
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Recent Activities Feed */}
+          {/* Recent Learning Activities */}
           <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
             <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-sm">
               <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center">
                 <Activity className="w-[22px] h-[22px] text-[#2563EB]" />
               </div>
-              <span>Recent AI Activities</span>
+              <span>Recent Activities</span>
             </div>
 
             <div className="space-y-3 text-xs font-inter">
               <div className="flex items-start gap-3 p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
                 <CheckCircle2 className="w-[18px] h-[18px] text-[#22C55E] shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-semibold text-[#1E293B]">Account Active: {user?.name}</div>
-                  <div className="text-[10px] text-[#64748B]">Multi-Agent System ready to generate study plans</div>
+                  <div className="font-semibold text-[#1E293B]">Welcome, {user?.name}!</div>
+                  <div className="text-[10px] text-[#64748B]">Your study companion is ready to build your study schedule.</div>
                 </div>
               </div>
             </div>

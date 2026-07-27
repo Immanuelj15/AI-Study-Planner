@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { dashboardAPI } from '../services/api';
 import { WeeklyBarChart, SubjectDoughnutChart, MonthlyProgressChart } from '../components/AnalyticsChart';
 import LoadingSkeleton from '../components/LoadingSkeleton';
-import { BarChart3, TrendingUp, Award, Target, Flame, Activity, BookOpen, PlusCircle } from 'lucide-react';
+import { BarChart3, TrendingUp, Award, Target, Flame, Activity, BookOpen, PlusCircle, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Analytics() {
@@ -26,7 +26,7 @@ export default function Analytics() {
     }
   };
 
-  if (loading) return <LoadingSkeleton text="Loading Performance Analytics..." />;
+  if (loading) return <LoadingSkeleton text="Loading your learning progress..." />;
 
   const subjectMastery = metrics?.subject_mastery || metrics?.topic_mastery || [];
 
@@ -34,15 +34,18 @@ export default function Analytics() {
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 pb-12"
+      className="space-y-6 pb-12 font-inter"
     >
       {/* Top Banner */}
       <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-2 shadow-soft bg-[#FFFFFF]">
-        <h1 className="font-poppins text-2xl font-black text-[#1E293B] flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-[#2563EB]" /> Student Performance Analytics
+        <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
+          <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Learning Progress
+        </div>
+        <h1 className="font-poppins text-2xl font-black text-[#1E293B] mt-1 flex items-center gap-2">
+          <BarChart3 className="w-6 h-6 text-[#2563EB]" /> My Learning Progress
         </h1>
         <p className="text-[#64748B] font-inter text-xs">
-          Multi-Agent feedback loop tracks subject mastery scores, study hour trends, and adaptive scheduler adjustments.
+          Track your study streaks, subject mastery, and weekly revision hours peacefully.
         </p>
       </div>
 
@@ -57,7 +60,7 @@ export default function Analytics() {
             {metrics?.average_quiz_score ?? 0}%
           </div>
           <div className="text-[10px] font-inter text-[#64748B] font-bold">
-            {metrics?.quizzes_taken > 0 ? '↑ AutoGen Calibrated' : 'No Quizzes Taken Yet'}
+            {metrics?.quizzes_taken > 0 ? 'Steady Progress' : 'No Quizzes Completed Yet'}
           </div>
         </div>
 
@@ -70,7 +73,7 @@ export default function Analytics() {
             {metrics?.quizzes_taken ?? 0}
           </div>
           <div className="text-[10px] font-inter text-[#64748B]">
-            {metrics?.quizzes_taken > 0 ? '100% Calibrated' : '0 Quizzes Completed'}
+            {metrics?.quizzes_taken > 0 ? 'Great Practice!' : '0 Quizzes Completed'}
           </div>
         </div>
 
@@ -96,7 +99,7 @@ export default function Analytics() {
             {metrics?.total_study_hours ?? 0} hrs
           </div>
           <div className="text-[10px] font-inter text-[#2563EB] font-bold">
-            {metrics?.total_study_hours > 0 ? 'Optimal Velocity' : '0 Hours Completed'}
+            {metrics?.total_study_hours > 0 ? 'Steady Revision' : '0 Hours Completed'}
           </div>
         </div>
       </div>
@@ -109,7 +112,7 @@ export default function Analytics() {
             <h3 className="font-poppins font-bold text-[#1E293B] text-sm flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#2563EB]" /> Weekly Target vs Completed Hours
             </h3>
-            <span className="text-xs font-inter text-[#2563EB] font-bold">Chart.js</span>
+            <span className="text-xs font-inter text-[#2563EB] font-bold">Weekly Overview</span>
           </div>
           <div className="h-64 relative overflow-hidden">
             <WeeklyBarChart weeklyData={metrics?.weekly_data} />
@@ -135,12 +138,12 @@ export default function Analytics() {
               <div>
                 <h4 className="font-poppins font-bold text-sm text-[#1E293B]">No Subject Analytics Available</h4>
                 <p className="text-xs text-[#64748B] font-inter mt-1 max-w-xs mx-auto">
-                  Add subjects and take quizzes to populate your mastery breakdown chart.
+                  Add subjects and take practice quizzes to populate your mastery breakdown chart.
                 </p>
               </div>
               <button
                 onClick={() => navigate('/study-planner')}
-                className="px-4 py-2 rounded-xl btn-gradient-primary text-xs font-inter font-bold flex items-center gap-1.5 shadow-sm"
+                className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center gap-1.5 shadow-sm"
               >
                 <PlusCircle className="w-4 h-4" /> Add Subjects
               </button>

@@ -5,7 +5,7 @@ import { agentAPI, quizAPI, subjectsAPI } from '../services/api';
 import QuizComponent from '../components/QuizComponent';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
-import { HelpCircle, Search, Sparkles, BookOpen } from 'lucide-react';
+import { HelpCircle, Search, Sparkles, BookOpen, Heart } from 'lucide-react';
 
 export default function QuizPage() {
   const [searchParams] = useSearchParams();
@@ -59,7 +59,7 @@ export default function QuizPage() {
       setQuestions(res.data);
     } catch (err) {
       console.error(err);
-      addToast('Error generating practice quiz.', 'error');
+      addToast('Something went wrong. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -81,10 +81,10 @@ export default function QuizPage() {
   const handleCompleteQuiz = async (resultData) => {
     try {
       const res = await quizAPI.submitQuiz(resultData);
-      addToast(`Quiz submitted! Scheduler Agent updated your study timetable.`, 'success');
+      addToast(`Quiz Completed 🎉 You're improving every day.`, 'success');
     } catch (err) {
       console.error(err);
-      addToast('Failed to record quiz submission.', 'error');
+      addToast('Something went wrong. Please try again.', 'error');
     }
   };
 
@@ -92,16 +92,19 @@ export default function QuizPage() {
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 pb-12"
+      className="space-y-6 pb-12 font-inter"
     >
       {/* Search Header */}
       <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-4 shadow-soft bg-[#FFFFFF]">
         <div>
-          <h1 className="font-poppins text-2xl font-black text-[#1E293B] flex items-center gap-2">
-            <HelpCircle className="w-6 h-6 text-[#2563EB]" /> Agent 3 Practice Quiz Engine
+          <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
+            <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Encouraging Practice
+          </div>
+          <h1 className="font-poppins text-2xl font-black text-[#1E293B] mt-1 flex items-center gap-2">
+            <HelpCircle className="w-6 h-6 text-[#2563EB]" /> Practice What You Learned
           </h1>
           <p className="text-[#64748B] font-inter text-xs mt-1">
-            Agent 3 generates 5 calibrated questions. Scores automatically trigger Agent 4 to recalculate study hours for weak concepts.
+            Answer practice questions with instant encouraging feedback to test your subject understanding.
           </p>
         </div>
 
@@ -143,17 +146,17 @@ export default function QuizPage() {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 rounded-2xl btn-gradient-primary text-xs font-inter font-bold flex items-center justify-center gap-1.5 shadow-sm shadow-blue-500/20"
+            className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-1.5 shadow-sm"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Generate Quiz</span>
+            <span>Create Quiz</span>
           </motion.button>
         </form>
       </div>
 
       {/* Quiz Interface or Sequential Processing Skeleton */}
       {loading ? (
-        <LoadingSkeleton text={`Agent 3 Calibrating Practice Questions for '${topic}'...`} />
+        <LoadingSkeleton text={`Preparing practice questions for '${topic}'...`} />
       ) : questions && questions.length > 0 ? (
         <QuizComponent
           questions={questions}
@@ -164,9 +167,9 @@ export default function QuizPage() {
       ) : (
         <div className="glass-card rounded-3xl p-12 text-center space-y-3 border border-[#E2E8F0] bg-[#FFFFFF] shadow-soft">
           <BookOpen className="w-12 h-12 text-[#2563EB] mx-auto" />
-          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic to Generate Quiz</h3>
+          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic to Practice</h3>
           <p className="text-xs text-[#64748B] font-inter max-w-md mx-auto">
-            Choose one of your subjects from the dropdown or type any custom topic name above to generate 5 calibrated practice questions.
+            Choose one of your subjects from the dropdown or type any topic above to create 5 practice questions.
           </p>
         </div>
       )}

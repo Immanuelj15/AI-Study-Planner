@@ -12,7 +12,8 @@ import {
   Target, 
   CheckCircle2, 
   Filter,
-  Layers
+  Layers,
+  Heart
 } from 'lucide-react';
 
 export default function StudyPlanner() {
@@ -64,9 +65,9 @@ export default function StudyPlanner() {
         subjects: subjectNames
       });
       setPlans(res.data || []);
-      addToast("Scheduler Agent calculated your adaptive study matrix!", "success");
+      addToast("Study Plan Created 🎉 Great work!", "success");
     } catch (err) {
-      addToast("Failed to generate study plan.", "error");
+      addToast("Something went wrong. Please try again.", "error");
     } finally {
       setGenerating(false);
     }
@@ -75,12 +76,12 @@ export default function StudyPlanner() {
   const handleToggleStatus = async (planId) => {
     try {
       const res = await agentAPI.togglePlanStatus(planId);
-      addToast(`Session marked as ${res.data.status}!`, 'success');
+      addToast(`Session marked as ${res.data.status}! Great work! 🎉`, 'success');
       setPlans((prev) =>
         prev.map((p) => (p.id === planId ? { ...p, status: res.data.status } : p))
       );
     } catch (err) {
-      addToast('Failed to update session status.', 'error');
+      addToast('Something went wrong. Please try again.', 'error');
     }
   };
 
@@ -101,26 +102,26 @@ export default function StudyPlanner() {
   const highPriorityCount = useMemo(() => plans.filter((p) => p.priority === 'High').length, [plans]);
   const completionPercentage = plans.length > 0 ? Math.round((completedCount / plans.length) * 100) : 0;
 
-  if (loading) return <LoadingSkeleton text="Loading Adaptive Study Schedule..." />;
+  if (loading) return <LoadingSkeleton text="Preparing your study planner..." />;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 pb-12"
+      className="space-y-6 pb-12 font-inter"
     >
       {/* 1. Header & Adaptive Generator Control Center */}
       <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-6 shadow-soft bg-[#FFFFFF]">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
-              <Sparkles className="w-4 h-4 text-[#38BDF8]" /> Agent 4 Adaptive Scheduler
+              <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Your Personal Study Timetable
             </div>
             <h1 className="font-poppins text-2xl lg:text-3xl font-black text-[#1E293B] mt-1">
-              Adaptive Study Matrix
+              Personalized Study Planner
             </h1>
             <p className="text-[#64748B] font-inter text-xs mt-1 max-w-xl">
-              Configures study hours based on exam target date and dynamically adjusts priorities according to your quiz performance.
+              Organize your learning timetable, set your target exam date, and let your study companion structure your days.
             </p>
           </div>
 
@@ -131,7 +132,7 @@ export default function StudyPlanner() {
             </div>
             <div className="px-3.5 py-1.5 rounded-2xl bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D] text-xs font-inter font-bold flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4" />
-              <span>{completionPercentage}% Done</span>
+              <span>{completionPercentage}% Complete</span>
             </div>
           </div>
         </div>
@@ -173,10 +174,10 @@ export default function StudyPlanner() {
               whileTap={{ scale: 0.97 }}
               type="submit"
               disabled={generating}
-              className="w-full py-2.5 px-4 rounded-xl btn-gradient-primary text-xs font-inter font-bold flex items-center justify-center gap-2 shadow-sm shadow-blue-500/20"
+              className="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-2 shadow-sm"
             >
               {generating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              <span>{generating ? 'Agent Scheduling...' : 'Generate New Plan'}</span>
+              <span>{generating ? 'Structuring Schedule...' : 'Build My Study Plan'}</span>
             </motion.button>
           </div>
         </form>
@@ -229,14 +230,14 @@ export default function StudyPlanner() {
         </div>
       )}
 
-      {/* 3. Schedule Matrix Sessions Grid (Equal Heights & 24px Gap) */}
+      {/* 3. Schedule Matrix Sessions Grid */}
       {filteredPlans.length > 0 ? (
         <div className="space-y-4">
           <div className="flex items-center justify-between text-xs font-inter font-bold text-[#64748B]">
             <span className="flex items-center gap-1.5">
               <Layers className="w-4 h-4 text-[#2563EB]" /> Displaying {filteredPlans.length} of {plans.length} Study Sessions
             </span>
-            <span className="text-[#2563EB]">Adaptive AutoGen Schedule</span>
+            <span className="text-[#2563EB]">Your Personalized Timetable</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
@@ -248,10 +249,10 @@ export default function StudyPlanner() {
       ) : (
         <div className="glass-card rounded-3xl p-12 text-center text-[#64748B] font-inter text-xs border border-[#E2E8F0] space-y-3 bg-[#FFFFFF] shadow-soft">
           <CalendarDays className="w-10 h-10 text-[#94A3B8]/60 mx-auto" />
-          <h3 className="font-poppins text-base font-bold text-[#1E293B]">No Study Sessions Found</h3>
+          <h3 className="font-poppins text-base font-bold text-[#1E293B]">No study plan yet. Let's create one together!</h3>
           <p className="max-w-md mx-auto">
             {plans.length === 0 
-              ? "No study plan has been generated yet. Set your exam date above and click 'Generate New Plan'." 
+              ? "Set your exam date above and click 'Build My Study Plan' to generate your personalized study timetable." 
               : "No sessions match your selected filter criteria. Try resetting your subject or priority filters."}
           </p>
         </div>

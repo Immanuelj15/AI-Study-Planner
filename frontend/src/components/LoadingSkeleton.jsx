@@ -9,43 +9,43 @@ import {
   CheckCircle2, 
   Sparkles, 
   Loader2,
-  Brain
+  BookOpen
 } from 'lucide-react';
 
 const agentsList = [
   {
     id: 'research',
-    name: 'Research Agent',
-    description: 'Searching Learning Resources...',
+    name: 'Step 1: Resource Research',
+    description: 'Gathering Learning Resources...',
     icon: Search,
   },
   {
     id: 'summarizer',
-    name: 'Summarizer Agent',
-    description: 'Generating Bullet Point Notes...',
+    name: 'Step 2: Class Notes',
+    description: 'Writing Easy-to-Understand Notes...',
     icon: FileText,
   },
   {
     id: 'mindmap',
-    name: 'Mind Map Generator',
-    description: 'Building Interactive Mind Map...',
+    name: 'Step 3: Visual Concept Map',
+    description: 'Building Concept Map...',
     icon: Network,
   },
   {
     id: 'quiz',
-    name: 'Quiz Generator',
+    name: 'Step 4: Practice Engine',
     description: 'Creating Practice Questions...',
     icon: ClipboardCheck,
   },
   {
     id: 'scheduler',
-    name: 'Scheduler Agent',
-    description: 'Preparing Personalized Study Plan...',
+    name: 'Step 5: Personal Schedule',
+    description: 'Structuring Your Study Schedule...',
     icon: CalendarClock,
   },
 ];
 
-export default function LoadingSkeleton({ text = "Multi-Agent System Processing..." }) {
+export default function LoadingSkeleton({ text = "Preparing Your Study Plan..." }) {
   const [activeStep, setActiveStep] = useState(0);
 
   useEffect(() => {
@@ -57,23 +57,23 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto my-10 space-y-6">
+    <div className="max-w-2xl mx-auto my-10 space-y-6 font-inter">
       {/* Header Banner */}
       <div className="glass-card rounded-3xl p-6 text-center space-y-3 border border-[#E2E8F0] relative overflow-hidden bg-[#FFFFFF] shadow-soft">
         <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#38BDF8] flex items-center justify-center shadow-md shadow-blue-500/20">
-            <Brain className="w-7 h-7 text-white animate-bounce" />
+          <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] flex items-center justify-center">
+            <BookOpen className="w-7 h-7 text-[#2563EB]" />
           </div>
           <div className="text-left">
             <h3 className="font-poppins text-lg font-black text-[#1E293B] tracking-tight">{text}</h3>
-            <p className="text-xs text-[#64748B] font-inter">Autonomous AI Workflow Processing Step-by-Step</p>
+            <p className="text-xs text-[#64748B] font-inter">Structuring your learning materials step-by-step</p>
           </div>
         </div>
 
         {/* Global Progress Line */}
         <div className="w-full h-2 bg-[#EFF6FF] rounded-full overflow-hidden mt-4 relative border border-[#DBEAFE]">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#2563EB] via-[#38BDF8] to-[#22C55E]"
+            className="h-full bg-[#2563EB]"
             initial={{ width: '10%' }}
             animate={{ width: `${((activeStep + 1) / agentsList.length) * 100}%` }}
             transition={{ duration: 0.5 }}
@@ -86,7 +86,7 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
         {/* Animated Connecting Line */}
         <div className="absolute left-[35px] top-8 bottom-8 w-0.5 bg-[#E2E8F0] z-0">
           <motion.div
-            className="w-full bg-gradient-to-b from-[#2563EB] to-[#22C55E]"
+            className="w-full bg-[#2563EB]"
             initial={{ height: '0%' }}
             animate={{ height: `${(activeStep / (agentsList.length - 1)) * 100}%` }}
             transition={{ duration: 0.5 }}
@@ -106,7 +106,7 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
               transition={{ delay: index * 0.1 }}
               className={`relative z-10 p-4.5 rounded-2xl border transition-all duration-300 flex items-center justify-between gap-4 ${
                 isActive
-                  ? 'bg-[#EFF6FF] border-[#2563EB] shadow-md shadow-blue-500/10 ring-2 ring-[#2563EB]/20 scale-[1.01]'
+                  ? 'bg-[#EFF6FF] border-[#2563EB] shadow-xs ring-2 ring-[#2563EB]/20 scale-[1.01]'
                   : isCompleted
                   ? 'bg-[#F0FDF4] border-[#22C55E]/40 opacity-95'
                   : 'bg-[#FFFFFF] border-[#E2E8F0] opacity-50'
@@ -117,7 +117,7 @@ export default function LoadingSkeleton({ text = "Multi-Agent System Processing.
                 <div
                   className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all shrink-0 ${
                     isActive
-                      ? 'bg-[#2563EB]/10 border-[#2563EB] text-[#2563EB] animate-pulse'
+                      ? 'bg-[#2563EB]/10 border-[#2563EB] text-[#2563EB]'
                       : isCompleted
                       ? 'bg-[#22C55E]/10 border-[#22C55E] text-[#22C55E]'
                       : 'bg-[#F8FBFF] border-[#E2E8F0] text-[#64748B]'

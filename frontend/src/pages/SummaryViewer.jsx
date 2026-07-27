@@ -5,7 +5,7 @@ import { agentAPI } from '../services/api';
 import SummaryCard from '../components/SummaryCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
-import { FileText, Search, Sparkles } from 'lucide-react';
+import { FileText, Search, Sparkles, Heart } from 'lucide-react';
 import jsPDF from 'jspdf';
 
 export default function SummaryViewer() {
@@ -34,9 +34,10 @@ export default function SummaryViewer() {
         research_content: researchRes.data
       });
       setSummaryData(summarizeRes.data);
+      addToast('Summary Ready 📘 Happy Learning!', 'success');
     } catch (err) {
       console.error(err);
-      addToast('Error generating topic summary.', 'error');
+      addToast('Something went wrong. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -54,7 +55,7 @@ export default function SummaryViewer() {
     const doc = new jsPDF();
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-    doc.text(`AI Study Notes: ${summaryData.topic}`, 14, 20);
+    doc.text(`Class Notes: ${summaryData.topic}`, 14, 20);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
@@ -82,13 +83,16 @@ export default function SummaryViewer() {
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 pb-12"
+      className="space-y-6 pb-12 font-inter"
     >
       {/* Search Header */}
       <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-4 shadow-soft bg-[#FFFFFF]">
         <div>
-          <h1 className="font-poppins text-2xl font-black text-[#1E293B] flex items-center gap-2">
-            <FileText className="w-6 h-6 text-[#2563EB]" /> Agent 1 & 2 Note Summarizer
+          <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
+            <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Simple Class Notes
+          </div>
+          <h1 className="font-poppins text-2xl font-black text-[#1E293B] mt-1 flex items-center gap-2">
+            <FileText className="w-6 h-6 text-[#2563EB]" /> Easy-to-Understand Class Notes
           </h1>
           <p className="text-[#64748B] font-inter text-xs mt-1">
             Research any topic to generate structured notes, definitions, interview tips, and voice summaries.
@@ -104,7 +108,7 @@ export default function SummaryViewer() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               className="w-full glass-input py-2.5 pl-10 pr-4 rounded-2xl text-xs font-inter bg-[#F8FBFF]"
-              placeholder="Enter topic (e.g. B+ Tree Indexing)..."
+              placeholder="Enter topic (e.g. Binary Search)..."
             />
           </div>
           <motion.button
@@ -112,17 +116,17 @@ export default function SummaryViewer() {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 rounded-2xl btn-gradient-primary text-xs font-inter font-bold flex items-center gap-1.5 shadow-sm shadow-blue-500/20"
+            className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center gap-1.5 shadow-sm"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Generate</span>
+            <span>Create Notes</span>
           </motion.button>
         </form>
       </div>
 
       {/* Main Content Card or Sequential Processing Skeleton */}
       {loading ? (
-        <LoadingSkeleton text={`Agents 1 & 2 Researching '${topic}'...`} />
+        <LoadingSkeleton text={`Writing Easy-to-Understand Notes for '${topic}'...`} />
       ) : summaryData ? (
         <SummaryCard
           summaryText={summaryData.summary}
