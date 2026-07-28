@@ -6,12 +6,16 @@ import ProgressCard from '../components/ProgressCard';
 import StudyCard from '../components/StudyCard';
 import { WeeklyBarChart } from '../components/AnalyticsChart';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import StudyHeatmap from '../components/StudyHeatmap';
+import GamificationBadges from '../components/GamificationBadges';
+import PomodoroTimer from '../components/PomodoroTimer';
+import LearningTimeline from '../components/LearningTimeline';
+import ChatTutor from '../components/ChatTutor';
 import { useToast } from '../context/ToastContext';
 import { 
   AlertTriangle, 
   CheckCircle2, 
   Clock3,
-  ArrowUpRight,
   Zap,
   TrendingUp,
   Activity,
@@ -19,10 +23,11 @@ import {
   Network,
   Target,
   Award,
-  CalendarDays,
   PlusCircle,
   BookOpen,
-  Heart
+  Heart,
+  HelpCircle,
+  Sparkles
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -79,12 +84,16 @@ export default function Dashboard() {
   const weakSubjects = metrics?.weak_subjects || [];
   const strongSubjects = metrics?.strong_subjects || [];
 
+  // Feature 1: Time-Aware Greeting
+  const hour = new Date().getHours();
+  const timeGreeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6 pb-12 font-inter"
+      className="space-y-6 pb-16 font-inter relative"
     >
       {/* 1. Dashboard Welcome Hero Banner (#2563EB -> #38BDF8 Gradient) */}
       <motion.div
@@ -97,7 +106,7 @@ export default function Dashboard() {
             <Heart className="w-[18px] h-[18px] text-white fill-white" /> Your Study Companion Ready
           </div>
           <h1 className="font-poppins text-3xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-            Welcome back, {user?.name || 'Student'}! 👋
+            {timeGreeting}, {user?.name || 'Student'}! 👋
           </h1>
           <p className="font-inter text-blue-50 text-xs lg:text-sm leading-relaxed max-w-xl">
             {metrics?.upcoming_exam_days > 0 
@@ -128,9 +137,38 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
+      {/* Feature 4: Explainable AI Schedule Justification Banner */}
+      {todayPlans.length > 0 && (
+        <motion.div
+          variants={itemVariants}
+          className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-xs text-[#1E293B] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-[#2563EB] text-white shrink-0">
+              <HelpCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="font-poppins font-bold text-[#2563EB]">Why did AI structure this schedule?</div>
+              <div className="text-[#64748B] text-[11px] mt-0.5">
+                Target Exam Date ({metrics?.upcoming_exam_days || 12} days away) + Subject Difficulty
+                {weakSubjects.length > 0 && ` + Quiz Score <60% on ${weakSubjects[0]}`} → AI allocated higher priority and extra revision sessions.
+              </div>
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-full bg-white border border-[#DBEAFE] text-[#2563EB] font-bold text-[10px] shrink-0">
+            Explainable AI Active
+          </span>
+        </motion.div>
+      )}
+
+      {/* Feature 9: Learning Progress Timeline */}
+      <motion.div variants={itemVariants}>
+        <LearningTimeline />
+      </motion.div>
+
       {/* Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Columns: Schedule, Charts, Recommendations */}
+        {/* Left 2 Columns: Schedule, Charts, Pomodoro, Heatmap */}
         <div className="lg:col-span-2 space-y-6">
           {/* Today's Study Schedule */}
           <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
@@ -176,6 +214,11 @@ export default function Dashboard() {
             )}
           </motion.div>
 
+          {/* Feature 5: GitHub Style Study Heatmap */}
+          <motion.div variants={itemVariants}>
+            <StudyHeatmap streak={metrics?.study_streak_days || 5} />
+          </motion.div>
+
           {/* Weekly Progress Bar Chart */}
           <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
             <div className="flex items-center justify-between">
@@ -191,47 +234,23 @@ export default function Dashboard() {
               <WeeklyBarChart weeklyData={metrics?.weekly_progress} />
             </div>
           </motion.div>
-
-          {/* Today's Study Suggestions Section */}
-          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
-            <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-base">
-              <div className="w-11 h-11 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center">
-                <Lightbulb className="w-[30px] h-[30px] text-[#D97706]" />
-              </div>
-              <span>Today's Study Suggestions</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-inter">
-              <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
-                <div className="flex items-center justify-between font-bold text-[#2563EB]">
-                  <span className="flex items-center gap-1.5">
-                    <Network className="w-[18px] h-[18px] text-[#2563EB]" /> Visual Concept Map
-                  </span>
-                </div>
-                <p className="text-[#64748B] leading-relaxed">
-                  Review concepts on the interactive diagram before taking your practice quiz.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
-                <div className="flex items-center justify-between font-bold text-[#22C55E]">
-                  <span className="flex items-center gap-1.5">
-                    <Target className="w-[18px] h-[18px] text-[#22C55E]" /> Adaptive Support
-                  </span>
-                </div>
-                <p className="text-[#64748B] leading-relaxed">
-                  We'll automatically schedule extra revision time for topics you want to strengthen.
-                </p>
-              </div>
-            </div>
-          </motion.div>
         </div>
 
-        {/* Right Column: Progress Card, Weak/Strong Badges, Recent Activities */}
+        {/* Right Column: Progress Card, Pomodoro, Gamification, Topics */}
         <div className="space-y-6">
           {/* Circular Completion Progress Ring */}
           <motion.div variants={itemVariants}>
             <ProgressCard metrics={metrics} />
+          </motion.div>
+
+          {/* Feature 10: Pomodoro Study Focus Timer */}
+          <motion.div variants={itemVariants}>
+            <PomodoroTimer />
+          </motion.div>
+
+          {/* Feature 6: Gamification Achievements */}
+          <motion.div variants={itemVariants}>
+            <GamificationBadges />
           </motion.div>
 
           {/* Subject Review Topics */}
@@ -279,28 +298,11 @@ export default function Dashboard() {
               </div>
             </div>
           </motion.div>
-
-          {/* Recent Learning Activities */}
-          <motion.div variants={itemVariants} className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
-            <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-sm">
-              <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center">
-                <Activity className="w-[22px] h-[22px] text-[#2563EB]" />
-              </div>
-              <span>Recent Activities</span>
-            </div>
-
-            <div className="space-y-3 text-xs font-inter">
-              <div className="flex items-start gap-3 p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
-                <CheckCircle2 className="w-[18px] h-[18px] text-[#22C55E] shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-semibold text-[#1E293B]">Welcome, {user?.name}!</div>
-                  <div className="text-[10px] text-[#64748B]">Your study companion is ready to build your study schedule.</div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </div>
+
+      {/* Feature 2: Floating AI Chat Tutor Assistant */}
+      <ChatTutor topic={weakSubjects[0] || "Computer Science"} />
     </motion.div>
   );
 }
