@@ -83,7 +83,75 @@
   }
 }
 
-/* Custom Scrollbars for Light Theme */
+/* =========================================================
+   NIGHT THEME (DARK MODE) COMPREHENSIVE OVERRIDES
+   ========================================================= */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+}
+
+.dark .bg-grid-pattern {
+  background-color: #0F172A !important;
+  background-image: linear-gradient(to right, rgba(51, 65, 85, 0.4) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(51, 65, 85, 0.4) 1px, transparent 1px) !important;
+}
+
+.dark .glass-card {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .glass-card-hover:hover {
+  background-color: #1E293B !important;
+  border-color: #38BDF8 !important;
+  box-shadow: 0 12px 30px -4px rgba(56, 189, 248, 0.25) !important;
+}
+
+.dark .glass-input {
+  background-color: #0F172A !important;
+  border-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+
+.dark .glass-input:focus {
+  border-color: #38BDF8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+}
+
+.dark header {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: #334155 !important;
+}
+
+.dark aside {
+  background-color: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+.dark select option {
+  background-color: #1E293B;
+  color: #F8FAFC;
+}
+
+/* Custom Scrollbars for Dark Theme */
+.dark ::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Standard Scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
