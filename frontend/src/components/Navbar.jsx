@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import { dashboardAPI } from '../services/api';
-import { Sun, Moon, Flame, LogOut, Search, Sparkles, Bot, Command } from 'lucide-react';
+import { Flame, LogOut, Search, Sparkles, Bot, Command } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const { darkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -107,16 +105,6 @@ export default function Navbar() {
           <Flame className="w-4 h-4 fill-[#F59E0B] text-[#D97706] animate-bounce" />
           <span>{streakCount} Day Streak</span>
         </div>
-
-        <motion.button
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.94 }}
-          onClick={toggleTheme}
-          className="p-2.5 rounded-2xl bg-[#F8FBFF] hover:bg-[#EFF6FF] text-[#64748B] hover:text-[#2563EB] border border-[#E2E8F0] transition-colors shadow-xs"
-          title="Toggle Dark/Light Theme"
-        >
-          {darkMode ? <Sun className="w-4 h-4 text-[#F59E0B]" /> : <Moon className="w-4 h-4 text-[#64748B]" />}
-        </motion.button>
 
         {user ? (
           <div className="flex items-center gap-2.5">
