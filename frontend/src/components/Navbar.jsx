@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { dashboardAPI } from '../services/api';
 import { Sun, Moon, Flame, LogOut, Search, Sparkles, Bot, Command } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -11,6 +12,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [streakCount, setStreakCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +25,18 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      dashboardAPI.getDashboard()
+        .then((res) => {
+          if (res.data && typeof res.data.study_streak_days === 'number') {
+            setStreakCount(res.data.study_streak_days);
+          }
+        })
+        .catch((err) => console.error("Streak fetch error:", err));
+    }
+  }, [user]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -91,7 +105,7 @@ export default function Navbar() {
       <div className="flex items-center gap-3">
         <div className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#D97706] text-xs font-inter font-bold shadow-xs">
           <Flame className="w-4 h-4 fill-[#F59E0B] text-[#D97706] animate-bounce" />
-          <span>5 Day Streak</span>
+          <span>{streakCount} Day Streak</span>
         </div>
 
         <motion.button
