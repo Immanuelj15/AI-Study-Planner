@@ -135,6 +135,49 @@
   border-color: #334155 !important;
 }
 
+/* Hardcoded hex color overrides for Dark Mode */
+.dark .bg-\[\#FFFFFF\],
+.dark .bg-white {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
+}
+
+.dark .bg-\[\#F8FBFF\],
+.dark .bg-\[\#EFF6FF\],
+.dark .bg-\[\#F0F9FF\],
+.dark .bg-\[\#F5F3FF\],
+.dark .bg-\[\#FDF2F8\],
+.dark .bg-\[\#F0FDF4\] {
+  background-color: #0F172A !important;
+  border-color: #334155 !important;
+}
+
+.dark .text-\[\#1E293B\],
+.dark .text-slate-900,
+.dark .text-slate-800 {
+  color: #F8FAFC !important;
+}
+
+.dark .text-\[\#64748B\],
+.dark .text-slate-500,
+.dark .text-slate-600 {
+  color: #94A3B8 !important;
+}
+
+.dark .border-\[\#E2E8F0\],
+.dark .border-\[\#DBEAFE\],
+.dark .border-slate-200 {
+  border-color: #334155 !important;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #0F172A !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+}
+
 .dark select option {
   background-color: #1E293B;
   color: #F8FAFC;
