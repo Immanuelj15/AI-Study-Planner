@@ -1,9 +1,13 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { Maximize2, Minimize2, Sparkles, BookOpen, Layers, X, Info } from 'lucide-react';
 
 export default function MindMapComponent({ mindmapData, topic }) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [selectedNodeData, setSelectedNodeData] = useState(null);
+
   const defaultNodes = [
     {
       id: 'root',
@@ -12,17 +16,17 @@ export default function MindMapComponent({ mindmapData, topic }) {
     },
     {
       id: 'def',
-      data: { label: '📖 Core Definition\nDivide & conquer search on sorted array' },
+      data: { label: '📖 Core Definition\nDivide & conquer search algorithm operating on sorted arrays.' },
       position: { x: 80, y: 170 }
     },
     {
       id: 'concepts',
-      data: { label: '💡 Key Invariants\nRequires sorted array & middle pointer logic' },
+      data: { label: '💡 Key Invariants\nRequires sorted array & calculated middle pointer logic.' },
       position: { x: 380, y: 170 }
     },
     {
       id: 'apps',
-      data: { label: '🚀 Applications\nDatabase indexing, B+ Trees & OS page lookup' },
+      data: { label: '🚀 Real-World Applications\nDatabase indexing, B+ Trees, OS memory page lookup.' },
       position: { x: 680, y: 170 }
     },
     {
@@ -32,7 +36,7 @@ export default function MindMapComponent({ mindmapData, topic }) {
     },
     {
       id: 'interview',
-      data: { label: '💼 Coding Interview Tip\nGuard against overflow: mid = low + (high-low)/2' },
+      data: { label: '💼 Exam & Interview Tip\nGuard against overflow: mid = low + (high-low)/2' },
       position: { x: 540, y: 310 }
     }
   ];
@@ -53,32 +57,58 @@ export default function MindMapComponent({ mindmapData, topic }) {
     return rawNodes.map((node, idx) => {
       const isRoot = node.id === '1' || node.id === 'root' || idx === 0;
       const rawLabel = typeof node.data?.label === 'string' ? node.data.label : (topic || 'Concept Node');
+      const lines = rawLabel.split('\n');
+      const headerText = lines[0];
+      const bodyText = lines.slice(1).join(' ');
+
+      // Color coding themes for sub-nodes
+      let nodeBg = '#FFFFFF';
+      let nodeBorder = '2px solid #E2E8F0';
+      let headerColor = 'text-[#1E293B]';
+
+      if (isRoot) {
+        nodeBg = 'linear-gradient(135deg, #2563EB 0%, #38BDF8 100%)';
+        nodeBorder = '2px solid #2563EB';
+        headerColor = 'text-white';
+      } else if (idx % 4 === 1) {
+        nodeBg = '#F0FDF4';
+        nodeBorder = '2px solid #86EFAC';
+      } else if (idx % 4 === 2) {
+        nodeBg = '#EFF6FF';
+        nodeBorder = '2px solid #BFDBFE';
+      } else if (idx % 4 === 3) {
+        nodeBg = '#FEF3C7';
+        nodeBorder = '2px solid #FDE68A';
+      } else {
+        nodeBg = '#F5F3FF';
+        nodeBorder = '2px solid #DDD6FE';
+      }
 
       return {
         ...node,
         data: {
           ...node.data,
+          rawHeader: headerText,
+          rawBody: bodyText,
           label: (
             <div className="flex flex-col items-center justify-center text-center p-1 space-y-1">
               <span className={`font-poppins tracking-tight ${isRoot ? 'text-base font-black text-white' : 'text-xs font-bold text-[#1E293B]'}`}>
-                {rawLabel.split('\n')[0]}
+                {headerText}
               </span>
-              {rawLabel.split('\n').length > 1 && (
-                <span className={`text-[11px] font-inter font-medium leading-tight max-w-[220px] ${isRoot ? 'text-blue-100' : 'text-[#64748B]'}`}>
-                  {rawLabel.split('\n').slice(1).join(' ')}
+              {bodyText && (
+                <span className={`text-[11px] font-inter font-medium leading-relaxed max-w-[220px] ${isRoot ? 'text-blue-100' : 'text-[#64748B]'}`}>
+                  {bodyText}
                 </span>
               )}
             </div>
           )
         },
         style: {
-          background: isRoot
-            ? 'linear-gradient(135deg, #2563EB 0%, #38BDF8 100%)'
-            : '#FFFFFF',
+          background: nodeBg,
           color: isRoot ? '#FFFFFF' : '#1E293B',
-          borderRadius: isRoot ? '20px' : '16px',
+          borderRadius: isRoot ? '22px' : '18px',
           padding: isRoot ? '14px 24px' : '12px 18px',
-          border: isRoot ? '2px solid #2563EB' : '2px solid #E2E8F0',
+          border: nodeBorder,
           boxShadow: isRoot
             ? '0 10px 30px rgba(37, 99, 235, 0.35)'
             : '0 4px 20px rgba(37, 99, 235, 0.08)',
@@ -101,22 +131,89 @@ export default function MindMapComponent({ mindmapData, topic }) {
     return defaultEdges;
   }, [mindmapData]);
 
+  const handleNodeClick = (event, node) => {
+    setSelectedNodeData({
+      header: node.data?.rawHeader || 'Concept Node',
+      body: node.data?.rawBody || 'Explore concepts and study relationships.'
+    });
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
+      initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="w-full h-[620px] glass-card rounded-3xl border border-[#E2E8F0] relative overflow-hidden shadow-soft bg-[#FFFFFF]"
+      className={`w-full glass-card rounded-3xl border border-[#E2E8F0] relative overflow-hidden shadow-soft bg-[#FFFFFF] transition-all duration-300 ${
+        isFullscreen ? 'fixed inset-0 z-50 rounded-none h-screen' : 'h-[640px]'
+      }`}
     >
-      <div className="absolute top-4 left-4 z-10 bg-[#FFFFFF]/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-[#E2E8F0] text-xs font-poppins font-bold text-[#1E293B] shadow-sm flex items-center gap-2">
-        <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] animate-ping"></span>
-        <span>Interactive Visual Concept Graph: {topic || 'Binary Search'}</span>
+      {/* Header Info Pill */}
+      <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2">
+        <div className="bg-[#FFFFFF]/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-[#E2E8F0] text-xs font-poppins font-bold text-[#1E293B] shadow-xs flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] animate-ping"></span>
+          <span>Concept Map: {topic || 'Binary Search'}</span>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[11px] font-inter font-bold text-[#2563EB] shadow-xs">
+          <Layers className="w-3.5 h-3.5" />
+          <span>{nodes.length} Concept Nodes • {edges.length} Connections</span>
+        </div>
       </div>
 
-      <ReactFlow nodes={nodes} edges={edges} fitView>
+      {/* Action Controls Top Right */}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setIsFullscreen(!isFullscreen)}
+          className="p-2.5 rounded-2xl bg-[#FFFFFF]/95 hover:bg-[#EFF6FF] text-[#2563EB] border border-[#E2E8F0] shadow-xs flex items-center gap-1.5 text-xs font-inter font-bold backdrop-blur-md"
+          title={isFullscreen ? "Exit Full Screen" : "Full Screen Mode"}
+        >
+          {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          <span className="hidden sm:inline">{isFullscreen ? 'Exit Full Screen' : 'Full Screen'}</span>
+        </motion.button>
+      </div>
+
+      {/* React Flow Canvas */}
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodeClick={handleNodeClick}
+        fitView
+      >
         <Background color="#CBD5E1" gap={20} size={1} />
-        <Controls className="bg-[#FFFFFF] text-[#1E293B] border-[#E2E8F0] rounded-xl shadow-sm" />
-        <MiniMap nodeColor="#2563EB" maskColor="rgba(248, 251, 255, 0.7)" className="bg-[#FFFFFF] border-[#E2E8F0] rounded-2xl shadow-sm" />
+        <Controls className="bg-[#FFFFFF] text-[#1E293B] border-[#E2E8F0] rounded-2xl shadow-xs" />
+        <MiniMap nodeColor="#2563EB" maskColor="rgba(248, 251, 255, 0.7)" className="bg-[#FFFFFF] border-[#E2E8F0] rounded-2xl shadow-xs hidden sm:block" />
       </ReactFlow>
+
+      {/* Node Detail Popup Modal */}
+      <AnimatePresence>
+        {selectedNodeData && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute bottom-6 left-6 right-6 sm:left-auto sm:right-6 sm:max-w-md z-30 p-5 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-2xl space-y-3 font-inter"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#2563EB]">
+                <Info className="w-4 h-4 text-[#2563EB]" />
+                <span>Node Details</span>
+              </div>
+              <button
+                onClick={() => setSelectedNodeData(null)}
+                className="p-1 rounded-lg hover:bg-[#F1F5F9] text-[#94A3B8] hover:text-[#1E293B]"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-1">
+              <h4 className="font-poppins font-bold text-sm text-[#1E293B]">{selectedNodeData.header}</h4>
+              <p className="text-xs text-[#64748B] leading-relaxed">{selectedNodeData.body || 'Core concept details for exam review.'}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
