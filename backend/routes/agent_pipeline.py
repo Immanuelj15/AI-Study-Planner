@@ -78,15 +78,26 @@ def generate_quiz(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    from models.models import QuestionHistory
+
+    # Fetch previously asked questions for anti-duplication history
+    history_records = db.query(QuestionHistory).filter(QuestionHistory.topic == req.topic).all()
+    existing_questions = [h.question for h in history_records if h.question]
+
+    # Calculate attempt count
+    attempt_count = len(history_records) // 15 + 1
+
     questions = autogen_manager.quiz_agent.execute(
         topic=req.topic,
         summary_text=req.summary_text or "",
         difficulty=req.difficulty or "Medium",
-        num_questions=req.num_questions or 5
+        num_questions=15,
+        existing_questions=existing_questions
     )
 
     saved_quizzes = []
     for q in questions:
+        # Save to Quiz table
         quiz_obj = Quiz(
             subject_id=req.subject_id,
             topic=req.topic,
@@ -94,16 +105,28 @@ def generate_quiz(
             options=json.dumps(q.get("options", [])),
             answer=q.get("answer", ""),
             explanation=q.get("explanation", ""),
-            difficulty=q.get("difficulty", "Medium")
+            difficulty=q.get("difficulty", req.difficulty or "Medium")
         )
         db.add(quiz_obj)
         db.commit()
         db.refresh(quiz_obj)
         
+        # Save to QuestionHistory table for anti-duplication tracking
+        history_obj = QuestionHistory(
+            topic=req.topic,
+            question=q.get("question", ""),
+            difficulty=q.get("difficulty", req.difficulty or "Medium"),
+            attempt_number=attempt_count,
+            is_used=1
+        )
+        db.add(history_obj)
+        db.commit()
+
         q["id"] = quiz_obj.id
         saved_quizzes.append(q)
 
     return saved_quizzes
+
 
 
 @router.post("/generate-plan", response_model=List[StudyPlanResponse])

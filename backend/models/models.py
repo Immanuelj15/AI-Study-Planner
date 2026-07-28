@@ -97,3 +97,15 @@ class QuizResult(Base):
     user = relationship("User", back_populates="quiz_results")
     subject = relationship("Subject", back_populates="quiz_results")
     quiz = relationship("Quiz", back_populates="quiz_results")
+
+
+class QuestionHistory(Base):
+    __tablename__ = "question_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    topic = Column(String(200), nullable=False)
+    question = Column(Text, nullable=False)
+    difficulty = Column(String(50), default="Medium")
+    attempt_number = Column(Integer, default=1)
+    generated_at = Column(DateTime, default=datetime.datetime.utcnow)
+    is_used = Column(Integer, default=1)

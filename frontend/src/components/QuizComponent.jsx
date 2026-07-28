@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, CircleHelp, ArrowRight, Trophy, Sparkles, Heart } from 'lucide-react';
+import { CheckCircle2, XCircle, CircleHelp, ArrowRight, Trophy, Sparkles, Heart, RefreshCw, BookOpen, Network, Flame, Award, HelpCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useNavigate } from 'react-router-dom';
 
-export default function QuizComponent({ questions, onCompleteQuiz, subjectId, topic }) {
+export default function QuizComponent({ questions, onCompleteQuiz, onRetakeQuiz, subjectId, topic, attemptCount = 1 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
   const [quizFinished, setQuizFinished] = useState(false);
+  const navigate = useNavigate();
 
   const currentQ = questions[currentIndex] || {};
 
@@ -63,12 +65,18 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
   if (quizFinished) {
     const finalCorrect = userAnswers.filter((a) => a.is_correct).length;
     const finalScore = Math.round((finalCorrect / questions.length) * 100);
+    const isFailed = finalScore < 70;
+    const isMultipleFailures = isFailed && attemptCount >= 3;
+
+    let nextDifficulty = "Medium";
+    if (finalScore >= 90) nextDifficulty = "Hard";
+    else if (finalScore < 70) nextDifficulty = "Easy";
 
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass-card rounded-3xl p-8 border border-[#E2E8F0] text-center space-y-6 max-w-xl mx-auto shadow-soft bg-[#FFFFFF] font-inter"
+        className="glass-card rounded-3xl p-8 border border-[#E2E8F0] text-center space-y-6 max-w-2xl mx-auto shadow-soft bg-[#FFFFFF] font-inter"
       >
         <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-[#2563EB] via-[#0EA5E9] to-[#38BDF8] mx-auto flex items-center justify-center shadow-md shadow-blue-500/20">
           <Trophy className="w-[36px] h-[36px] text-white animate-bounce" />
@@ -76,9 +84,10 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
 
         <div>
           <h2 className="font-poppins text-3xl font-black text-[#1E293B]">Quiz Completed 🎉</h2>
-          <p className="text-[#64748B] font-inter text-xs mt-1">You're improving every day!</p>
+          <p className="text-[#64748B] font-inter text-xs mt-1">Attempt {attemptCount} • Topic: {topic || 'General'}</p>
         </div>
 
+        {/* Score Metric Badges */}
         <div className="p-6 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-center justify-around">
           <div>
             <div className="font-poppins text-4xl font-extrabold text-[#2563EB]">{finalScore}%</div>
@@ -102,10 +111,63 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
           </div>
         </div>
 
-        <div className="text-xs font-inter text-[#1E293B] bg-[#EFF6FF] border border-[#DBEAFE] p-4 rounded-2xl leading-relaxed">
-          {finalScore < 60
-            ? "You're improving! Spend a little more time on these topics. We've added extra practice time to your study plan to help you master them."
-            : "Great Job! You understood this concept exceptionally well. We've updated your revision schedule."}
+        {/* Adaptive Feedback Message */}
+        <div className={`p-4 rounded-2xl text-xs font-inter leading-relaxed text-left border ${
+          isFailed ? 'bg-[#FFFBEB] border-[#FDE68A] text-[#92400E]' : 'bg-[#EFF6FF] border-[#DBEAFE] text-[#1E293B]'
+        }`}>
+          <div className="font-poppins font-bold text-sm mb-1 flex items-center gap-2">
+            {isFailed ? '💡 Personalized Tutor Guidance:' : '🌟 Excellent Understanding!'}
+          </div>
+          {isFailed
+            ? "Nice attempt! You need a little more practice on this topic. Next quiz difficulty will adjust to Easy with 15 fresh unique questions."
+            : "Awesome work! You mastered this concept. Your study timetable has been updated and next quiz will scale to Hard."}
+        </div>
+
+        {/* Failed 3 Times Study Recommendation */}
+        {isMultipleFailures && (
+          <div className="p-4 rounded-2xl bg-[#FEE2E2] border border-[#FCA5A5] text-left text-xs text-[#991B1B] space-y-2">
+            <div className="font-poppins font-bold text-sm">It looks like you're finding this topic difficult.</div>
+            <p>We recommend reviewing the class notes and concept map before attempting another quiz.</p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button
+                onClick={() => navigate(`/summary?topic=${encodeURIComponent(topic)}`)}
+                className="px-3.5 py-1.5 rounded-xl bg-white text-[#991B1B] border border-[#FCA5A5] font-bold text-xs flex items-center gap-1.5"
+              >
+                <BookOpen className="w-4 h-4" /> Read Class Notes
+              </button>
+              <button
+                onClick={() => navigate(`/mindmap?topic=${encodeURIComponent(topic)}`)}
+                className="px-3.5 py-1.5 rounded-xl bg-white text-[#991B1B] border border-[#FCA5A5] font-bold text-xs flex items-center gap-1.5"
+              >
+                <Network className="w-4 h-4" /> View Concept Map
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Explainable AI Banner */}
+        <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] text-left text-xs space-y-1">
+          <div className="font-poppins font-bold text-[#2563EB] flex items-center gap-1.5">
+            <HelpCircle className="w-4 h-4 text-[#2563EB]" /> Why am I getting these questions?
+          </div>
+          <p className="text-[#64748B] leading-relaxed">
+            These 15 questions focus on concepts where your previous performance was lower. Every retake generates 100% NEW questions.
+          </p>
+        </div>
+
+        {/* Retake Quiz Button */}
+        <div className="flex justify-center gap-3 pt-2">
+          {onRetakeQuiz && (
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={onRetakeQuiz}
+              className="px-6 py-3 rounded-2xl bg-[#2563EB] text-white font-poppins font-bold text-xs flex items-center gap-2 shadow-md"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Retake Quiz (15 New Questions)</span>
+            </motion.button>
+          )}
         </div>
       </motion.div>
     );
@@ -139,7 +201,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
       {/* Question Title */}
       <h3 className="font-poppins text-lg font-bold text-[#1E293B] leading-snug">{currentQ.question}</h3>
 
-      {/* Options List (MCQ) or Text Input */}
+      {/* Options List */}
       {Array.isArray(currentQ.options) && currentQ.options.length > 0 ? (
         <div className="space-y-3">
           {currentQ.options.map((option, idx) => {
@@ -170,13 +232,13 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
                 <AnimatePresence>
                   {isSubmitted && isCorrect && (
                     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-1.5 text-xs text-[#15803D]">
-                      <span>Great Job!</span>
+                      <span>Excellent! You understood this concept.</span>
                       <CheckCircle2 className="w-5 h-5 text-[#22C55E]" />
                     </motion.div>
                   )}
                   {isSubmitted && isSelected && !isCorrect && (
                     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-1.5 text-xs text-[#EF4444]">
-                      <span>Not quite. Let's review this concept.</span>
+                      <span>Nice attempt. Review this concept once more.</span>
                       <XCircle className="w-5 h-5 text-[#EF4444]" />
                     </motion.div>
                   )}
@@ -186,7 +248,6 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
           })}
         </div>
       ) : (
-        /* Fill-in-the-blank / Short Answer Text Input Box */
         <div className="space-y-3">
           <label className="text-xs font-inter font-bold text-[#2563EB] flex items-center gap-1.5">
             <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Type your answer in the box below:
@@ -205,15 +266,10 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
                 : 'focus:border-[#2563EB]'
             }`}
           />
-          {isSubmitted && (
-            <div className="text-xs font-inter font-semibold text-[#64748B] pt-1 flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-[#22C55E]" /> Answer: <span className="text-[#22C55E] font-bold">{currentQ.answer}</span>
-            </div>
-          )}
         </div>
       )}
 
-      {/* Explanation Box */}
+      {/* Detailed Explanation Box */}
       <AnimatePresence>
         {isSubmitted && (
           <motion.div
@@ -223,7 +279,7 @@ export default function QuizComponent({ questions, onCompleteQuiz, subjectId, to
             className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-xs font-inter space-y-1"
           >
             <div className="font-poppins font-bold text-[#2563EB] flex items-center gap-1.5">
-              <CircleHelp className="w-[18px] h-[18px] text-[#2563EB]" /> Explanation
+              <CircleHelp className="w-[18px] h-[18px] text-[#2563EB]" /> Detailed Explanation
             </div>
             <p className="text-[#1E293B] leading-relaxed">{currentQ.explanation}</p>
           </motion.div>

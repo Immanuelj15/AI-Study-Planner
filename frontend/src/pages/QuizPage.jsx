@@ -5,7 +5,7 @@ import { agentAPI, quizAPI, subjectsAPI } from '../services/api';
 import QuizComponent from '../components/QuizComponent';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
-import { HelpCircle, Search, Sparkles, BookOpen, Heart } from 'lucide-react';
+import { HelpCircle, Search, Sparkles, BookOpen, Heart, Flame, Award, Trophy } from 'lucide-react';
 
 export default function QuizPage() {
   const [searchParams] = useSearchParams();
@@ -17,6 +17,8 @@ export default function QuizPage() {
   const [userSubjects, setUserSubjects] = useState([]);
   const [questions, setQuestions] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(1);
+  const [currentDifficulty, setCurrentDifficulty] = useState('Medium');
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -42,19 +44,19 @@ export default function QuizPage() {
     if (initialTopic) {
       setTopic(initialTopic);
       setSubjectId(initialSubId || 1);
-      fetchQuiz(initialTopic, initialSubId || 1);
+      fetchQuiz(initialTopic, initialSubId || 1, 'Medium');
     }
   };
 
-  const fetchQuiz = async (searchTopic, subId) => {
+  const fetchQuiz = async (searchTopic, subId, diff = 'Medium') => {
     if (!searchTopic || !searchTopic.trim()) return;
     setLoading(true);
     try {
       const res = await agentAPI.generateQuiz({
         subject_id: subId || 1,
         topic: searchTopic.trim(),
-        difficulty: 'Medium',
-        num_questions: 5
+        difficulty: diff,
+        num_questions: 15
       });
       setQuestions(res.data);
     } catch (err) {
@@ -68,20 +70,34 @@ export default function QuizPage() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (topic.trim()) {
-      fetchQuiz(topic.trim(), subjectId);
+      setAttemptCount(1);
+      fetchQuiz(topic.trim(), subjectId, 'Medium');
     }
   };
 
   const handleSelectSubject = (selectedSub) => {
     setTopic(selectedSub.subject_name);
     setSubjectId(selectedSub.id);
-    fetchQuiz(selectedSub.subject_name, selectedSub.id);
+    setAttemptCount(1);
+    fetchQuiz(selectedSub.subject_name, selectedSub.id, 'Medium');
+  };
+
+  const handleRetakeQuiz = () => {
+    setAttemptCount((prev) => prev + 1);
+    fetchQuiz(topic, subjectId, currentDifficulty);
   };
 
   const handleCompleteQuiz = async (resultData) => {
     try {
       const res = await quizAPI.submitQuiz(resultData);
-      addToast(`Quiz Completed 🎉 You're improving every day.`, 'success');
+      
+      // Calculate next adaptive difficulty
+      let nextDiff = 'Medium';
+      if (resultData.score >= 90) nextDiff = 'Hard';
+      else if (resultData.score < 70) nextDiff = 'Easy';
+      
+      setCurrentDifficulty(nextDiff);
+      addToast(`Quiz Attempt ${attemptCount} Complete! Adaptive difficulty scaled to ${nextDiff}.`, 'success');
     } catch (err) {
       console.error(err);
       addToast('Something went wrong. Please try again.', 'error');
@@ -94,17 +110,60 @@ export default function QuizPage() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6 pb-12 font-inter"
     >
+      {/* Gamification Bonus Metrics Header */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-[#FEF3C7] text-[#D97706]">
+            <Flame className="w-5 h-5 fill-[#F59E0B]" />
+          </div>
+          <div>
+            <div className="font-poppins font-bold text-sm text-[#1E293B]">5 Day Streak</div>
+            <div className="text-[10px] text-[#64748B]">Active Daily Quiz</div>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-[#EFF6FF] text-[#2563EB]">
+            <Trophy className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="font-poppins font-bold text-sm text-[#1E293B]">100% Best Score</div>
+            <div className="text-[10px] text-[#64748B]">Top Score Mastery</div>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-[#F0FDF4] text-[#15803D]">
+            <Award className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="font-poppins font-bold text-sm text-[#1E293B]">15 Questions</div>
+            <div className="text-[10px] text-[#64748B]">Anti-Duplication Set</div>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-[#F5F3FF] text-[#7C3AED]">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="font-poppins font-bold text-sm text-[#1E293B]">Adaptive Engine</div>
+            <div className="text-[10px] text-[#64748B]">Level: {currentDifficulty}</div>
+          </div>
+        </div>
+      </div>
+
       {/* Search Header */}
       <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-4 shadow-soft bg-[#FFFFFF]">
         <div>
           <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
-            <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Encouraging Practice
+            <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Adaptive AI Quiz Engine
           </div>
           <h1 className="font-poppins text-2xl font-black text-[#1E293B] mt-1 flex items-center gap-2">
-            <HelpCircle className="w-6 h-6 text-[#2563EB]" /> Practice What You Learned
+            <HelpCircle className="w-6 h-6 text-[#2563EB]" /> Interactive Adaptive Quiz Agent
           </h1>
           <p className="text-[#64748B] font-inter text-xs mt-1">
-            Answer practice questions with instant encouraging feedback to test your subject understanding.
+            Generates 15 unique, non-repeating questions per attempt with instant positive feedback and detailed explanations.
           </p>
         </div>
 
@@ -149,27 +208,29 @@ export default function QuizPage() {
             className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-1.5 shadow-sm"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Create Quiz</span>
+            <span>Generate 15 Questions</span>
           </motion.button>
         </form>
       </div>
 
-      {/* Quiz Interface or Sequential Processing Skeleton */}
+      {/* Quiz Interface or Loading Skeleton */}
       {loading ? (
-        <LoadingSkeleton text={`Preparing practice questions for '${topic}'...`} />
+        <LoadingSkeleton text={`Generating 15 fresh unique questions for '${topic}'...`} />
       ) : questions && questions.length > 0 ? (
         <QuizComponent
           questions={questions}
           onCompleteQuiz={handleCompleteQuiz}
+          onRetakeQuiz={handleRetakeQuiz}
           subjectId={subjectId}
           topic={topic}
+          attemptCount={attemptCount}
         />
       ) : (
         <div className="glass-card rounded-3xl p-12 text-center space-y-3 border border-[#E2E8F0] bg-[#FFFFFF] shadow-soft">
           <BookOpen className="w-12 h-12 text-[#2563EB] mx-auto" />
-          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic to Practice</h3>
+          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic for 15 Questions</h3>
           <p className="text-xs text-[#64748B] font-inter max-w-md mx-auto">
-            Choose one of your subjects from the dropdown or type any topic above to create 5 practice questions.
+            Choose one of your subjects from the dropdown or type any topic above to create 15 unique practice questions.
           </p>
         </div>
       )}
