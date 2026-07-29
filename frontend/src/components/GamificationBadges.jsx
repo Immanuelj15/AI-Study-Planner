@@ -58,45 +58,50 @@ const badgesList = [
 export default function GamificationBadges() {
   return (
     <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft font-inter">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-base">
-          <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-base min-w-0">
+          <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center shrink-0">
             <Award className="w-5 h-5 text-[#2563EB]" />
           </div>
-          <div>
-            <div>Learning Achievements</div>
-            <div className="text-[11px] text-[#64748B] font-normal">Earn badges as you complete study goals</div>
+          <div className="min-w-0">
+            <div className="truncate">Learning Achievements</div>
+            <div className="text-[11px] text-[#64748B] font-normal truncate">Earn badges as you complete goals</div>
           </div>
         </div>
-        <span className="text-xs font-inter font-bold text-[#2563EB]">4 of 5 Unlocked</span>
+        <span className="px-2.5 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE] text-[11px] font-inter font-bold shrink-0">
+          4 of 5 Unlocked
+        </span>
       </div>
 
-      {/* Badges Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      {/* Badges List */}
+      <div className="space-y-2.5">
         {badgesList.map((b) => {
           const Icon = b.icon;
           return (
             <motion.div
               key={b.id}
-              whileHover={{ y: -4 }}
-              className={`p-3.5 rounded-2xl border text-center space-y-2 relative transition-all ${
+              whileHover={{ x: 4 }}
+              className={`p-3 rounded-2xl border flex items-center gap-3 transition-all ${
                 b.unlocked ? 'shadow-xs' : 'opacity-60 grayscale'
               }`}
               style={{ backgroundColor: b.bg, borderColor: b.border }}
             >
-              {b.unlocked && (
-                <CheckCircle2 className="w-4 h-4 text-[#22C55E] absolute top-2 right-2" />
-              )}
               <div
-                className="w-10 h-10 rounded-xl mx-auto flex items-center justify-center border shadow-2xs"
+                className="w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 shadow-2xs"
                 style={{ backgroundColor: `${b.color}20`, borderColor: b.border, color: b.color }}
               >
                 <Icon className="w-5 h-5" />
               </div>
-              <div>
-                <div className="font-poppins font-bold text-xs text-[#1E293B]">{b.title}</div>
-                <div className="text-[10px] text-[#64748B] font-medium leading-tight mt-0.5">{b.desc}</div>
+              <div className="flex-1 min-w-0">
+                <div className="font-poppins font-bold text-xs text-[#1E293B] truncate">{b.title}</div>
+                <div className="text-[11px] text-[#64748B] font-medium leading-tight truncate">{b.desc}</div>
               </div>
+              {b.unlocked ? (
+                <CheckCircle2 className="w-4.5 h-4.5 text-[#22C55E] shrink-0" />
+              ) : (
+                <span className="text-[10px] text-[#64748B] font-bold shrink-0">Locked</span>
+              )}
             </motion.div>
           );
         })}
