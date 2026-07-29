@@ -3,11 +3,63 @@ import json
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database.session import get_db
-from models.models import User, Subject, StudyPlan, QuizResult
+from models.models import User, Subject, StudyPlan, QuizResult, Summary
 from schemas.schemas import DashboardMetrics
 from services.auth import get_current_user
 
 router = APIRouter(tags=["Dashboard"])
+
+def calculate_user_streak(user_id: int, db: Session) -> int:
+    """
+    Calculates consecutive daily study streak:
+    Counts consecutive days backward from today where the user performed ANY activity:
+    - Logged in / opened dashboard today
+    - Completed a study plan task
+    - Submitted a practice quiz
+    - Generated notes / mind maps
+    """
+    today = datetime.date.today()
+    active_dates = set()
+
+    # 1. Registered today's active session
+    active_dates.add(today)
+
+    # 2. Dates of completed study plans
+    completed_plans = db.query(StudyPlan).filter(
+        StudyPlan.user_id == user_id,
+        StudyPlan.status == "Completed"
+    ).all()
+    for p in completed_plans:
+        if p.study_date:
+            try:
+                active_dates.add(datetime.datetime.strptime(p.study_date, "%Y-%m-%d").date())
+            except Exception:
+                pass
+
+    # 3. Dates of practice quizzes taken
+    quiz_results = db.query(QuizResult).filter(QuizResult.user_id == user_id).all()
+    for q in quiz_results:
+        if q.created_at:
+            active_dates.add(q.created_at.date())
+
+    # 4. Dates of generated notes/summaries
+    user_subjects = db.query(Subject).filter(Subject.user_id == user_id).all()
+    sub_ids = [s.id for s in user_subjects]
+    if sub_ids:
+        summaries = db.query(Summary).filter(Summary.subject_id.in_(sub_ids)).all()
+        for sm in summaries:
+            if sm.created_at:
+                active_dates.add(sm.created_at.date())
+
+    # 5. Count consecutive active days backwards from today
+    streak = 0
+    check_date = today
+    while check_date in active_dates:
+        streak += 1
+        check_date -= datetime.timedelta(days=1)
+
+    return streak
+
 
 @router.get("/dashboard", response_model=DashboardMetrics)
 def get_dashboard_metrics(
@@ -67,7 +119,7 @@ def get_dashboard_metrics(
         "subject_breakdown": {s: round(sum(scores)/len(scores), 1) for s, scores in subject_scores.items()}
     }
 
-    # 4. Weekly Progress Chart Data (Real data for current_user)
+    # 4. Weekly Progress Chart Data
     weekly_progress = []
     days_of_week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     today_day = datetime.date.today().weekday()
@@ -87,7 +139,7 @@ def get_dashboard_metrics(
             "completed": round(hours_done, 1)
         })
 
-    # 5. Calculate Real Exam Countdown & Study Streak for current_user
+    # 5. Calculate Real Exam Countdown
     upcoming_days = 0
     if all_plans:
         try:
@@ -99,7 +151,8 @@ def get_dashboard_metrics(
         except Exception:
             upcoming_days = 0
 
-    streak_days = len(completed_plans) if len(completed_plans) > 0 else 0
+    # 6. Dynamic Study Streak Calculation
+    streak_days = calculate_user_streak(current_user.id, db)
 
     return {
         "upcoming_exam_days": upcoming_days,
