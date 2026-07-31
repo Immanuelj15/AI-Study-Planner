@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, CheckCircle2, Info } from 'lucide-react';
+import { Flame, CheckCircle2 } from 'lucide-react';
 
-export default function StudyHeatmap({ streak = 5 }) {
+export default function StudyHeatmap({ streak = 1 }) {
   const [hoveredDay, setHoveredDay] = useState(null);
 
-  // Generate 26 weeks x 7 days grid (182 cells) with rich interactive metadata
+  // Generate 26 weeks x 7 days grid (182 cells total)
+  const totalCells = 182;
+  const activeCount = Math.max(1, Math.min(streak, totalCells));
+  const activeStartIndex = totalCells - activeCount;
+
   const weeks = Array.from({ length: 26 }, (_, weekIdx) => {
     return Array.from({ length: 7 }, (_, dayIdx) => {
       const cellId = weekIdx * 7 + dayIdx;
-      const isRecentActive = cellId >= 170 && cellId < 170 + streak;
-      const isRandomActive = (cellId * 13) % 7 === 0 || (cellId * 17) % 11 === 0;
-      const isActive = isRecentActive || isRandomActive;
+      const isActive = cellId >= activeStartIndex;
 
-      const studyHours = isActive ? (isRecentActive ? 2.5 : 1.5) : 0;
-      const quizDone = isActive ? (isRecentActive ? '1 Quiz (85%)' : 'None') : 'None';
+      const studyHours = isActive ? 2.5 : 0;
+      const quizDone = isActive ? '1 Quiz (85%)' : 'None';
       const revisionStatus = isActive ? 'Completed' : 'Rest Day';
 
-      const intensity = isRecentActive
+      const intensity = isActive
         ? 'bg-[#2563EB] shadow-xs'
-        : isActive
-        ? 'bg-[#38BDF8]/70'
         : 'bg-[#EFF6FF] border-[#DBEAFE]';
 
       return {
@@ -45,7 +45,7 @@ export default function StudyHeatmap({ streak = 5 }) {
           </div>
           <div>
             <div>Study Consistency Heatmap</div>
-            <div className="text-[11px] text-[#64748B] font-normal">Hover over any day box to inspect study metrics</div>
+            <div className="text-[11px] text-[#64748B] font-normal">Hover over any day box to inspect daily study metrics</div>
           </div>
         </div>
 
@@ -90,7 +90,7 @@ export default function StudyHeatmap({ streak = 5 }) {
             <div className="text-[11px] text-slate-300 grid grid-cols-2 gap-2 pt-1 font-inter">
               <div>📚 Study: <span className="font-bold text-white">{hoveredDay.hours} Hrs</span></div>
               <div>🏆 Quiz: <span className="font-bold text-white">{hoveredDay.quiz}</span></div>
-              <div>🔄 Revision: <span className="font-bold text-white">{hoveredDay.revision}</span></div>
+              <div>🔄 Status: <span className="font-bold text-white">{hoveredDay.revision}</span></div>
             </div>
           </motion.div>
         )}
