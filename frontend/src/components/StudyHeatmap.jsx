@@ -1,23 +1,43 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Flame, Calendar, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Flame, CheckCircle2, Info } from 'lucide-react';
 
 export default function StudyHeatmap({ streak = 5 }) {
-  // Generate 52 weeks x 7 days grid (364 cells)
+  const [hoveredDay, setHoveredDay] = useState(null);
+
+  // Generate 26 weeks x 7 days grid (182 cells) with rich interactive metadata
   const weeks = Array.from({ length: 26 }, (_, weekIdx) => {
     return Array.from({ length: 7 }, (_, dayIdx) => {
-      // Simulate active days based on student activity
       const cellId = weekIdx * 7 + dayIdx;
-      const isRecentActive = cellId >= 175 && cellId < 175 + streak;
+      const isRecentActive = cellId >= 170 && cellId < 170 + streak;
       const isRandomActive = (cellId * 13) % 7 === 0 || (cellId * 17) % 11 === 0;
       const isActive = isRecentActive || isRandomActive;
-      const intensity = isRecentActive ? 'bg-[#2563EB]' : isActive ? 'bg-[#38BDF8]/60' : 'bg-[#EFF6FF]';
-      return { id: cellId, active: isActive, intensity };
+
+      const studyHours = isActive ? (isRecentActive ? 2.5 : 1.5) : 0;
+      const quizDone = isActive ? (isRecentActive ? '1 Quiz (85%)' : 'None') : 'None';
+      const revisionStatus = isActive ? 'Completed' : 'Rest Day';
+
+      const intensity = isRecentActive
+        ? 'bg-[#2563EB] shadow-xs'
+        : isActive
+        ? 'bg-[#38BDF8]/70'
+        : 'bg-[#EFF6FF] border-[#DBEAFE]';
+
+      return {
+        id: cellId,
+        week: weekIdx + 1,
+        dayNum: dayIdx + 1,
+        active: isActive,
+        hours: studyHours,
+        quiz: quizDone,
+        revision: revisionStatus,
+        intensity
+      };
     });
   });
 
   return (
-    <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft font-inter">
+    <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft font-inter relative">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-base">
           <div className="w-10 h-10 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] flex items-center justify-center">
@@ -25,7 +45,7 @@ export default function StudyHeatmap({ streak = 5 }) {
           </div>
           <div>
             <div>Study Consistency Heatmap</div>
-            <div className="text-[11px] text-[#64748B] font-normal">GitHub-style Daily Contribution Tracker</div>
+            <div className="text-[11px] text-[#64748B] font-normal">Hover over any day box to inspect study metrics</div>
           </div>
         </div>
 
@@ -36,15 +56,17 @@ export default function StudyHeatmap({ streak = 5 }) {
       </div>
 
       {/* Heatmap Grid */}
-      <div className="overflow-x-auto pb-2">
-        <div className="flex gap-1.5 min-w-[500px]">
+      <div className="overflow-x-auto pb-2 pt-1">
+        <div className="flex gap-1.5 min-w-[520px] justify-between">
           {weeks.map((week, wIdx) => (
             <div key={wIdx} className="flex flex-col gap-1.5">
               {week.map((day) => (
-                <div
+                <motion.div
                   key={day.id}
-                  title={`Day ${day.id}: ${day.active ? 'Study session completed' : 'Rest day'}`}
-                  className={`w-3 h-3 rounded-xs transition-colors border border-black/5 ${day.intensity}`}
+                  whileHover={{ scale: 1.4, zIndex: 20 }}
+                  onMouseEnter={() => setHoveredDay(day)}
+                  onMouseLeave={() => setHoveredDay(null)}
+                  className={`w-3.5 h-3.5 rounded-xs transition-all border border-black/5 cursor-pointer ${day.intensity}`}
                 />
               ))}
             </div>
@@ -52,14 +74,36 @@ export default function StudyHeatmap({ streak = 5 }) {
         </div>
       </div>
 
+      {/* Active Day Hover Tooltip Detail Box */}
+      <AnimatePresence>
+        {hoveredDay && (
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            className="p-3 rounded-2xl bg-[#1E293B] text-white text-xs space-y-1 shadow-xl max-w-xs border border-slate-700"
+          >
+            <div className="flex items-center justify-between font-poppins font-bold text-[#38BDF8]">
+              <span>Week {hoveredDay.week}, Day {hoveredDay.dayNum}</span>
+              <span>{hoveredDay.active ? '⚡ Active Study Day' : '☕ Rest Day'}</span>
+            </div>
+            <div className="text-[11px] text-slate-300 grid grid-cols-2 gap-2 pt-1 font-inter">
+              <div>📚 Study: <span className="font-bold text-white">{hoveredDay.hours} Hrs</span></div>
+              <div>🏆 Quiz: <span className="font-bold text-white">{hoveredDay.quiz}</span></div>
+              <div>🔄 Revision: <span className="font-bold text-white">{hoveredDay.revision}</span></div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Legend */}
       <div className="flex items-center justify-between text-[11px] text-[#64748B] font-medium pt-2 border-t border-[#E2E8F0]">
-        <span>26 Weeks Activity Tracker</span>
+        <span>26 Weeks Daily Activity Tracker</span>
         <div className="flex items-center gap-1.5">
           <span>Less</span>
-          <span className="w-2.5 h-2.5 rounded-xs bg-[#EFF6FF] border border-[#E2E8F0]"></span>
-          <span className="w-2.5 h-2.5 rounded-xs bg-[#38BDF8]/60"></span>
-          <span className="w-2.5 h-2.5 rounded-xs bg-[#2563EB]"></span>
+          <span className="w-3 h-3 rounded-xs bg-[#EFF6FF] border border-[#E2E8F0]"></span>
+          <span className="w-3 h-3 rounded-xs bg-[#38BDF8]/70"></span>
+          <span className="w-3 h-3 rounded-xs bg-[#2563EB]"></span>
           <span>More</span>
         </div>
       </div>
