@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { agentAPI, subjectsAPI } from '../services/api';
 import MindMapComponent from '../components/MindMapComponent';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import ChatTutor from '../components/ChatTutor';
 import { useToast } from '../context/ToastContext';
-import { GitFork, Search, Sparkles, BookOpen, Heart } from 'lucide-react';
+import { GitFork, Search, Sparkles, BookOpen, Heart, Award, Trophy } from 'lucide-react';
 
 export default function MindMapViewer() {
   const [searchParams] = useSearchParams();
   const topicFromUrl = searchParams.get('topic');
+  const navigate = useNavigate();
 
   const [topic, setTopic] = useState(topicFromUrl || '');
   const [userSubjects, setUserSubjects] = useState([]);
   const [mindmapData, setMindmapData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [aiTutorTopic, setAiTutorTopic] = useState(null);
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -47,7 +50,7 @@ export default function MindMapViewer() {
     try {
       const res = await agentAPI.generateMindmap(searchTopic.trim());
       setMindmapData(res.data.mindmap_json);
-      addToast('Concept Map Built! 🧠 Happy Learning!', 'success');
+      addToast('Interactive Learning Hub Ready! Click any node to study! 🧠', 'success');
     } catch (err) {
       console.error(err);
       addToast('Something went wrong. Please try again.', 'error');
@@ -68,23 +71,71 @@ export default function MindMapViewer() {
     fetchMindMap(selectedSubName);
   };
 
+  const handleAskAITutor = (nodeTitle) => {
+    setAiTutorTopic(`${topic} - ${nodeTitle}`);
+    addToast(`AI Tutor pre-loaded for '${nodeTitle}'!`, 'info');
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 pb-12 font-inter"
+      className="space-y-6 pb-12 font-inter relative"
     >
+      {/* Gamification Badges Track */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-[#EFF6FF] text-[#2563EB]">
+            <GitFork className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-poppins font-bold text-xs text-[#1E293B]">Mind Map Explorer</div>
+            <div className="text-[10px] text-[#64748B]">Badge Unlocked</div>
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-[#F0FDF4] text-[#15803D]">
+            <Award className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-poppins font-bold text-xs text-[#1E293B]">Concept Master</div>
+            <div className="text-[10px] text-[#64748B]">80% Mastery</div>
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-[#FEF3C7] text-[#D97706]">
+            <Trophy className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-poppins font-bold text-xs text-[#1E293B]">Fast Learner</div>
+            <div className="text-[10px] text-[#64748B]">3 Mins / Node</div>
+          </div>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-white border border-[#E2E8F0] shadow-xs flex items-center gap-2.5">
+          <div className="p-2 rounded-xl bg-[#F5F3FF] text-[#7C3AED]">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-poppins font-bold text-xs text-[#1E293B]">Revision Expert</div>
+            <div className="text-[10px] text-[#64748B]">Spaced Review</div>
+          </div>
+        </div>
+      </div>
+
       {/* Header & Topic Search */}
       <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-4 shadow-soft bg-[#FFFFFF]">
         <div>
           <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
-            <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Visual Learning Support
+            <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Interactive Learning Hub
           </div>
           <h1 className="font-poppins text-2xl font-black text-[#1E293B] mt-1 flex items-center gap-2">
-            <GitFork className="w-6 h-6 text-[#2563EB]" /> Interactive Visual Concept Map
+            <GitFork className="w-6 h-6 text-[#2563EB]" /> Central AI Visual Learning Hub
           </h1>
           <p className="text-[#64748B] font-inter text-xs mt-1">
-            Visual concept maps convert long textbook paragraphs into clear, memorable visual node trees.
+            Learn, practice 2-question quizzes, and explore concepts directly inside your interactive mind map nodes.
           </p>
         </div>
 
@@ -126,25 +177,32 @@ export default function MindMapViewer() {
             className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-1.5 shadow-sm"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Build Concept Map</span>
+            <span>Open Learning Hub</span>
           </motion.button>
         </form>
       </div>
 
-      {/* Mind Map Canvas or Sequential Processing Skeleton */}
+      {/* Mind Map Canvas or Skeleton */}
       {loading ? (
-        <LoadingSkeleton text={`Building Concept Map for '${topic}'...`} />
+        <LoadingSkeleton text={`Building Interactive Learning Hub for '${topic}'...`} />
       ) : mindmapData ? (
-        <MindMapComponent mindmapData={mindmapData} topic={topic} />
+        <MindMapComponent
+          mindmapData={mindmapData}
+          topic={topic}
+          onAskAITutor={handleAskAITutor}
+        />
       ) : (
         <div className="glass-card rounded-3xl p-12 text-center space-y-3 border border-[#E2E8F0] bg-[#FFFFFF] shadow-soft">
           <BookOpen className="w-12 h-12 text-[#2563EB] mx-auto" />
-          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic to Build Concept Map</h3>
+          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic to Open Learning Hub</h3>
           <p className="text-xs text-[#64748B] font-inter max-w-md mx-auto">
-            Choose one of your subjects from the dropdown or type any topic name above to generate your visual concept graph.
+            Choose one of your subjects from the dropdown or type any topic name above to open your interactive concept hub.
           </p>
         </div>
       )}
+
+      {/* Floating AI Chat Tutor */}
+      <ChatTutor topic={aiTutorTopic || topic || "Computer Science"} />
     </motion.div>
   );
 }
