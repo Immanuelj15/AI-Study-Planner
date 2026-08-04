@@ -5,12 +5,12 @@ import { agentAPI } from '../services/api';
 import SummaryCard from '../components/SummaryCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
-import { FileText, Search, Sparkles, Heart } from 'lucide-react';
+import { FileText, Search, Sparkles, Heart, BookOpen } from 'lucide-react';
 import jsPDF from 'jspdf';
 
 export default function SummaryViewer() {
   const [searchParams] = useSearchParams();
-  const topicParam = searchParams.get('topic') || 'Binary Search';
+  const topicParam = searchParams.get('topic') || '';
   const subjectIdParam = parseInt(searchParams.get('subject_id') || '1');
 
   const [topic, setTopic] = useState(topicParam);
@@ -19,10 +19,14 @@ export default function SummaryViewer() {
   const { addToast } = useToast();
 
   useEffect(() => {
-    fetchSummary(topicParam, subjectIdParam);
+    if (topicParam) {
+      setTopic(topicParam);
+      fetchSummary(topicParam, subjectIdParam);
+    }
   }, [topicParam, subjectIdParam]);
 
   const fetchSummary = async (searchTopic, subId) => {
+    if (!searchTopic || !searchTopic.trim()) return;
     setLoading(true);
     try {
       // Step 1: Agent 1 Research
@@ -34,7 +38,7 @@ export default function SummaryViewer() {
         research_content: researchRes.data
       });
       setSummaryData(summarizeRes.data);
-      addToast('Summary Ready 📘 Happy Learning!', 'success');
+      addToast('Class Notes Ready 📘 Happy Learning!', 'success');
     } catch (err) {
       console.error(err);
       addToast('Something went wrong. Please try again.', 'error');
@@ -59,7 +63,6 @@ export default function SummaryViewer() {
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    // Strip raw #, *, _, and ` characters for a clean PDF export!
     const cleanText = summaryData.summary ? summaryData.summary.replace(/[\#\*\_`]/g, '') : '';
     const splitText = doc.splitTextToSize(cleanText, 180);
     
@@ -89,13 +92,13 @@ export default function SummaryViewer() {
       <div className="glass-card rounded-3xl p-6 lg:p-8 border border-[#E2E8F0] space-y-4 shadow-soft bg-[#FFFFFF]">
         <div>
           <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">
-            <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> Simple Class Notes
+            <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" /> AI Research & Notes Agent
           </div>
           <h1 className="font-poppins text-2xl font-black text-[#1E293B] mt-1 flex items-center gap-2">
             <FileText className="w-6 h-6 text-[#2563EB]" /> Easy-to-Understand Class Notes
           </h1>
           <p className="text-[#64748B] font-inter text-xs mt-1">
-            Research any topic to generate structured notes, definitions, interview tips, and voice summaries.
+            Enter any topic name and click "Generate Notes" to create structured bullet points, definitions, and interview tips.
           </p>
         </div>
 
@@ -108,7 +111,7 @@ export default function SummaryViewer() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               className="w-full glass-input py-2.5 pl-10 pr-4 rounded-2xl text-xs font-inter bg-[#F8FBFF]"
-              placeholder="Enter topic (e.g. Binary Search)..."
+              placeholder="Enter topic (e.g. Operating Systems)..."
             />
           </div>
           <motion.button
@@ -116,10 +119,10 @@ export default function SummaryViewer() {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center gap-1.5 shadow-sm"
+            className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center gap-1.5 shadow-sm shrink-0"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Create Notes</span>
+            <span>Generate Notes</span>
           </motion.button>
         </form>
       </div>
@@ -134,7 +137,15 @@ export default function SummaryViewer() {
           topic={summaryData.topic}
           onExportPDF={handleExportPDF}
         />
-      ) : null}
+      ) : (
+        <div className="glass-card rounded-3xl p-12 text-center space-y-3 border border-[#E2E8F0] bg-[#FFFFFF] shadow-soft">
+          <BookOpen className="w-12 h-12 text-[#2563EB] mx-auto" />
+          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Enter a Topic to Generate Class Notes</h3>
+          <p className="text-xs text-[#64748B] font-inter max-w-md mx-auto">
+            Type any topic above and click "Generate Notes" to trigger the AI Research Agent.
+          </p>
+        </div>
+      )}
     </motion.div>
   );
 }

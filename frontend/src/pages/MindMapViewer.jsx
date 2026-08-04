@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { agentAPI, subjectsAPI } from '../services/api';
 import MindMapComponent from '../components/MindMapComponent';
 import LoadingSkeleton from '../components/LoadingSkeleton';
@@ -11,7 +11,6 @@ import { GitFork, Search, Sparkles, BookOpen, Heart, Award, Trophy } from 'lucid
 export default function MindMapViewer() {
   const [searchParams] = useSearchParams();
   const topicFromUrl = searchParams.get('topic');
-  const navigate = useNavigate();
 
   const [topic, setTopic] = useState(topicFromUrl || '');
   const [userSubjects, setUserSubjects] = useState([]);
@@ -25,22 +24,22 @@ export default function MindMapViewer() {
   }, [topicFromUrl]);
 
   const loadInitialData = async () => {
-    let initialTopic = topicFromUrl;
     try {
       const resSubs = await subjectsAPI.getSubjects();
       const subs = resSubs.data || [];
       setUserSubjects(subs);
 
-      if (!initialTopic && subs.length > 0) {
-        initialTopic = subs[0].subject_name;
+      if (!topicFromUrl && subs.length > 0) {
+        setTopic(subs[0].subject_name);
       }
     } catch (err) {
       console.error(err);
     }
 
-    if (initialTopic) {
-      setTopic(initialTopic);
-      fetchMindMap(initialTopic);
+    // Only auto-fetch if explicit topic query parameter was passed in URL!
+    if (topicFromUrl) {
+      setTopic(topicFromUrl);
+      fetchMindMap(topicFromUrl);
     }
   };
 
@@ -68,7 +67,6 @@ export default function MindMapViewer() {
 
   const handleSelectSubject = (selectedSubName) => {
     setTopic(selectedSubName);
-    fetchMindMap(selectedSubName);
   };
 
   const handleAskAITutor = (nodeTitle) => {
@@ -135,7 +133,7 @@ export default function MindMapViewer() {
             <GitFork className="w-6 h-6 text-[#2563EB]" /> Central AI Visual Learning Hub
           </h1>
           <p className="text-[#64748B] font-inter text-xs mt-1">
-            Learn, practice 2-question quizzes, and explore concepts directly inside your interactive mind map nodes.
+            Enter any topic name and click "Generate Mind Map" to build your interactive concept hub.
           </p>
         </div>
 
@@ -174,10 +172,10 @@ export default function MindMapViewer() {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-1.5 shadow-sm"
+            className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-1.5 shadow-sm shrink-0"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Open Learning Hub</span>
+            <span>Generate Mind Map</span>
           </motion.button>
         </form>
       </div>
@@ -194,9 +192,9 @@ export default function MindMapViewer() {
       ) : (
         <div className="glass-card rounded-3xl p-12 text-center space-y-3 border border-[#E2E8F0] bg-[#FFFFFF] shadow-soft">
           <BookOpen className="w-12 h-12 text-[#2563EB] mx-auto" />
-          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic to Open Learning Hub</h3>
+          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic & Click "Generate Mind Map"</h3>
           <p className="text-xs text-[#64748B] font-inter max-w-md mx-auto">
-            Choose one of your subjects from the dropdown or type any topic name above to open your interactive concept hub.
+            Choose one of your subjects or enter a topic name above, then click "Generate Mind Map" to create your visual study graph.
           </p>
         </div>
       )}

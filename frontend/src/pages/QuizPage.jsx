@@ -26,25 +26,24 @@ export default function QuizPage() {
   }, [topicFromUrl, subIdFromUrl]);
 
   const loadInitialData = async () => {
-    let initialTopic = topicFromUrl;
-    let initialSubId = subIdFromUrl;
     try {
       const resSubs = await subjectsAPI.getSubjects();
       const subs = resSubs.data || [];
       setUserSubjects(subs);
 
-      if (!initialTopic && subs.length > 0) {
-        initialTopic = subs[0].subject_name;
-        initialSubId = subs[0].id;
+      if (!topicFromUrl && subs.length > 0) {
+        setTopic(subs[0].subject_name);
+        setSubjectId(subs[0].id);
       }
     } catch (err) {
       console.error(err);
     }
 
-    if (initialTopic) {
-      setTopic(initialTopic);
-      setSubjectId(initialSubId || 1);
-      fetchQuiz(initialTopic, initialSubId || 1, 'Medium');
+    // Only auto-fetch if explicit topic parameter was passed in URL!
+    if (topicFromUrl) {
+      setTopic(topicFromUrl);
+      setSubjectId(subIdFromUrl || 1);
+      fetchQuiz(topicFromUrl, subIdFromUrl || 1, 'Medium');
     }
   };
 
@@ -78,8 +77,6 @@ export default function QuizPage() {
   const handleSelectSubject = (selectedSub) => {
     setTopic(selectedSub.subject_name);
     setSubjectId(selectedSub.id);
-    setAttemptCount(1);
-    fetchQuiz(selectedSub.subject_name, selectedSub.id, 'Medium');
   };
 
   const handleRetakeQuiz = () => {
@@ -91,7 +88,6 @@ export default function QuizPage() {
     try {
       const res = await quizAPI.submitQuiz(resultData);
       
-      // Calculate next adaptive difficulty
       let nextDiff = 'Medium';
       if (resultData.score >= 90) nextDiff = 'Hard';
       else if (resultData.score < 70) nextDiff = 'Easy';
@@ -163,7 +159,7 @@ export default function QuizPage() {
             <HelpCircle className="w-6 h-6 text-[#2563EB]" /> Interactive Adaptive Quiz Agent
           </h1>
           <p className="text-[#64748B] font-inter text-xs mt-1">
-            Generates 15 unique, non-repeating questions per attempt with instant positive feedback and detailed explanations.
+            Enter any topic and click "Generate 15 Questions" to start your 15-question adaptive quiz.
           </p>
         </div>
 
@@ -205,7 +201,7 @@ export default function QuizPage() {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-1.5 shadow-sm"
+            className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-1.5 shadow-sm shrink-0"
           >
             <Sparkles className="w-4 h-4" />
             <span>Generate 15 Questions</span>
@@ -228,9 +224,9 @@ export default function QuizPage() {
       ) : (
         <div className="glass-card rounded-3xl p-12 text-center space-y-3 border border-[#E2E8F0] bg-[#FFFFFF] shadow-soft">
           <BookOpen className="w-12 h-12 text-[#2563EB] mx-auto" />
-          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select or Enter a Topic for 15 Questions</h3>
+          <h3 className="font-poppins font-bold text-base text-[#1E293B]">Select a Topic & Click "Generate 15 Questions"</h3>
           <p className="text-xs text-[#64748B] font-inter max-w-md mx-auto">
-            Choose one of your subjects from the dropdown or type any topic above to create 15 unique practice questions.
+            Choose one of your subjects or enter a topic above, then click "Generate 15 Questions" to start your practice quiz.
           </p>
         </div>
       )}
