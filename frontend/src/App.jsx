@@ -6,6 +6,7 @@ import { ToastProvider } from './context/ToastContext';
 
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import LoadingSkeleton from './components/LoadingSkeleton';
 
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -22,7 +23,9 @@ import Settings from './pages/Settings';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return null;
+  if (loading) {
+    return <LoadingSkeleton text="Authenticating user session..." />;
+  }
   if (!user) return <Navigate to="/login" replace />;
   return children;
 };

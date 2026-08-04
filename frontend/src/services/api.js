@@ -25,8 +25,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-    if ((error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) && !originalRequest._retry) {
+    const originalRequest = error?.config;
+    if (originalRequest && (error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) && !originalRequest._retry) {
       originalRequest._retry = true;
       const currentUrl = originalRequest.baseURL || '';
       const fallbackTarget = currentUrl.includes('8001') ? 'http://127.0.0.1:8000' : 'http://127.0.0.1:8001';

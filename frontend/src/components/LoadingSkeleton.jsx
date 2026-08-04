@@ -75,7 +75,7 @@ export default function LoadingSkeleton({ text = "Preparing Your Study Plan..." 
           <motion.div
             className="h-full bg-[#2563EB]"
             initial={{ width: '10%' }}
-            animate={{ width: `${((activeStep + 1) / agentsList.length) * 100}%` }}
+            animate={{ width: `${((activeStep + 1) / Math.max(1, agentsList.length)) * 100}%` }}
             transition={{ duration: 0.5 }}
           />
         </div>
@@ -88,7 +88,7 @@ export default function LoadingSkeleton({ text = "Preparing Your Study Plan..." 
           <motion.div
             className="w-full bg-[#2563EB]"
             initial={{ height: '0%' }}
-            animate={{ height: `${(activeStep / (agentsList.length - 1)) * 100}%` }}
+            animate={{ height: `${(activeStep / Math.max(1, agentsList.length - 1)) * 100}%` }}
             transition={{ duration: 0.5 }}
           />
         </div>
