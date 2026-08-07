@@ -1,17 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, Sparkles, Clock, Target, Lightbulb, Heart, ArrowRight, ClipboardCheck, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { adaptiveAPI } from '../services/api';
 
 export default function AICoachPanel({ weakTopic = "Operating Systems", strongTopic = "Binary Search" }) {
   const navigate = useNavigate();
+  const [recommendation, setRecommendation] = useState(null);
+
+  useEffect(() => {
+    adaptiveAPI.getRecommendation()
+      .then(res => setRecommendation(res.data))
+      .catch(err => console.error("Error loading coach recommendation:", err));
+  }, []);
+
+  const profile = recommendation?.profile;
+  const explainable = recommendation?.explainable_ai;
+
+  let coachMessage = `"Focus 45 minutes on ${weakTopic} today before attempting your practice quiz. Your optimal focus window is 9:00 AM – 11:30 AM."`;
+  if (profile) {
+    if (profile.improvement_trend === 'Late Bloomer') {
+      coachMessage = `"Great progress! You learn better with steady revision. Today's plan includes extra practice and step-by-step guidance on ${weakTopic}."`;
+    } else if (profile.learning_style === 'Visual') {
+      coachMessage = `"Great progress! You learn best using visual explanations. Today's lesson includes interactive mind maps for ${weakTopic}."`;
+    } else if (profile.learning_speed === 'Fast') {
+      coachMessage = `"Outstanding pace! You're mastering concepts fast. Today we've scaled ${weakTopic} to advanced interview-level questions."`;
+    }
+  }
 
   return (
     <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft font-inter">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 font-poppins font-bold text-[#1E293B] text-base">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#38BDF8] text-white flex items-center justify-center shadow-md">
-            <Bot className="w-5 h-5" />
+            <Bot className="w-5 h-5 animate-bounce" />
           </div>
           <div>
             <div>Personalized AI Study Coach</div>
@@ -27,18 +49,18 @@ export default function AICoachPanel({ weakTopic = "Operating Systems", strongTo
       {/* Encouraging Message & Insight */}
       <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
         <div className="flex items-center gap-1.5 text-xs font-poppins font-bold text-[#2563EB]">
-          <Heart className="w-4 h-4 fill-[#2563EB]" /> Coach Recommendation for Today:
+          <Heart className="w-4 h-4 fill-[#2563EB]" /> Coach Encouragement & Action Plan:
         </div>
-        <p className="text-xs text-[#1E293B] leading-relaxed">
-          "Focus 45 minutes on <strong>{weakTopic}</strong> today before attempting your practice quiz. Your optimal peak focus window is between 9:00 AM – 11:30 AM."
+        <p className="text-xs text-[#1E293B] leading-relaxed font-medium">
+          {coachMessage}
         </p>
       </div>
 
       {/* Key Coach Metrics Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
         <div className="p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
-          <div className="text-[10px] font-bold text-[#64748B] uppercase">Optimal Focus Window</div>
-          <div className="font-poppins font-bold text-[#1E293B] mt-0.5">9:00 AM – 11:30 AM</div>
+          <div className="text-[10px] font-bold text-[#64748B] uppercase">Learning Style</div>
+          <div className="font-poppins font-bold text-[#2563EB] mt-0.5">{profile?.learning_style || "Visual"}</div>
         </div>
 
         <div className="p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
@@ -47,13 +69,13 @@ export default function AICoachPanel({ weakTopic = "Operating Systems", strongTo
         </div>
 
         <div className="p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
-          <div className="text-[10px] font-bold text-[#64748B] uppercase">Solid Concept</div>
+          <div className="text-[10px] font-bold text-[#64748B] uppercase">Mastered Concept</div>
           <div className="font-poppins font-bold text-[#22C55E] truncate mt-0.5">{strongTopic}</div>
         </div>
 
         <div className="p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
-          <div className="text-[10px] font-bold text-[#64748B] uppercase">Est. Completion</div>
-          <div className="font-poppins font-bold text-[#2563EB] mt-0.5">1 Hr 45 Mins</div>
+          <div className="text-[10px] font-bold text-[#64748B] uppercase">Learning Pace</div>
+          <div className="font-poppins font-bold text-[#2563EB] mt-0.5">{profile?.learning_speed || "Medium"}</div>
         </div>
       </div>
 

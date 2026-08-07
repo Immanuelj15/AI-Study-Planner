@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, XCircle, CircleHelp, ArrowRight, Trophy, Sparkles, Heart, RefreshCw, BookOpen, Network, Flame, Award, HelpCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
+import { adaptiveAPI } from '../services/api';
 
 export default function QuizComponent({ questions, onCompleteQuiz, onRetakeQuiz, subjectId, topic, attemptCount = 1 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -48,6 +49,13 @@ export default function QuizComponent({ questions, onCompleteQuiz, onRetakeQuiz,
       const correctCount = userAnswers.filter((a) => a.is_correct).length;
       const wrongCount = questions.length - correctCount;
       const scorePct = Math.round((correctCount / questions.length) * 100);
+
+      // Track Telemetry for Adaptive Learning Engine
+      adaptiveAPI.trackEvent({
+        event_type: "quiz",
+        score: scorePct,
+        topic: topic || 'General'
+      }).catch(err => console.error("Error tracking telemetry:", err));
 
       if (onCompleteQuiz) {
         onCompleteQuiz({

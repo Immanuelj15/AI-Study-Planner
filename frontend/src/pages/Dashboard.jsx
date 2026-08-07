@@ -12,6 +12,7 @@ import PomodoroTimer from '../components/PomodoroTimer';
 import LearningTimeline from '../components/LearningTimeline';
 import XPProgressCard from '../components/XPProgressCard';
 import AICoachPanel from '../components/AICoachPanel';
+import AdaptiveProfileCard from '../components/AdaptiveProfileCard';
 import ChatTutor from '../components/ChatTutor';
 import { useToast } from '../context/ToastContext';
 import { 
@@ -141,7 +142,7 @@ export default function Dashboard() {
           </motion.button>
         </div>
 
-        {/* Integrated Clean Stats Bar (Replaces 4 Heavy Boxed Grid Cards) */}
+        {/* Integrated Clean Stats Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-5 mt-5 border-t border-white/20 text-white">
           <div className="space-y-0.5">
             <div className="text-[11px] text-blue-100 font-medium">Focus Subject</div>
@@ -162,7 +163,7 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
-      {/* 2. Sleek Section Navigation Tabs (Organizes View & Eliminates Grid Overload) */}
+      {/* 2. Sleek Section Navigation Tabs */}
       <motion.div variants={itemVariants} className="flex items-center justify-between gap-3 border-b border-[#E2E8F0] pb-3">
         <div className="flex items-center gap-2 bg-[#F8FBFF] p-1 rounded-2xl border border-[#E2E8F0]">
           <button
@@ -210,6 +211,11 @@ export default function Dashboard() {
       {/* TAB 1: DAILY OVERVIEW */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
+          {/* Adaptive Learning Intelligence Profile Card */}
+          <motion.div variants={itemVariants}>
+            <AdaptiveProfileCard />
+          </motion.div>
+
           {/* Personalized AI Coach Panel */}
           <motion.div variants={itemVariants}>
             <AICoachPanel weakTopic={weakSubjects[0] || "Operating Systems"} strongTopic={strongSubjects[0] || "Binary Search"} />
@@ -278,6 +284,10 @@ export default function Dashboard() {
       {/* TAB 2: ANALYTICS & HEATMAP */}
       {activeTab === 'analytics' && (
         <div className="space-y-6">
+          <motion.div variants={itemVariants}>
+            <AdaptiveProfileCard />
+          </motion.div>
+
           <motion.div variants={itemVariants}>
             <StudyHeatmap streak={metrics?.study_streak_days || 0} />
           </motion.div>

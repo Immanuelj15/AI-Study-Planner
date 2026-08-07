@@ -67,4 +67,10 @@ export const dashboardAPI = {
   getAnalytics: () => api.get('/analytics'),
 };
 
+export const adaptiveAPI = {
+  getProfile: () => api.get('/adaptive/profile'),
+  trackEvent: (data) => api.post('/adaptive/track-event', data),
+  getRecommendation: () => api.get('/adaptive/recommendation'),
+};
+
 export default api;

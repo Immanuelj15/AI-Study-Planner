@@ -15,6 +15,7 @@ class User(Base):
     subjects = relationship("Subject", back_populates="user", cascade="all, delete-orphan")
     study_plans = relationship("StudyPlan", back_populates="user", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
+    learning_profile = relationship("StudentLearningProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
 
 class Subject(Base):
@@ -109,3 +110,26 @@ class QuestionHistory(Base):
     attempt_number = Column(Integer, default=1)
     generated_at = Column(DateTime, default=datetime.datetime.utcnow)
     is_used = Column(Integer, default=1)
+
+
+class StudentLearningProfile(Base):
+    __tablename__ = "student_learning_profiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
+    learning_speed = Column(String(50), default="Medium")      # Fast, Medium, Slow
+    learning_style = Column(String(50), default="Mixed")       # Visual, Reading, Practice, Mixed
+    understanding_level = Column(String(50), default="Intermediate") # Beginner, Intermediate, Advanced
+    confidence_level = Column(String(50), default="Medium")     # Low, Medium, High
+    average_reading_time = Column(Float, default=120.0)         # Average reading time in seconds
+    average_quiz_time = Column(Float, default=180.0)            # Average quiz time in seconds
+    average_quiz_score = Column(Float, default=75.0)             # Average quiz score %
+    mindmap_usage = Column(Integer, default=0)                   # Mindmap view count
+    revision_frequency = Column(Integer, default=0)              # Revisions count
+    chat_usage = Column(Integer, default=0)                      # AI Tutor chat count
+    consistency_score = Column(Float, default=85.0)             # Consistency %
+    improvement_trend = Column(String(50), default="Stable")     # Late Bloomer, Fast Learner, Struggling Learner, Stable
+    preferred_study_time = Column(String(100), default="Morning (9:00 AM - 11:30 AM)")
+    last_updated = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="learning_profile")

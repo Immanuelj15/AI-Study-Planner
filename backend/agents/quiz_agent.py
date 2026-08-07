@@ -1,7 +1,7 @@
 import json
 import logging
 import random
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from services.groq_client import call_groq_llm
 
 logger = logging.getLogger(__name__)
@@ -11,18 +11,46 @@ class QuizAgent:
     Agent 3: Adaptive AI Quiz Generator Agent
     Responsibilities:
     - Generate EXACTLY 15 unique questions per quiz attempt
+    - Adapt difficulty based on Student Learning Profile (Fast -> Hard, Late Bloomer -> Easy/Medium, Struggling -> Easy with extra hints)
     - Mix MCQ, True/False, Fill in the Blanks, Scenario, and Coding Interview questions
     - Ensure anti-duplication by checking against previous question history
-    - Support adaptive difficulty scaling (Easy, Medium, Hard)
-    - Provide positive, detailed explanations for why answers are correct/incorrect
     """
     def __init__(self, name: str = "Adaptive_Quiz_Agent"):
         self.name = name
 
-    def execute(self, topic: str, summary_text: str = "", difficulty: str = "Medium", num_questions: int = 15, existing_questions: List[str] = None) -> List[Dict[str, Any]]:
-        logger.info(f"[{self.name}] Generating {num_questions} unique quiz questions for topic: '{topic}' ({difficulty})")
+    def execute(
+        self,
+        topic: str,
+        summary_text: str = "",
+        difficulty: str = "Medium",
+        num_questions: int = 15,
+        existing_questions: List[str] = None,
+        student_profile: Optional[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
         if existing_questions is None:
             existing_questions = []
+
+        # Auto-adjust difficulty based on Student Learning Profile if provided
+        effective_difficulty = difficulty
+        profile_style_prompt = ""
+        if student_profile:
+            speed = student_profile.get("learning_speed", "Medium")
+            trend = student_profile.get("improvement_trend", "Stable")
+            style = student_profile.get("learning_style", "Mixed")
+
+            if speed == "Fast" or trend == "Fast Learner":
+                effective_difficulty = "Hard"
+                profile_style_prompt = "Generate HARD, advanced interview-level questions testing edge cases, time/space trade-offs, and complex scenarios."
+            elif trend == "Late Bloomer":
+                effective_difficulty = "Medium"
+                profile_style_prompt = "Generate EASY to MEDIUM progressive questions that encourage steady understanding and build confidence."
+            elif speed == "Slow" or trend == "Struggling Learner":
+                effective_difficulty = "Easy"
+                profile_style_prompt = "Generate ACCESSIBLE, EASY conceptual questions with step-by-step encouraging explanations."
+            elif style == "Practice":
+                profile_style_prompt = "Focus heavily on real-world scenario-based problem solving and hands-on coding questions."
+
+        logger.info(f"[{self.name}] Generating {num_questions} unique questions for '{topic}' (Adapted Difficulty: {effective_difficulty})")
 
         existing_set = set(q.strip().lower() for q in existing_questions if q)
         
@@ -34,7 +62,9 @@ class QuizAgent:
             avoid_clause = f"\nDO NOT reuse any of these previously asked questions:\n- " + "\n- ".join(sample_avoid)
 
         prompt = f"""
-Generate EXACTLY {num_questions} unique quiz questions for the topic: "{topic}" (Difficulty: {difficulty}).
+Generate EXACTLY {num_questions} unique quiz questions for the topic: "{topic}" (Difficulty: {effective_difficulty}).
+{profile_style_prompt}
+
 Ensure a balanced mix of:
 1. Multiple Choice Questions (MCQs)
 2. True/False Questions
@@ -51,7 +81,7 @@ Return ONLY a JSON object with this exact structure:
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "answer": "Option A",
       "explanation": "Clear explanation detailing why Option A is correct and why other options are incorrect.",
-      "difficulty": "{difficulty}"
+      "difficulty": "{effective_difficulty}"
     }}
   ]
 }}
@@ -81,7 +111,7 @@ Return ONLY a JSON object with this exact structure:
 
         # If we need more questions to reach 15, generate fallbacks
         if len(unique_questions) < num_questions:
-            fallbacks = self._generate_fallback_bank(topic, difficulty)
+            fallbacks = self._generate_fallback_bank(topic, effective_difficulty)
             for fq in fallbacks:
                 if len(unique_questions) >= num_questions:
                     break

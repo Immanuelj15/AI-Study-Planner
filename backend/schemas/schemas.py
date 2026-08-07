@@ -134,3 +134,32 @@ class DashboardMetrics(BaseModel):
     today_plan: List[Dict[str, Any]]
     weekly_progress: List[Dict[str, Any]]
     quiz_performance: Dict[str, Any]
+
+
+# --- Adaptive Learning Intelligence Engine Schemas ---
+class StudentLearningProfileResponse(BaseModel):
+    id: int
+    user_id: int
+    learning_speed: str
+    learning_style: str
+    understanding_level: str
+    confidence_level: str
+    average_reading_time: float
+    average_quiz_time: float
+    average_quiz_score: float
+    mindmap_usage: int
+    revision_frequency: int
+    chat_usage: int
+    consistency_score: float
+    improvement_trend: str
+    preferred_study_time: str
+    last_updated: datetime
+
+    class Config:
+        from_attributes = True
+
+class TelemetryEventRequest(BaseModel):
+    event_type: str  # "reading", "quiz", "mindmap", "chat", "revision"
+    duration_seconds: Optional[float] = 0.0
+    score: Optional[float] = None
+    topic: Optional[str] = None

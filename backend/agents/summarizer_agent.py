@@ -1,33 +1,48 @@
 import json
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from services.groq_client import call_groq_llm
 
 logger = logging.getLogger(__name__)
 
 class SummarizerAgent:
     """
-    Agent 2: Summarizer Agent
+    Agent 2: Summarizer Agent (Adaptive)
     Responsibilities:
-    - Receive research output
-    - Convert into beginner-friendly notes (Intro, Concepts, Defs, Examples, Pros, Cons, Applications, Interview Tips, Revision Notes)
-    - Generate bullet point summary
-    - Generate React Flow compatible mindmap JSON with clear, concept-explaining labels
+    - Receive research output & student learning profile
+    - Tailor note style (Fast Learner -> concise/advanced, Slow -> detailed step-by-step, Visual -> enhanced diagrams)
+    - Generate beginner-friendly notes & React Flow compatible mindmap JSON
     """
     def __init__(self, name: str = "Summarizer_Agent"):
         self.name = name
 
-    def execute(self, research_data: Dict[str, Any]) -> Dict[str, Any]:
+    def execute(self, research_data: Dict[str, Any], student_profile: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         topic = research_data.get("topic", "Study Topic")
         logger.info(f"[{self.name}] Summarizing research for topic: {topic}")
         
         system_prompt = "You are an expert AI Educator & Note Summarizer. Output strictly valid JSON."
-        
+
+        learning_style = student_profile.get("learning_style", "Mixed") if student_profile else "Mixed"
+        learning_speed = student_profile.get("learning_speed", "Medium") if student_profile else "Medium"
+        trend = student_profile.get("improvement_trend", "Stable") if student_profile else "Stable"
+
+        style_instruction = ""
+        if learning_speed == "Fast" or trend == "Fast Learner":
+            style_instruction = "Tailor for a FAST LEARNER: Use concise notes, highlight advanced invariants, architectural edge cases, and high-frequency technical interview tips."
+        elif learning_speed == "Slow" or trend == "Struggling Learner" or trend == "Late Bloomer":
+            style_instruction = "Tailor for a STRUGGLING/SLOW LEARNER: Use step-by-step simple English, clear foundational definitions, multiple real-world analogies, and encouraging guidance."
+        elif learning_style == "Visual":
+            style_instruction = "Tailor for a VISUAL LEARNER: Generate enhanced mindmap nodes with rich visual metaphors and clear hierarchical connections."
+        elif learning_style == "Practice":
+            style_instruction = "Tailor for a PRACTICE LEARNER: Provide actionable code examples, hands-on exercises, and scenario challenges."
+
         prompt = f"""
-Given this research data on "{topic}":
+Given research data on "{topic}":
 {json.dumps(research_data, indent=2)}
 
-Create comprehensive, beginner-friendly study notes and an educational React Flow mind map JSON.
+Adaptation Directive: {style_instruction}
+
+Create tailored study notes and an educational React Flow mind map JSON.
 For mind map nodes, ensure every sub-node includes a title AND a 1-line concept explanation separated by \\n.
 
 Return ONLY valid JSON with this EXACT structure:
@@ -67,7 +82,6 @@ Return ONLY valid JSON with this EXACT structure:
             except Exception as e:
                 logger.error(f"Failed to parse summarizer JSON from Groq: {e}")
 
-        # Fallback generator
         return self._generate_fallback(topic, research_data)
 
     def _generate_fallback(self, topic: str, research_data: Dict[str, Any]) -> Dict[str, Any]:
