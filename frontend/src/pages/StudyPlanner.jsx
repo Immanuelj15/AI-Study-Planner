@@ -13,7 +13,8 @@ import {
   CheckCircle2, 
   Filter,
   Layers,
-  Heart
+  Heart,
+  Calendar
 } from 'lucide-react';
 
 export default function StudyPlanner() {
@@ -85,6 +86,53 @@ export default function StudyPlanner() {
     }
   };
 
+  // Standard iCal (.ics) Calendar Export
+  const handleExportICS = () => {
+    if (!plans || plans.length === 0) return;
+
+    let csContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//AI Study Planner//Study Schedule//EN",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH"
+    ];
+
+    plans.forEach((plan, idx) => {
+      const subject = plan.subject_name || plan.subject || 'Study Session';
+      const topic = plan.topic || 'General Review';
+      const dateStr = plan.date ? plan.date.replace(/-/g, '') : '20260815';
+
+      csContent.push(
+        "BEGIN:VEVENT",
+        `UID:study-session-${idx}-${Date.now()}@studyplanner.ai`,
+        `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+        `DTSTART:${dateStr}T090000Z`,
+        `DTEND:${dateStr}T110000Z`,
+        `SUMMARY:📚 ${subject} - ${topic}`,
+        `DESCRIPTION:AI Study Planner Session: ${topic}. Allocated time: ${plan.hours || 2} hrs. Priority: ${plan.priority || 'Medium'}.`,
+        "STATUS:CONFIRMED",
+        "BEGIN:VALARM",
+        "TRIGGER:-PT15M",
+        "ACTION:DISPLAY",
+        `DESCRIPTION:Reminder: ${subject} study session starts in 15 minutes!`,
+        "END:VALARM",
+        "END:VEVENT"
+      );
+    });
+
+    csContent.push("END:VCALENDAR");
+
+    const blob = new Blob([csContent.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.setAttribute("download", "AI_Study_Schedule.ics");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast("Exported schedule to Google Calendar / iCal (.ics)! 📅", "success");
+  };
+
   // Filtered Plans Logic
   const filteredPlans = useMemo(() => {
     return plans.filter((item) => {
@@ -125,12 +173,25 @@ export default function StudyPlanner() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="px-3.5 py-1.5 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {plans.length > 0 && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleExportICS}
+                className="px-3.5 py-2 rounded-2xl bg-[#EFF6FF] hover:bg-[#DBEAFE] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold flex items-center gap-1.5 shadow-xs"
+              >
+                <Calendar className="w-4 h-4 text-[#2563EB]" />
+                <span>Export Calendar (.ics)</span>
+              </motion.button>
+            )}
+
+            <div className="px-3.5 py-2 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold flex items-center gap-1.5">
               <Clock className="w-4 h-4" />
               <span>{totalHours} Total Hours</span>
             </div>
-            <div className="px-3.5 py-1.5 rounded-2xl bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D] text-xs font-inter font-bold flex items-center gap-1.5">
+
+            <div className="px-3.5 py-2 rounded-2xl bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D] text-xs font-inter font-bold flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4" />
               <span>{completionPercentage}% Complete</span>
             </div>

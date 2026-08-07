@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Volume2, 
@@ -13,11 +13,13 @@ import {
   Star, 
   BookMarked, 
   Briefcase,
-  Network
+  Network,
+  Layers
 } from 'lucide-react';
 import { useSpeech } from '../hooks/useSpeech';
 import { useToast } from '../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
+import FlashcardModal from './FlashcardModal';
 
 function renderCleanSummaryContent(summaryText) {
   if (!summaryText) return null;
@@ -68,7 +70,8 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
   const { isPlaying, isPaused, speak, pause, resume, stop } = useSpeech();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
+  const [showFlashcards, setShowFlashcards] = useState(false);
 
   const handleCopy = () => {
     const cleanText = summaryText ? summaryText.replace(/[\#\*\_`]/g, '') : '';
@@ -106,6 +109,16 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
         </div>
 
         <div className="flex items-center gap-2.5">
+          {/* Flashcards Mode Button */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowFlashcards(true)}
+            className="px-3.5 py-2 rounded-xl bg-[#F0FDF4] hover:bg-[#DCFCE7] text-[#15803D] text-xs font-inter font-bold flex items-center gap-1.5 border border-[#86EFAC]"
+          >
+            <Layers className="w-[18px] h-[18px] text-[#15803D]" /> Flashcards
+          </motion.button>
+
           {/* Mind Map Shortcut */}
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -216,6 +229,15 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
       <div className="prose prose-slate max-w-none text-[#1E293B] font-inter bg-[#F8FBFF] p-6 lg:p-8 rounded-2xl border border-[#E2E8F0]">
         {renderCleanSummaryContent(summaryText)}
       </div>
+
+      {/* 3D Flashcards Modal */}
+      {showFlashcards && (
+        <FlashcardModal
+          topic={topic}
+          bulletPoints={bulletPoints}
+          onClose={() => setShowFlashcards(false)}
+        />
+      )}
     </motion.div>
   );
 }

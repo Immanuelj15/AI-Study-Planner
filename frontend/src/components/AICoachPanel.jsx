@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Sparkles, Clock, Target, Lightbulb, Heart, ArrowRight } from 'lucide-react';
+import { Bot, Sparkles, Clock, Target, Lightbulb, Heart, ArrowRight, ClipboardCheck, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AICoachPanel({ weakTopic = "Operating Systems", strongTopic = "Binary Search" }) {
@@ -57,16 +57,28 @@ export default function AICoachPanel({ weakTopic = "Operating Systems", strongTo
         </div>
       </div>
 
-      {/* Quick Action Button */}
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => navigate(`/summary?topic=${encodeURIComponent(weakTopic)}`)}
-        className="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] text-white font-poppins font-bold text-xs flex items-center justify-center gap-2 shadow-sm shadow-blue-500/20"
-      >
-        <span>Open {weakTopic} Class Notes</span>
-        <ArrowRight className="w-4 h-4" />
-      </motion.button>
+      {/* Action Buttons Bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => navigate(`/summary?topic=${encodeURIComponent(weakTopic)}`)}
+          className="py-2.5 px-4 rounded-2xl bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE] font-poppins font-bold text-xs flex items-center justify-center gap-2"
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>Open {weakTopic} Notes</span>
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => navigate(`/quiz?topic=${encodeURIComponent(weakTopic)}`)}
+          className="py-2.5 px-4 rounded-2xl bg-[#2563EB] text-white font-poppins font-bold text-xs flex items-center justify-center gap-2 shadow-sm shadow-blue-500/20"
+        >
+          <ClipboardCheck className="w-4 h-4" />
+          <span>Start 5-Min Quiz on {weakTopic}</span>
+        </motion.button>
+      </div>
     </div>
   );
 }
