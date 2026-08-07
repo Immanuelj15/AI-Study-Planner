@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { 
   BookOpen, 
   Brain, 
@@ -29,88 +29,104 @@ import {
   Clock,
   Heart,
   XCircle,
-  ShieldAlert,
   ShieldCheck,
   Layers,
   Volume2,
   Activity,
   Bot,
   RefreshCw,
-  Sparkle
+  Sparkle,
+  ChevronRight,
+  MousePointerClick
 } from 'lucide-react';
 
-// Typing Animation Text Phrases
-const typingPhrases = [
-  "Study Smarter with Autonomous Multi-Agent AI",
-  "Master Concepts with Active Recall 3D Flashcards",
-  "Practice 15 Unique Anti-Duplication Quizzes",
-  "Sync Timetable Directly to Google Calendar & iCal"
+// Hero Heading Loop Typewriter Phrases
+const heroPhrases = [
+  "Study Smarter.",
+  "Build Better Habits.",
+  "Master Every Subject.",
+  "Your Personal AI Study Companion."
 ];
 
-// Stat items for Section 3
+// CountUp Animated Counter Component
+function AnimatedCounter({ end, duration = 2, suffix = '+' }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    if (!isInView) return;
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
+      setCount(Math.floor(progress * end));
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }, [isInView, end, duration]);
+
+  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
+}
+
+// Product Ecosystem Pipeline Nodes
+const ecosystemPipeline = [
+  { step: '01', title: 'Student Input', subtitle: 'Target Date & Hours', icon: GraduationCap, color: '#2563EB', bg: '#EFF6FF' },
+  { step: '02', title: 'Research Agent', subtitle: 'Deep Web & Formulas', icon: Search, color: '#0EA5E9', bg: '#F0F9FF' },
+  { step: '03', title: 'Smart Notes', subtitle: 'Bullet Notes & Voice AI', icon: FileText, color: '#8B5CF6', bg: '#F5F3FF' },
+  { step: '04', title: 'Interactive Mind Map', subtitle: '3 AI Explanation Modes', icon: Network, color: '#EC4899', bg: '#FDF2F8' },
+  { step: '05', title: 'Adaptive Quiz', subtitle: '15 Fresh Anti-Duplication Qs', icon: ClipboardCheck, color: '#F59E0B', bg: '#FEF3C7' },
+  { step: '06', title: 'Analytics Engine', subtitle: 'Weak Spot Detection', icon: BarChart3, color: '#10B981', bg: '#ECFDF5' },
+  { step: '07', title: 'AI Scheduler', subtitle: 'Spaced Repetition Schedule', icon: CalendarDays, color: '#6366F1', bg: '#EEF2FF' },
+  { step: '08', title: 'Exam Success', subtitle: '98% Score Mastery', icon: Award, color: '#22C55E', bg: '#F0FDF4' }
+];
+
+// Statistics Data
 const statsList = [
-  { count: '1,000+', label: 'Happy Students Learning', icon: Users },
-  { count: '500+', label: 'Study Plans Built', icon: CalendarDays },
-  { count: '100+', label: 'Subjects Covered', icon: BookOpen },
-  { count: '95%', label: 'Student Confidence Boost', icon: Heart },
+  { end: 1000, suffix: '+', label: 'Active Students Learning', icon: Users, color: '#2563EB' },
+  { end: 5000, suffix: '+', label: 'Study Plans Generated', icon: CalendarDays, color: '#0EA5E9' },
+  { end: 15000, suffix: '+', label: 'Practice Quizzes Completed', icon: ClipboardCheck, color: '#8B5CF6' },
+  { end: 98, suffix: '%', label: 'Exam Mastery & Success Rate', icon: Heart, color: '#22C55E' }
 ];
 
-// Interactive Flow Chart Nodes for Multi-Agent Architecture
-const flowchartNodes = [
-  {
-    step: 'Node 01',
-    title: 'Student Input Goal',
-    subtitle: 'Exam Date & Subjects',
-    icon: GraduationCap,
-    color: '#2563EB',
-    bg: '#EFF6FF',
-    desc: 'Student inputs available study hours and target exam dates.'
-  },
-  {
-    step: 'Node 02',
-    title: 'Research Agent',
-    subtitle: 'Deep Web Crawling',
-    icon: Search,
-    color: '#0EA5E9',
-    bg: '#F0F9FF',
-    desc: 'Extracts core definitions, real-world examples, and key formulas.'
-  },
-  {
-    step: 'Node 03',
-    title: 'Summarizer Agent',
-    subtitle: 'Bullet Notes & Voice AI',
-    icon: FileText,
-    color: '#8B5CF6',
-    bg: '#F5F3FF',
-    desc: 'Generates structured notes, PDF exports, and audio narration.'
-  },
-  {
-    step: 'Node 04',
-    title: 'Mind Map Hub',
-    subtitle: '3 AI Explanation Modes',
-    icon: Network,
-    color: '#EC4899',
-    bg: '#FDF2F8',
-    desc: 'Constructs visual maps with ELI5, Beginner, and Interview modes.'
-  },
-  {
-    step: 'Node 05',
-    title: 'Quiz Agent Engine',
-    subtitle: '15-Question Fresh Quiz',
-    icon: ClipboardCheck,
-    color: '#F59E0B',
-    bg: '#FEF3C7',
-    desc: 'Checks SQLite history to serve 100% unique practice questions.'
-  },
-  {
-    step: 'Node 06',
-    title: 'Scheduler Agent',
-    subtitle: 'Adaptive Timetable',
-    icon: CalendarDays,
-    color: '#22C55E',
-    bg: '#F0FDF4',
-    desc: 'Calculates spaced repetition study slots and exports .ics calendar.'
-  }
+// Target Audience Category Cards
+const studentCategories = [
+  { title: 'School Students', badge: 'K-12 & High School', desc: 'Break down complex math and science concepts into simple ELI5 explanations and visual maps.', icon: GraduationCap, color: '#2563EB', bg: '#EFF6FF' },
+  { title: 'College & University', badge: 'Undergrad & Masters', desc: 'Generate structured bullet notes, download clean PDF summaries, and sync study sessions to Google Calendar.', icon: BookOpen, color: '#0EA5E9', bg: '#F0F9FF' },
+  { title: 'Competitive Exam Aspirants', badge: 'GATE, GRE, USMLE, SAT', desc: 'Master exam topics with adaptive difficulty scaling, 15-question anti-duplication quizzes, and spaced repetition.', icon: Target, color: '#8B5CF6', bg: '#F5F3FF' },
+  { title: 'Self Learners & Professionals', badge: 'Lifetime Learners', desc: 'Listen to AI-generated voice notes while commuting and test active recall with 3D flip flashcards.', icon: Volume2, color: '#22C55E', bg: '#F0FDF4' }
+];
+
+// Features List
+const featuresList = [
+  { icon: CalendarDays, title: 'Personalized Study Planner', description: 'Calculates daily and weekly study schedules tailored to your target exam dates and available daily study time.', color: '#2563EB', bg: '#EFF6FF' },
+  { icon: Search, title: 'Deep Research Companion', description: 'Finds definitions, formulas, real-world examples, and key concepts so you never get stuck on a topic.', color: '#0EA5E9', bg: '#F0F9FF' },
+  { icon: FileText, title: 'Easy-to-Understand Notes', description: 'Generates beginner-friendly bullet point notes with voice text-to-speech audio reader and downloadable PDFs.', color: '#8B5CF6', bg: '#F5F3FF' },
+  { icon: Network, title: 'Visual Concept Maps', description: 'Builds interactive concept maps so visual learners can understand complex relationships effortlessly.', color: '#EC4899', bg: '#FDF2F8' },
+  { icon: ClipboardCheck, title: 'Practice What You Learned', description: 'Generates practice questions with encouraging feedback and detailed step-by-step explanations.', color: '#22C55E', bg: '#F0FDF4' },
+  { icon: BarChart3, title: 'My Learning Progress', description: 'Track your subject mastery, weekly study hours, and daily learning streaks without stress or pressure.', color: '#F59E0B', bg: '#FEF3C7' }
+];
+
+// How It Works Horizontal Timeline Steps
+const timelineSteps = [
+  { step: '01', title: 'Choose Subject', desc: 'Input target exam date and daily available hours.', icon: GraduationCap, color: '#2563EB' },
+  { step: '02', title: 'Research Agent', desc: 'Autonomous crawling for core definitions and formulas.', icon: Search, color: '#0EA5E9' },
+  { step: '03', title: 'AI Smart Notes', desc: 'Generates structured bullet points and voice audio.', icon: FileText, color: '#8B5CF6' },
+  { step: '04', title: 'Interactive Mind Map', desc: 'Visual node relationships with 3 explanation modes.', icon: Network, color: '#EC4899' },
+  { step: '05', title: 'Adaptive Practice Quiz', desc: '15 unique fresh questions with step-by-step solutions.', icon: ClipboardCheck, color: '#F59E0B' },
+  { step: '06', title: 'Adaptive Study Plan', desc: 'Spaced repetition schedule synced to Google Calendar.', icon: CalendarDays, color: '#22C55E' }
+];
+
+// Multi-Agent Engine Architecture Nodes
+const agentNodes = [
+  { title: 'Research Agent', role: 'Data Extraction', icon: Search, color: '#2563EB' },
+  { title: 'Summarizer Agent', role: 'Note Synthesis', icon: FileText, color: '#0EA5E9' },
+  { title: 'Mind Map Generator', role: 'Visual Graph', icon: Network, color: '#8B5CF6' },
+  { title: 'Quiz Agent', role: 'Anti-Duplication Qs', icon: ClipboardCheck, color: '#F59E0B' },
+  { title: 'Scheduler Agent', role: 'Spaced Repetition', icon: CalendarDays, color: '#22C55E' },
+  { title: 'AI Coach / Tutor', role: 'Weak Spot Bridge', icon: Bot, color: '#EC4899' }
 ];
 
 // Problem vs Solution Comparison Data
@@ -120,160 +136,42 @@ const problemVsSolution = [
     problemDesc: 'Generic timetables fail when life happens, leading to accumulated backlogs and study stress.',
     solutionTitle: 'Adaptive Multi-Agent Timetables',
     solutionDesc: 'SchedulerAgent automatically redistributes study hours based on your target exam date and quiz results.',
-    color: '#2563EB'
   },
   {
     problemTitle: 'Repetitive Static Quizzes',
     problemDesc: 'Traditional platforms repeat the same static question banks, masking real knowledge gaps.',
     solutionTitle: 'Anti-Duplication 15-Question Engine',
     solutionDesc: 'QuizAgent checks SQLite QuestionHistory to guarantee 100% fresh, non-repeating questions per attempt.',
-    color: '#0EA5E9'
   },
   {
     problemTitle: 'Overwhelming Walls of Text',
     problemDesc: 'Long textbook chapters trigger cognitive fatigue, making active recall difficult.',
     solutionTitle: '3D Flashcards & Voice AI Reader',
     solutionDesc: 'Listen to notes on your commute or flip active-recall 3D flashcards designed for peak retention.',
-    color: '#8B5CF6'
   },
   {
     problemTitle: 'One-Size-Fits-All Explanations',
     problemDesc: 'Complex topics are presented identically regardless of whether you are a beginner or preparing for interviews.',
     solutionTitle: '3 AI Explanation Modes',
     solutionDesc: 'Switch effortlessly between ELI5 (Explain Like I\'m 10), Beginner Mode, and Interview Prep Mode inside the Mind Map Hub.',
-    color: '#22C55E'
   }
 ];
 
-// Target Audience Category Cards
-const studentCategories = [
-  {
-    title: 'School Students',
-    badge: 'K-12 & High School',
-    desc: 'Break down complex math and science concepts into simple ELI5 explanations and fun visual maps.',
-    icon: GraduationCap,
-    color: '#2563EB',
-    bg: '#EFF6FF'
-  },
-  {
-    title: 'College & University',
-    badge: 'Undergrad & Masters',
-    desc: 'Generate structured bullet notes, download clean PDF summaries, and sync study sessions to Google Calendar.',
-    icon: BookOpen,
-    color: '#0EA5E9',
-    bg: '#F0F9FF'
-  },
-  {
-    title: 'Competitive Exam Aspirants',
-    badge: 'GATE, GRE, USMLE, SAT',
-    desc: 'Master exam topics with adaptive difficulty scaling, 15-question anti-duplication quizzes, and spaced repetition.',
-    icon: Target,
-    color: '#8B5CF6',
-    bg: '#F5F3FF'
-  },
-  {
-    title: 'Self Learners & Professionals',
-    badge: 'Lifetime Learners',
-    desc: 'Listen to AI-generated voice notes while commuting and test active recall with 3D flip flashcards.',
-    icon: Volume2,
-    color: '#22C55E',
-    bg: '#F0FDF4'
-  }
-];
-
-// Features list for Section 4
-const featuresList = [
-  {
-    icon: CalendarDays,
-    title: 'Personalized Study Planner',
-    description: 'Calculates daily and weekly study schedules tailored to your target exam dates and available daily study time.',
-    color: '#2563EB',
-    bg: '#EFF6FF',
-  },
-  {
-    icon: Search,
-    title: 'Deep Research Companion',
-    description: 'Finds definitions, formulas, real-world examples, and key concepts so you never get stuck on a topic.',
-    color: '#0EA5E9',
-    bg: '#F0F9FF',
-  },
-  {
-    icon: FileText,
-    title: 'Easy-to-Understand Notes',
-    description: 'Generates beginner-friendly bullet point notes with voice text-to-speech audio reader and downloadable PDFs.',
-    color: '#8B5CF6',
-    bg: '#F5F3FF',
-  },
-  {
-    icon: Network,
-    title: 'Visual Concept Maps',
-    description: 'Builds interactive concept maps so visual learners can understand complex relationships effortlessly.',
-    color: '#EC4899',
-    bg: '#FDF2F8',
-  },
-  {
-    icon: ClipboardCheck,
-    title: 'Practice What You Learned',
-    description: 'Generates practice questions with encouraging feedback and detailed step-by-step explanations.',
-    color: '#22C55E',
-    bg: '#F0FDF4',
-  },
-  {
-    icon: BarChart3,
-    title: 'My Learning Progress',
-    description: 'Track your subject mastery, weekly study hours, and daily learning streaks without stress or pressure.',
-    color: '#F59E0B',
-    bg: '#FEF3C7',
-  },
-];
-
-// Testimonials for Section 8
+// Testimonials
 const testimonialsList = [
-  {
-    name: 'Sarah Chen',
-    role: 'Computer Science Student, Stanford',
-    review: 'The easy-to-understand notes and visual concept maps helped me understand Algorithms peacefully. I feel so much more confident!',
-    rating: 5,
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
-  },
-  {
-    name: 'Marcus Vance',
-    role: 'Competitive Exam Aspirant (GATE)',
-    review: 'The feedback loop is amazing. When I needed extra help on DBMS, my study plan automatically gave me extra revision time!',
-    rating: 5,
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
-  },
-  {
-    name: 'Elena Rostova',
-    role: 'Medical Student, Oxford',
-    review: 'Listening to notes on my commute with the voice reader makes studying enjoyable. This app truly understands students.',
-    rating: 5,
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-  },
+  { name: 'Sarah Chen', role: 'Computer Science Student, Stanford', review: 'The easy-to-understand notes and visual concept maps helped me understand Algorithms peacefully. I feel so much more confident!', rating: 5, avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80' },
+  { name: 'Marcus Vance', role: 'Competitive Exam Aspirant (GATE)', review: 'The feedback loop is amazing. When I needed extra help on DBMS, my study plan automatically gave me extra revision time!', rating: 5, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80' },
+  { name: 'Elena Rostova', role: 'Medical Student, Oxford', review: 'Listening to notes on my commute with the voice reader makes studying enjoyable. This app truly understands students.', rating: 5, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80' },
+  { name: 'David Park', role: 'Electrical Engineering, MIT', review: 'The 3D flip flashcards and Google Calendar export saved my semester. Highly recommend to engineering students!', rating: 5, avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80' }
 ];
 
-// FAQ Accordion List for Section 9
+// FAQ Accordion List
 const faqList = [
-  {
-    q: 'How does the AI Study Planner help me learn?',
-    a: 'Simply enter your subjects, target exam date, and daily study hours. Our intelligent study companion creates a step-by-step timetable, clear notes, visual concept maps, and practice quizzes to help you learn peacefully.'
-  },
-  {
-    q: 'What makes this different from a static to-do list?',
-    a: 'Static to-do lists do not adapt. If you score low on a practice quiz, our platform automatically adjusts your future timetable to spend more time on topics that need extra attention.'
-  },
-  {
-    q: 'Is this suitable for school, university, or competitive exams?',
-    a: 'Yes! It is crafted for school students, college undergraduates, university students, and competitive exam aspirants (GATE, GRE, USMLE, SAT, etc.).'
-  },
-  {
-    q: 'Is there a free trial or demo available?',
-    a: 'Yes, you can click "Start Your Learning Journey" or "See How It Works" to explore the platform with free demo credits.'
-  },
-  {
-    q: 'Can I download my notes as PDFs?',
-    a: 'Yes! You can export your class notes as clean PDFs and view interactive concept maps whenever you want to revise.'
-  }
+  { q: 'How does the AI Study Planner help me learn?', a: 'Simply enter your subjects, target exam date, and daily study hours. Our intelligent study companion creates a step-by-step timetable, clear notes, visual concept maps, and practice quizzes to help you learn peacefully.' },
+  { q: 'What makes this different from a static to-do list?', a: 'Static to-do lists do not adapt. If you score low on a practice quiz, our platform automatically adjusts your future timetable to spend more time on topics that need extra attention.' },
+  { q: 'Is this suitable for school, university, or competitive exams?', a: 'Yes! It is crafted for school students, college undergraduates, university students, and competitive exam aspirants (GATE, GRE, USMLE, SAT, etc.).' },
+  { q: 'Is there a free trial or demo available?', a: 'Yes, you can click "Start Learning" or "See How It Works" to explore the platform with free demo credits.' },
+  { q: 'Can I download my notes as PDFs and sync to Google Calendar?', a: 'Yes! You can export your class notes as clean PDFs and export study schedules directly into Google Calendar, Outlook, or Apple iCal (.ics).' }
 ];
 
 export default function LandingPage() {
@@ -281,54 +179,57 @@ export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
 
-  // Typing Animation State
-  const [phraseIndex, setPhraseIndex] = useState(0);
+  // Typewriter Loop Logic
+  const [phraseIdx, setPhraseIdx] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showSubtitle, setShowSubtitle] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Typing Animation Logic
+  // Typewriter Animation Effect
   useEffect(() => {
-    const currentPhrase = typingPhrases[phraseIndex];
+    const currentPhrase = heroPhrases[phraseIdx];
     let timer;
 
     if (!isDeleting && typedText.length < currentPhrase.length) {
       timer = setTimeout(() => {
         setTypedText(currentPhrase.substring(0, typedText.length + 1));
-      }, 50);
+      }, 70);
     } else if (!isDeleting && typedText.length === currentPhrase.length) {
+      setShowSubtitle(true);
       timer = setTimeout(() => {
         setIsDeleting(true);
-      }, 2000);
+      }, 2200);
     } else if (isDeleting && typedText.length > 0) {
       timer = setTimeout(() => {
         setTypedText(currentPhrase.substring(0, typedText.length - 1));
-      }, 30);
+      }, 40);
     } else if (isDeleting && typedText.length === 0) {
       setIsDeleting(false);
-      setPhraseIndex((prev) => (prev + 1) % typingPhrases.length);
+      setPhraseIdx((prev) => (prev + 1) % heroPhrases.length);
     }
 
     return () => clearTimeout(timer);
-  }, [typedText, isDeleting, phraseIndex]);
+  }, [typedText, isDeleting, phraseIdx]);
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] text-[#1E293B] font-inter selection:bg-[#2563EB] selection:text-white">
+    <div className="min-h-screen bg-[#FFFFFF] text-[#1E293B] font-inter selection:bg-[#2563EB] selection:text-white relative overflow-hidden">
+      {/* Background Subtle Educational Elements */}
+      <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-40"></div>
+      <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full bg-[#DBEAFE]/30 blur-3xl pointer-events-none"></div>
+      <div className="absolute top-96 right-10 w-96 h-96 rounded-full bg-[#E0F2FE]/40 blur-3xl pointer-events-none"></div>
+
       {/* ==========================================
           1. STICKY NAVIGATION BAR (GLASSMORPHISM)
           ========================================== */}
@@ -339,7 +240,6 @@ export default function LandingPage() {
             : 'bg-transparent border-b border-transparent'
         }`}
       >
-        {/* Left: Brand Logo */}
         <Link to="/" className="flex items-center gap-3 group">
           <img
             src="/logo.png"
@@ -354,29 +254,21 @@ export default function LandingPage() {
           </div>
         </Link>
 
-        {/* Center Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-inter font-bold text-[#64748B]">
           <a href="#home" className="hover:text-[#2563EB] transition-colors">Home</a>
-          <a href="#flowchart" className="hover:text-[#2563EB] transition-colors">AI Ecosystem</a>
+          <a href="#ecosystem" className="hover:text-[#2563EB] transition-colors">Ecosystem</a>
           <a href="#market-problem" className="hover:text-[#2563EB] transition-colors">What We Solve</a>
           <a href="#features" className="hover:text-[#2563EB] transition-colors">Features</a>
-          <a href="#students" className="hover:text-[#2563EB] transition-colors">For Students</a>
+          <a href="#how-it-works" className="hover:text-[#2563EB] transition-colors">How It Works</a>
           <a href="#faq" className="hover:text-[#2563EB] transition-colors">FAQ</a>
         </nav>
 
-        {/* Right Action Buttons */}
         <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="text-xs font-inter font-bold text-[#64748B] hover:text-[#1E293B] px-3 py-2 transition-colors"
-          >
+          <Link to="/login" className="text-xs font-inter font-bold text-[#64748B] hover:text-[#1E293B] px-3 py-2 transition-colors">
             Sign In
           </Link>
-          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-            <Link
-              to="/register"
-              className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-poppins font-bold shadow-md hover:bg-[#1D4ED8] transition-all"
-            >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link to="/register" className="px-5 py-2.5 rounded-2xl bg-[#2563EB] text-white text-xs font-poppins font-bold shadow-md hover:bg-[#1D4ED8] transition-all">
               Start Learning
             </Link>
           </motion.div>
@@ -384,246 +276,217 @@ export default function LandingPage() {
       </header>
 
       {/* ==========================================
-          2. HERO SECTION WITH TYPING ANIMATION
+          2. WORLD-CLASS HERO SECTION (90-95% WIDTH)
           ========================================== */}
-      <section id="home" className="pt-32 pb-20 px-6 lg:px-12 bg-gradient-to-b from-[#F8FBFF] via-[#FFFFFF] to-[#EFF6FF] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          {/* Hero Left Content */}
-          <div className="space-y-6 text-left">
+      <section id="home" className="pt-32 pb-24 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          {/* Left Column: Heading & Typewriter Animation (7 cols) */}
+          <div className="lg:col-span-7 space-y-6 text-left">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold shadow-xs"
             >
-              <Heart className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" />
-              <span>Designed for Students • Stress-Free Learning</span>
+              <Sparkles className="w-4 h-4 text-[#2563EB] animate-spin" />
+              <span>Autonomous Multi-Agent AI Learning Ecosystem</span>
             </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-              className="font-poppins text-4xl sm:text-6xl lg:text-6xl font-black text-[#1E293B] tracking-tight leading-tight"
-            >
-              Study Smarter. <br />
-              Learn Better. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#0EA5E9] to-[#38BDF8]">
-                Reach Your Goals.
-              </span>
-            </motion.h1>
-
-            {/* Typing Animation Subheading */}
-            <div className="h-14 flex items-center">
-              <p className="text-[#2563EB] font-poppins font-extrabold text-base sm:text-lg tracking-tight flex items-center">
-                <span>{typedText}</span>
-                <span className="w-0.5 h-6 bg-[#2563EB] ml-1 animate-pulse"></span>
-              </p>
+            {/* Main Typewriter Animated Heading */}
+            <div className="min-h-[140px] flex items-center">
+              <h1 className="font-poppins text-4xl sm:text-6xl lg:text-6xl font-black text-[#1E293B] tracking-tight leading-tight">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#0EA5E9] to-[#38BDF8]">
+                  {typedText}
+                </span>
+                <span className="w-1.5 h-10 bg-[#2563EB] inline-block ml-1 animate-pulse align-middle"></span>
+              </h1>
             </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-[#64748B] font-inter text-sm sm:text-base leading-relaxed max-w-xl"
-            >
-              Create a personalized study plan, understand difficult topics with simple notes, practice quizzes, and improve every day with an AI study companion designed for students.
-            </motion.p>
+            {/* Subtitle Fades In */}
+            <AnimatePresence>
+              {showSubtitle && (
+                <motion.p
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-[#64748B] font-inter text-sm sm:text-base leading-relaxed max-w-2xl"
+                >
+                  Create personalized study plans, interactive 3D concept maps, AI-generated bullet notes, adaptive practice quizzes, and intelligent revision schedules using our Multi-Agent AI system.
+                </motion.p>
+              )}
+            </AnimatePresence>
 
             {/* Action Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="flex flex-wrap items-center gap-4 pt-2"
-            >
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   to="/register"
-                  className="px-8 py-4 rounded-2xl bg-[#2563EB] text-white text-xs sm:text-sm font-poppins font-bold flex items-center gap-2 shadow-md hover:bg-[#1D4ED8] transition-all"
+                  className="px-8 py-4 rounded-2xl bg-[#2563EB] text-white text-xs sm:text-sm font-poppins font-bold flex items-center gap-2 shadow-lg shadow-blue-500/25 hover:bg-[#1D4ED8] transition-all"
                 >
-                  <span>Start Your Learning Journey</span>
+                  <span>Start Learning</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <a
-                  href="#flowchart"
+                  href="#ecosystem"
                   className="px-8 py-4 rounded-2xl bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E2E8F0] text-[#1E293B] text-xs sm:text-sm font-inter font-bold flex items-center gap-2 shadow-xs transition-colors"
                 >
-                  <Activity className="w-3.5 h-3.5 text-[#2563EB]" />
-                  <span>View AI Flowchart</span>
+                  <Play className="w-3.5 h-3.5 text-[#2563EB] fill-[#2563EB]" />
+                  <span>Watch Demo</span>
                 </a>
               </motion.div>
-            </motion.div>
+            </div>
 
             {/* User Target Badges */}
             <div className="pt-4 flex flex-wrap items-center gap-2 text-[11px] font-inter font-bold text-[#64748B]">
               <span className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB]">🎓 School Students</span>
               <span className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB]">🏫 College & Uni</span>
               <span className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB]">⚡ Competitive Exams</span>
+              <span className="px-3 py-1 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB]">💡 Self Learning</span>
             </div>
           </div>
 
-          {/* Hero Right: Educational Paper Notebook Showcase */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="relative flex items-center justify-center min-h-[420px]"
-          >
-            <div className="absolute w-72 h-72 rounded-full bg-[#DBEAFE] blur-3xl -top-6 -left-6 pointer-events-none"></div>
-
-            <div className="relative w-full max-w-lg bg-[#FFFFFF] rounded-3xl p-6 border border-[#E2E8F0] shadow-lg space-y-5">
+          {/* Right Column: Floating Product Ecosystem Illustration (5 cols) */}
+          <div className="lg:col-span-5 relative flex items-center justify-center min-h-[460px]">
+            <div className="w-full max-w-md bg-[#FFFFFF] rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 relative z-10">
               <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-[#2563EB]" />
-                  </div>
-                  <div>
-                    <div className="font-poppins font-bold text-xs text-[#1E293B]">My Study Companion</div>
-                    <div className="text-[10px] text-[#64748B]">Peaceful Learning Space</div>
-                  </div>
+                <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#1E293B]">
+                  <Activity className="w-4 h-4 text-[#2563EB] animate-pulse" />
+                  <span>Live Product Ecosystem</span>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] text-[10px] font-bold border border-[#DBEAFE]">
-                  Ready to Help
+                <span className="px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-[10px] font-bold border border-[#86EFAC]">
+                  Autonomous AI
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 text-left">
-                <div className="p-3.5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
-                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Today's Goal</div>
-                  <div className="font-poppins font-bold text-xs text-[#1E293B] mt-0.5">Binary Trees & Algorithms</div>
-                  <div className="text-[10px] text-[#2563EB] font-bold mt-1">1.5 hours planned</div>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE]">
-                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Learning Progress</div>
-                  <div className="font-poppins font-black text-base text-[#2563EB] mt-0.5">Steady Improvement</div>
-                  <div className="text-[10px] text-[#22C55E] font-bold mt-1">Great work! Keep going!</div>
-                </div>
+              {/* Floating Ecosystem Node Stack */}
+              <div className="space-y-2.5">
+                {[
+                  { title: 'AI Study Planner', desc: 'Spaced Repetition Engine', color: '#2563EB' },
+                  { title: 'Research Agent', desc: 'Autonomous Web Crawling', color: '#0EA5E9' },
+                  { title: 'Smart Notes & Audio', desc: 'Voice AI Reader & PDF Export', color: '#8B5CF6' },
+                  { title: 'Interactive Mind Map', desc: '3 AI Explanation Modes', color: '#EC4899' },
+                  { title: 'Adaptive Quiz Engine', desc: '15 Anti-Duplication Qs', color: '#F59E0B' },
+                  { title: 'Performance Analytics', desc: 'Weak Spot Detection', color: '#22C55E' }
+                ].map((item, idx) => (
+                  <motion.div
+                    key={idx}
+                    animate={{ y: [idx % 2 === 0 ? -4 : 4, idx % 2 === 0 ? 4 : -4, idx % 2 === 0 ? -4 : 4] }}
+                    transition={{ repeat: Infinity, duration: 4 + idx * 0.5, ease: "easeInOut" }}
+                    className="p-3.5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-center justify-between shadow-xs hover:border-[#2563EB] transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></div>
+                      <div>
+                        <div className="font-poppins font-bold text-xs text-[#1E293B]">{item.title}</div>
+                        <div className="text-[10px] text-[#64748B] font-inter">{item.desc}</div>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
+                  </motion.div>
+                ))}
               </div>
             </div>
-
-            <motion.div
-              animate={{ y: [-8, 8, -8] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="absolute -top-4 -left-4 sm:top-2 sm:-left-6 p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-md flex items-center gap-3"
-            >
-              <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-100">
-                <Network className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <div className="font-poppins font-bold text-xs text-[#1E293B]">Visual Concept Map</div>
-                <div className="text-[10px] text-[#64748B]">Clear Relationship Diagram</div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              animate={{ y: [8, -8, 8] }}
-              transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
-              className="absolute -bottom-4 -right-4 sm:bottom-4 sm:-right-6 p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-md flex items-center gap-3"
-            >
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
-                <ClipboardCheck className="w-5 h-5" />
-              </div>
-              <div className="text-left">
-                <div className="font-poppins font-bold text-xs text-[#1E293B]">Practice Quiz</div>
-                <div className="text-[10px] text-[#64748B]">Encouraging Questions</div>
-              </div>
-            </motion.div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ==========================================
-          NEW VISUAL FLOWCHART: OUR MULTI-AGENT CULTURE & ECOSYSTEM
+          3. PRODUCT ECOSYSTEM PIPELINE VISUALIZATION
           ========================================== */}
-      <section id="flowchart" className="py-20 px-6 lg:px-12 bg-[#F8FBFF] border-y border-[#E2E8F0]">
-        <div className="max-w-7xl mx-auto space-y-12 text-center">
-          <div className="space-y-3 max-w-2xl mx-auto">
+      <section id="ecosystem" className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="glass-card rounded-3xl p-8 lg:p-12 border border-[#E2E8F0] bg-[#FFFFFF] shadow-soft space-y-12 text-center"
+        >
+          <div className="space-y-3 max-w-3xl mx-auto">
             <span className="px-3.5 py-1 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold shadow-xs">
-              ⚡ Live Multi-Agent Culture & Engine Flowchart
+              ⚡ End-to-End Multi-Agent Architecture
             </span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">How Our Autonomous AI Agents Coordinate</h2>
+            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">
+              How Information Flows Through Our System
+            </h2>
             <p className="text-xs sm:text-sm text-[#64748B] font-inter">
-              An interactive flowchart showing how ResearchAgent, SummarizerAgent, QuizAgent, and SchedulerAgent work in harmony.
+              From entering target exam dates to 98% score mastery, witness our autonomous multi-agent pipeline in real time.
             </p>
           </div>
 
-          {/* Animated Flowchart Matrix */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left relative">
-            {flowchartNodes.map((node, idx) => {
+          {/* Interactive Pipeline Nodes Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 items-stretch relative">
+            {ecosystemPipeline.map((node, idx) => {
               const Icon = node.icon;
               return (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ scale: 1.03 }}
-                  className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-soft relative flex flex-col justify-between space-y-4"
+                  transition={{ delay: idx * 0.08, duration: 0.4 }}
+                  whileHover={{ y: -6, scale: 1.04 }}
+                  className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-sm flex flex-col justify-between items-center text-center space-y-3 relative group hover:border-[#2563EB] transition-all"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold text-[#64748B] uppercase">{node.step}</span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] animate-ping"></span>
+                  <div className="text-[10px] font-mono font-bold text-[#64748B]">{node.step}</div>
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center border shadow-xs"
+                    style={{ backgroundColor: node.bg, borderColor: '#DBEAFE', color: node.color }}
+                  >
+                    <Icon className="w-5 h-5" />
                   </div>
-
-                  <div className="space-y-2">
-                    <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center border shadow-xs"
-                      style={{ backgroundColor: node.bg, borderColor: '#DBEAFE', color: node.color }}
-                    >
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <h3 className="font-poppins font-bold text-base text-[#1E293B]">{node.title}</h3>
-                    <div className="text-xs font-inter font-bold text-[#2563EB]">{node.subtitle}</div>
-                    <p className="text-xs text-[#64748B] font-inter leading-relaxed">{node.desc}</p>
+                  <div>
+                    <div className="font-poppins font-bold text-xs text-[#1E293B]">{node.title}</div>
+                    <div className="text-[10px] text-[#64748B] font-inter mt-0.5 leading-tight">{node.subtitle}</div>
                   </div>
-
-                  {idx < flowchartNodes.length - 1 && (
-                    <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 z-10">
-                      <div className="w-6 h-6 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-xs shadow-md">
-                        →
-                      </div>
-                    </div>
-                  )}
                 </motion.div>
               );
             })}
           </div>
+        </motion.div>
+      </section>
 
-          {/* Feedback Loop Re-alignment Banner */}
-          <motion.div
-            whileHover={{ scale: 1.01 }}
-            className="p-6 rounded-3xl bg-gradient-to-r from-[#EFF6FF] to-[#DBEAFE] border border-[#BFDBFE] text-left flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-md">
-                <RefreshCw className="w-5 h-5 animate-spin" />
-              </div>
-              <div>
-                <div className="font-poppins font-bold text-sm text-[#1E293B]">Continuous Adaptive Feedback Loop</div>
-                <div className="text-xs text-[#64748B]">Quiz performance dynamically reschedules difficult topics until 100% mastery is achieved.</div>
-              </div>
-            </div>
-            <span className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-poppins font-bold shadow-xs whitespace-nowrap">
-              Active Feedback Loop 🔄
-            </span>
-          </motion.div>
+      {/* ==========================================
+          4. STATISTICS COUNTER SECTION (COUNTUP)
+          ========================================== */}
+      <section className="py-16 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 items-stretch text-center">
+          {statsList.map((stat, idx) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1, duration: 0.5 }}
+                className="p-8 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft flex flex-col items-center justify-center space-y-3 hover:border-[#2563EB] transition-colors"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center border border-[#DBEAFE]">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <div className="font-poppins font-black text-4xl sm:text-5xl text-[#1E293B]">
+                  <AnimatedCounter end={stat.end} suffix={stat.suffix} />
+                </div>
+                <div className="text-xs font-inter font-bold text-[#64748B]">{stat.label}</div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
       {/* ==========================================
-          NEW SECTION: WHAT WE SOLVE IN THE CURRENT MARKET
+          5. WHAT WE SOLVE IN THE CURRENT MARKET
           ========================================== */}
-      <section id="market-problem" className="py-20 px-6 lg:px-12 bg-[#FFFFFF] border-y border-[#E2E8F0]">
-        <div className="max-w-7xl mx-auto space-y-12 text-center">
-          <div className="space-y-3 max-w-2xl mx-auto">
+      <section id="market-problem" className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto">
+        <div className="space-y-12 text-center">
+          <div className="space-y-3 max-w-3xl mx-auto">
             <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Market Innovation</span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Traditional Learning Lacks Personalization. We Solve That.</h2>
+            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">
+              Traditional Learning Lacks Personalization. We Solve That.
+            </h2>
             <p className="text-xs sm:text-sm text-[#64748B] font-inter">
               See how our Autonomous Multi-Agent AI system transforms static study habits into an active, adaptive learning journey.
             </p>
@@ -633,13 +496,12 @@ export default function LandingPage() {
             {problemVsSolution.map((item, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="p-7 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft space-y-4 flex flex-col justify-between"
+                transition={{ delay: idx * 0.1, duration: 0.5 }}
+                className="p-8 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft space-y-4 flex flex-col justify-between"
               >
-                {/* Traditional Problem Box */}
                 <div className="p-4 rounded-2xl bg-[#FEF2F2] border border-[#FCA5A5] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#DC2626]">
                     <XCircle className="w-4 h-4 text-[#DC2626]" />
@@ -648,7 +510,6 @@ export default function LandingPage() {
                   <p className="text-xs text-[#7F1D1D] leading-relaxed font-inter">{item.problemDesc}</p>
                 </div>
 
-                {/* Our Multi-Agent Solution Box */}
                 <div className="p-4 rounded-2xl bg-[#F0FDF4] border border-[#86EFAC] space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#15803D]">
                     <ShieldCheck className="w-4 h-4 text-[#15803D]" />
@@ -663,86 +524,11 @@ export default function LandingPage() {
       </section>
 
       {/* ==========================================
-          NEW SECTION: TAILORED FOR EVERY TYPE OF STUDENT
+          6. FEATURES SECTION (STAGGERED ANIMATIONS)
           ========================================== */}
-      <section id="students" className="py-20 px-6 lg:px-12 bg-gradient-to-b from-[#F8FBFF] to-[#FFFFFF]">
-        <div className="max-w-7xl mx-auto space-y-12 text-center">
-          <div className="space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Student Profiles</span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Crafted for Every Type of Student</h2>
-            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
-              Whether you are preparing for high school exams, college finals, or competitive entrance tests.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-            {studentCategories.map((cat, idx) => {
-              const Icon = cat.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ y: -6 }}
-                  className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-soft space-y-4 flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div
-                        className="w-12 h-12 rounded-2xl flex items-center justify-center border"
-                        style={{ backgroundColor: cat.bg, borderColor: '#DBEAFE', color: cat.color }}
-                      >
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE]">
-                        {cat.badge}
-                      </span>
-                    </div>
-                    <h3 className="font-poppins text-lg font-bold text-[#1E293B]">{cat.title}</h3>
-                    <p className="text-xs text-[#64748B] font-inter leading-relaxed">{cat.desc}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ==========================================
-          3. TRUSTED BY / COUNTER STATS SECTION
-          ========================================== */}
-      <section className="py-12 px-6 lg:px-12 bg-[#FFFFFF] border-y border-[#E2E8F0]">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 items-stretch text-center">
-          {statsList.map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="p-6 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-xs flex flex-col items-center justify-center space-y-2"
-              >
-                <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center border border-[#DBEAFE]">
-                  <Icon className="w-5 h-5" />
-                </div>
-                <div className="font-poppins font-black text-3xl sm:text-4xl text-[#1E293B]">{stat.count}</div>
-                <div className="text-xs font-inter font-bold text-[#64748B]">{stat.label}</div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ==========================================
-          4. FEATURES SECTION (HUMAN EDUCATIONAL CARDS)
-          ========================================== */}
-      <section id="features" className="py-20 px-6 lg:px-12 bg-gradient-to-b from-[#FFFFFF] to-[#F8FBFF]">
-        <div className="max-w-7xl mx-auto space-y-12 text-center">
-          <div className="space-y-3 max-w-2xl mx-auto">
+      <section id="features" className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto">
+        <div className="space-y-12 text-center">
+          <div className="space-y-3 max-w-3xl mx-auto">
             <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Built for Students</span>
             <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Tools Designed for Stress-Free Learning</h2>
             <p className="text-xs sm:text-sm text-[#64748B] font-inter">
@@ -756,12 +542,12 @@ export default function LandingPage() {
               return (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
                   whileHover={{ y: -6 }}
-                  className="p-7 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-soft hover:shadow-lg transition-all space-y-4 flex flex-col justify-between"
+                  className="p-8 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-soft hover:shadow-xl transition-all space-y-4 flex flex-col justify-between"
                 >
                   <div className="space-y-3">
                     <div
@@ -781,26 +567,118 @@ export default function LandingPage() {
       </section>
 
       {/* ==========================================
-          8. TESTIMONIALS SECTION (STUDENT REVIEWS)
+          7. HOW IT WORKS HORIZONTAL TIMELINE
           ========================================== */}
-      <section className="py-20 px-6 lg:px-12 bg-[#FFFFFF]">
-        <div className="max-w-7xl mx-auto space-y-12 text-center">
-          <div className="space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Student Experiences</span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Loved by Students Everywhere</h2>
+      <section id="how-it-works" className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto bg-[#EFF6FF] rounded-3xl border border-[#DBEAFE]">
+        <div className="space-y-12 text-center">
+          <div className="space-y-3 max-w-3xl mx-auto">
+            <span className="px-3.5 py-1 rounded-full bg-[#FFFFFF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold shadow-xs">
+              📘 Step-by-Step Learning Timeline
+            </span>
+            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">How Your Study Companion Works</h2>
             <p className="text-xs sm:text-sm text-[#64748B] font-inter">
-              Hear from students who use our study companion to stay focused and reach their academic goals.
+              6 clear steps from entering your target subject to generating an adaptive study timetable.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left items-stretch">
+          {/* Horizontal Timeline Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-stretch">
+            {timelineSteps.map((st, idx) => {
+              const Icon = st.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1, duration: 0.4 }}
+                  whileHover={{ y: -6 }}
+                  className="p-5 rounded-2xl bg-[#FFFFFF] border border-[#DBEAFE] shadow-sm flex flex-col justify-between items-center text-center space-y-3"
+                >
+                  <div className="text-[10px] font-mono font-bold text-[#64748B]">{st.step}</div>
+                  <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center border border-[#DBEAFE]">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="font-poppins font-bold text-xs text-[#1E293B]">{st.title}</div>
+                    <div className="text-[10px] text-[#64748B] font-inter mt-1 leading-relaxed">{st.desc}</div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ==========================================
+          8. MULTI-AGENT ENGINE ECOSYSTEM SECTION
+          ========================================== */}
+      <section className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto">
+        <div className="space-y-12 text-center">
+          <div className="space-y-3 max-w-3xl mx-auto">
+            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Multi-Agent Coordination</span>
+            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">
+              Autonomous AI Agents Working Together
+            </h2>
+            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
+              Every agent specializes in a distinct cognitive task to build your personalized study ecosystem.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+            {agentNodes.map((agent, idx) => {
+              const Icon = agent.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                  whileHover={{ y: -6 }}
+                  className="p-7 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft space-y-3 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center border shadow-xs"
+                      style={{ backgroundColor: `${agent.color}15`, borderColor: `${agent.color}40`, color: agent.color }}
+                    >
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-poppins font-bold text-base text-[#1E293B]">{agent.title}</h3>
+                      <p className="text-xs text-[#64748B] font-inter">{agent.role}</p>
+                    </div>
+                  </div>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E] animate-pulse"></span>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ==========================================
+          9. AUTO-SCROLLING TESTIMONIALS CAROUSEL
+          ========================================== */}
+      <section className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto border-t border-[#E2E8F0]">
+        <div className="space-y-12 text-center">
+          <div className="space-y-3 max-w-3xl mx-auto">
+            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Student Reviews</span>
+            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Loved by Students Everywhere</h2>
+            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
+              Hear from students who transformed their study efficiency with our AI companion.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
             {testimonialsList.map((item, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: idx * 0.1, duration: 0.5 }}
                 whileHover={{ y: -6 }}
                 className="p-7 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft space-y-4 flex flex-col justify-between"
               >
@@ -827,9 +705,9 @@ export default function LandingPage() {
       </section>
 
       {/* ==========================================
-          9. FAQ SECTION (ACCORDION STYLE)
+          10. FAQ ACCORDION SECTION
           ========================================== */}
-      <section id="faq" className="py-20 px-6 lg:px-12 bg-[#F8FBFF] border-t border-[#E2E8F0]">
+      <section id="faq" className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto bg-[#F8FBFF] rounded-3xl border border-[#E2E8F0]">
         <div className="max-w-4xl mx-auto space-y-12 text-center">
           <div className="space-y-3">
             <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Got Questions?</span>
@@ -867,28 +745,28 @@ export default function LandingPage() {
       </section>
 
       {/* ==========================================
-          10. FINAL CTA SECTION (CALM BLUE GRADIENT)
+          11. FINAL LARGE CTA SECTION (SOFT BLUE GRADIENT)
           ========================================== */}
-      <section className="py-20 px-6 lg:px-12 bg-[#FFFFFF]">
+      <section className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto">
         <motion.div
           whileHover={{ scale: 1.01 }}
-          className="max-w-5xl mx-auto rounded-3xl p-8 sm:p-14 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white space-y-6 text-center shadow-xl relative overflow-hidden"
+          className="rounded-3xl p-10 sm:p-16 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white space-y-6 text-center shadow-2xl relative overflow-hidden"
         >
-          <div className="space-y-3 max-w-2xl mx-auto">
+          <div className="space-y-3 max-w-3xl mx-auto">
             <h2 className="font-poppins text-3xl sm:text-5xl font-black text-white leading-tight">
-              Start Your Learning Journey Today
+              Ready to Transform Your Study Journey?
             </h2>
-            <p className="font-inter text-blue-50 text-xs sm:text-sm leading-relaxed">
+            <p className="font-inter text-blue-50 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto">
               Join thousands of students organizing their study schedules with a peaceful AI study companion.
             </p>
           </div>
 
-          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               to="/register"
-              className="inline-flex items-center gap-2 px-9 py-4 rounded-2xl bg-[#FFFFFF] text-[#2563EB] hover:bg-blue-50 font-poppins font-bold text-sm shadow-md transition-all"
+              className="inline-flex items-center gap-2 px-10 py-4.5 rounded-2xl bg-[#FFFFFF] text-[#2563EB] hover:bg-blue-50 font-poppins font-bold text-sm shadow-xl transition-all"
             >
-              <span>Start Your Learning Journey</span>
+              <span>Start Learning Today</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
@@ -896,10 +774,10 @@ export default function LandingPage() {
       </section>
 
       {/* ==========================================
-          11. FOOTER SECTION
+          12. MODERN FOOTER
           ========================================== */}
       <footer id="contact" className="py-12 px-6 lg:px-12 bg-[#FFFFFF] border-t border-[#E2E8F0] text-xs font-inter text-[#64748B]">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-left pb-8 border-b border-[#E2E8F0]">
+        <div className="w-[92%] max-w-[1536px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-left pb-8 border-b border-[#E2E8F0]">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-xl object-cover" />
@@ -914,10 +792,10 @@ export default function LandingPage() {
             <div className="font-poppins font-bold text-xs text-[#1E293B]">Quick Links</div>
             <ul className="space-y-1.5 text-xs text-[#64748B]">
               <li><a href="#home" className="hover:text-[#2563EB]">Home</a></li>
-              <li><a href="#flowchart" className="hover:text-[#2563EB]">AI Ecosystem</a></li>
+              <li><a href="#ecosystem" className="hover:text-[#2563EB]">Ecosystem</a></li>
               <li><a href="#market-problem" className="hover:text-[#2563EB]">What We Solve</a></li>
               <li><a href="#features" className="hover:text-[#2563EB]">Features</a></li>
-              <li><a href="#students" className="hover:text-[#2563EB]">For Students</a></li>
+              <li><a href="#how-it-works" className="hover:text-[#2563EB]">How It Works</a></li>
               <li><a href="#faq" className="hover:text-[#2563EB]">FAQ</a></li>
             </ul>
           </div>
@@ -943,7 +821,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#64748B]">
+        <div className="w-[92%] max-w-[1536px] mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#64748B]">
           <div>© 2026 AI Study Planner. All rights reserved.</div>
           <div>Built with care for students everywhere.</div>
         </div>
