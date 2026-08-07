@@ -37,15 +37,16 @@ import {
   RefreshCw,
   Sparkle,
   ChevronRight,
-  MousePointerClick
+  MousePointerClick,
+  Check
 } from 'lucide-react';
 
-// Hero Heading Loop Typewriter Phrases
+// Hero Subheading Typewriter Phrases
 const heroPhrases = [
-  "Study Smarter.",
-  "Build Better Habits.",
-  "Master Every Subject.",
-  "Your Personal AI Study Companion."
+  "Autonomous Multi-Agent AI System",
+  "Active Recall 3D Flashcards",
+  "15-Question Fresh Anti-Duplication Engine",
+  "Spaced Repetition Schedule Synced to Google Calendar"
 ];
 
 // CountUp Animated Counter Component
@@ -70,6 +71,99 @@ function AnimatedCounter({ end, duration = 2, suffix = '+' }) {
 
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
+
+// Interactive Live Tab Mockups Data for Hero Right Side
+const showcaseTabs = [
+  {
+    id: 'planner',
+    label: '📅 Study Planner',
+    title: 'Personalized Timetable',
+    badge: 'Spaced Repetition',
+    content: (
+      <div className="space-y-3 font-inter">
+        <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <CalendarDays className="w-4 h-4 text-[#2563EB]" />
+            <span className="font-bold text-[#1E293B]">Binary Trees & Algorithms</span>
+          </div>
+          <span className="px-2 py-0.5 rounded-full bg-[#2563EB] text-white text-[10px] font-bold">1.5 Hours</span>
+        </div>
+        <div className="p-3.5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-[#0EA5E9]" />
+            <span className="font-bold text-[#1E293B]">DBMS Normalization</span>
+          </div>
+          <span className="px-2 py-0.5 rounded-full bg-[#E0F2FE] text-[#0284C7] text-[10px] font-bold">2.0 Hours</span>
+        </div>
+        <div className="p-3 rounded-xl bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D] text-[11px] font-bold flex items-center gap-1.5">
+          <CheckCircle2 className="w-4 h-4 text-[#22C55E]" />
+          <span>Synced directly to Google Calendar & Apple iCal (.ics)</span>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'notes',
+    label: '📝 Smart Notes',
+    title: 'Class Notes & Audio',
+    badge: 'Voice AI Reader',
+    content: (
+      <div className="space-y-3 font-inter text-xs">
+        <div className="p-3.5 rounded-2xl bg-[#F5F3FF] border border-[#DDD6FE] space-y-1.5">
+          <div className="flex items-center justify-between text-[#7C3AED] font-bold">
+            <span className="flex items-center gap-1.5"><Volume2 className="w-4 h-4 animate-pulse" /> Voice AI Audio Reader</span>
+            <span className="text-[10px]">Active Narration</span>
+          </div>
+          <p className="text-[#4C1D95] text-[11px] leading-relaxed">"Binary Search operates in logarithmic time complexity O(log N) by dividing sorted search space in half..."</p>
+        </div>
+        <div className="flex justify-between items-center pt-1 text-[11px] font-bold text-[#2563EB]">
+          <span>• Bullet Point Summaries</span>
+          <span>• Clean PDF Export</span>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'mindmap',
+    label: '🧠 Mind Map',
+    title: 'Concept Map Hub',
+    badge: '3 AI Explanation Modes',
+    content: (
+      <div className="space-y-3 font-inter text-xs">
+        <div className="flex items-center gap-2">
+          <span className="px-2.5 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] text-[10px] font-bold border border-[#DBEAFE]">ELI5 Mode</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#F8FBFF] text-[#64748B] text-[10px] font-bold border border-[#E2E8F0]">Beginner</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#F8FBFF] text-[#64748B] text-[10px] font-bold border border-[#E2E8F0]">Interview Prep</span>
+        </div>
+        <div className="p-4 rounded-2xl bg-[#FDF2F8] border border-[#FBCFE8] space-y-2 text-[#9D174D]">
+          <div className="font-poppins font-bold text-xs">Visual Node Relationships</div>
+          <p className="text-[11px] leading-relaxed">Imagine a phonebook where you open the middle page every time to find a name twice as fast!</p>
+        </div>
+      </div>
+    )
+  },
+  {
+    id: 'quiz',
+    label: '🏆 Practice Quiz',
+    title: 'Anti-Duplication Quiz',
+    badge: '15 Fresh Questions',
+    content: (
+      <div className="space-y-3 font-inter text-xs">
+        <div className="p-3.5 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] space-y-1.5">
+          <div className="flex items-center justify-between text-[#B45309] font-bold">
+            <span>Question 1 of 15</span>
+            <span className="text-[10px]">Medium Difficulty</span>
+          </div>
+          <p className="text-[#78350F] font-bold text-[11px]">What is the worst-case time complexity of Binary Search?</p>
+        </div>
+        <div className="p-2.5 rounded-xl bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D] font-bold text-[11px] flex items-center justify-between">
+          <span>Option B: O(log N)</span>
+          <CheckCircle2 className="w-4 h-4 text-[#22C55E]" />
+        </div>
+      </div>
+    )
+  }
+];
 
 // Product Ecosystem Pipeline Nodes
 const ecosystemPipeline = [
@@ -178,12 +272,12 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
+  const [activeTab, setActiveTab] = useState('planner');
 
   // Typewriter Loop Logic
   const [phraseIdx, setPhraseIdx] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showSubtitle, setShowSubtitle] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -201,16 +295,15 @@ export default function LandingPage() {
     if (!isDeleting && typedText.length < currentPhrase.length) {
       timer = setTimeout(() => {
         setTypedText(currentPhrase.substring(0, typedText.length + 1));
-      }, 70);
+      }, 50);
     } else if (!isDeleting && typedText.length === currentPhrase.length) {
-      setShowSubtitle(true);
       timer = setTimeout(() => {
         setIsDeleting(true);
-      }, 2200);
+      }, 2000);
     } else if (isDeleting && typedText.length > 0) {
       timer = setTimeout(() => {
         setTypedText(currentPhrase.substring(0, typedText.length - 1));
-      }, 40);
+      }, 30);
     } else if (isDeleting && typedText.length === 0) {
       setIsDeleting(false);
       setPhraseIdx((prev) => (prev + 1) % heroPhrases.length);
@@ -223,9 +316,11 @@ export default function LandingPage() {
     setOpenFaq(openFaq === index ? null : index);
   };
 
+  const activeMockup = showcaseTabs.find((t) => t.id === activeTab) || showcaseTabs[0];
+
   return (
     <div className="min-h-screen bg-[#FFFFFF] text-[#1E293B] font-inter selection:bg-[#2563EB] selection:text-white relative overflow-hidden">
-      {/* Background Subtle Educational Elements */}
+      {/* Subtle Background Elements */}
       <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-40"></div>
       <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full bg-[#DBEAFE]/30 blur-3xl pointer-events-none"></div>
       <div className="absolute top-96 right-10 w-96 h-96 rounded-full bg-[#E0F2FE]/40 blur-3xl pointer-events-none"></div>
@@ -276,12 +371,12 @@ export default function LandingPage() {
       </header>
 
       {/* ==========================================
-          2. WORLD-CLASS HERO SECTION (90-95% WIDTH)
+          2. WORLD-CLASS HERO SECTION (92% WIDTH)
           ========================================== */}
       <section id="home" className="pt-32 pb-24 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Left Column: Heading & Typewriter Animation (7 cols) */}
+          {/* Left Column: Bold Headline & Typing Sub-Badge (7 cols) */}
           <div className="lg:col-span-7 space-y-6 text-left">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
@@ -289,32 +384,28 @@ export default function LandingPage() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold shadow-xs"
             >
               <Sparkles className="w-4 h-4 text-[#2563EB] animate-spin" />
-              <span>Autonomous Multi-Agent AI Learning Ecosystem</span>
+              <span>Designed for Students • Stress-Free Learning</span>
             </motion.div>
 
-            {/* Main Typewriter Animated Heading */}
-            <div className="min-h-[140px] flex items-center">
-              <h1 className="font-poppins text-4xl sm:text-6xl lg:text-6xl font-black text-[#1E293B] tracking-tight leading-tight">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#0EA5E9] to-[#38BDF8]">
-                  {typedText}
-                </span>
-                <span className="w-1.5 h-10 bg-[#2563EB] inline-block ml-1 animate-pulse align-middle"></span>
-              </h1>
+            {/* Bold High-Impact Static Headline */}
+            <h1 className="font-poppins text-4xl sm:text-6xl lg:text-6xl font-black text-[#1E293B] tracking-tight leading-tight">
+              Study Smarter. <br />
+              Build Better Habits. <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] via-[#0EA5E9] to-[#38BDF8]">
+                Master Every Subject.
+              </span>
+            </h1>
+
+            {/* Smooth Dynamic Typewriter Sub-Badge */}
+            <div className="p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-center gap-2 text-xs sm:text-sm font-poppins font-bold text-[#2563EB]">
+              <Sparkle className="w-4 h-4 text-[#2563EB] fill-[#2563EB]" />
+              <span>{typedText}</span>
+              <span className="w-0.5 h-4 bg-[#2563EB] animate-pulse"></span>
             </div>
 
-            {/* Subtitle Fades In */}
-            <AnimatePresence>
-              {showSubtitle && (
-                <motion.p
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-[#64748B] font-inter text-sm sm:text-base leading-relaxed max-w-2xl"
-                >
-                  Create personalized study plans, interactive 3D concept maps, AI-generated bullet notes, adaptive practice quizzes, and intelligent revision schedules using our Multi-Agent AI system.
-                </motion.p>
-              )}
-            </AnimatePresence>
+            <p className="text-[#64748B] font-inter text-sm sm:text-base leading-relaxed max-w-2xl">
+              Create personalized study plans, interactive 3D concept maps, AI-generated bullet notes, adaptive practice quizzes, and intelligent revision schedules using our Multi-Agent AI system.
+            </p>
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -348,45 +439,44 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right Column: Floating Product Ecosystem Illustration (5 cols) */}
+          {/* Right Column: Tabbed Interactive Showcase Card (5 cols) */}
           <div className="lg:col-span-5 relative flex items-center justify-center min-h-[460px]">
             <div className="w-full max-w-md bg-[#FFFFFF] rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 relative z-10">
-              <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
-                <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#1E293B]">
-                  <Activity className="w-4 h-4 text-[#2563EB] animate-pulse" />
-                  <span>Live Product Ecosystem</span>
-                </div>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#DCFCE7] text-[#15803D] text-[10px] font-bold border border-[#86EFAC]">
-                  Autonomous AI
-                </span>
+              
+              {/* Tab Navigation Controls */}
+              <div className="flex flex-wrap gap-1.5 p-1 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+                {showcaseTabs.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setActiveTab(t.id)}
+                    className={`px-3 py-1.5 rounded-xl text-[11px] font-poppins font-bold transition-all ${
+                      activeTab === t.id
+                        ? 'bg-[#2563EB] text-white shadow-xs'
+                        : 'text-[#64748B] hover:text-[#1E293B]'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
               </div>
 
-              {/* Floating Ecosystem Node Stack */}
-              <div className="space-y-2.5">
-                {[
-                  { title: 'AI Study Planner', desc: 'Spaced Repetition Engine', color: '#2563EB' },
-                  { title: 'Research Agent', desc: 'Autonomous Web Crawling', color: '#0EA5E9' },
-                  { title: 'Smart Notes & Audio', desc: 'Voice AI Reader & PDF Export', color: '#8B5CF6' },
-                  { title: 'Interactive Mind Map', desc: '3 AI Explanation Modes', color: '#EC4899' },
-                  { title: 'Adaptive Quiz Engine', desc: '15 Anti-Duplication Qs', color: '#F59E0B' },
-                  { title: 'Performance Analytics', desc: 'Weak Spot Detection', color: '#22C55E' }
-                ].map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    animate={{ y: [idx % 2 === 0 ? -4 : 4, idx % 2 === 0 ? 4 : -4, idx % 2 === 0 ? -4 : 4] }}
-                    transition={{ repeat: Infinity, duration: 4 + idx * 0.5, ease: "easeInOut" }}
-                    className="p-3.5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-center justify-between shadow-xs hover:border-[#2563EB] transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }}></div>
-                      <div>
-                        <div className="font-poppins font-bold text-xs text-[#1E293B]">{item.title}</div>
-                        <div className="text-[10px] text-[#64748B] font-inter">{item.desc}</div>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
-                  </motion.div>
-                ))}
+              {/* Active Tab Showcase Content */}
+              <div className="p-4 rounded-2xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3 min-h-[220px] flex flex-col justify-between shadow-xs">
+                <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
+                  <span className="font-poppins font-bold text-xs text-[#1E293B]">{activeMockup.title}</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] text-[10px] font-bold border border-[#DBEAFE]">
+                    {activeMockup.badge}
+                  </span>
+                </div>
+
+                <div>
+                  {activeMockup.content}
+                </div>
+
+                <div className="pt-2 border-t border-[#E2E8F0] flex items-center justify-between text-[11px] text-[#64748B] font-inter">
+                  <span className="flex items-center gap-1"><MousePointerClick className="w-3.5 h-3.5 text-[#2563EB]" /> Interactive Preview</span>
+                  <span className="text-[#2563EB] font-bold">100% Automated</span>
+                </div>
               </div>
             </div>
           </div>
@@ -659,7 +749,7 @@ export default function LandingPage() {
       </section>
 
       {/* ==========================================
-          9. AUTO-SCROLLING TESTIMONIALS CAROUSEL
+          9. TESTIMONIALS CAROUSEL
           ========================================== */}
       <section className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto border-t border-[#E2E8F0]">
         <div className="space-y-12 text-center">
