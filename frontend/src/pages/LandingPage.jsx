@@ -27,7 +27,12 @@ import {
   Twitter,
   Linkedin,
   Clock,
-  Heart
+  Heart,
+  XCircle,
+  ShieldAlert,
+  ShieldCheck,
+  Layers,
+  Volume2
 } from 'lucide-react';
 
 // Stat items for Section 3
@@ -36,6 +41,74 @@ const statsList = [
   { count: '500+', label: 'Study Plans Built', icon: CalendarDays },
   { count: '100+', label: 'Subjects Covered', icon: BookOpen },
   { count: '95%', label: 'Student Confidence Boost', icon: Heart },
+];
+
+// Problem vs Solution Comparison Data
+const problemVsSolution = [
+  {
+    problemTitle: 'Static To-Do Lists & Fixed Schedules',
+    problemDesc: 'Generic timetables fail when life happens, leading to accumulated backlogs and study stress.',
+    solutionTitle: 'Adaptive Multi-Agent Timetables',
+    solutionDesc: 'SchedulerAgent automatically redistributes study hours based on your target exam date and quiz results.',
+    color: '#2563EB'
+  },
+  {
+    problemTitle: 'Repetitive Static Quizzes',
+    problemDesc: 'Traditional platforms repeat the same static question banks, masking real knowledge gaps.',
+    solutionTitle: 'Anti-Duplication 15-Question Engine',
+    solutionDesc: 'QuizAgent checks SQLite QuestionHistory to guarantee 100% fresh, non-repeating questions per attempt.',
+    color: '#0EA5E9'
+  },
+  {
+    problemTitle: 'Overwhelming Walls of Text',
+    problemDesc: 'Long textbook chapters trigger cognitive fatigue, making active recall difficult.',
+    solutionTitle: '3D Flashcards & Voice AI Reader',
+    solutionDesc: 'Listen to notes on your commute or flip active-recall 3D flashcards designed for peak retention.',
+    color: '#8B5CF6'
+  },
+  {
+    problemTitle: 'One-Size-Fits-All Explanations',
+    problemDesc: 'Complex topics are presented identically regardless of whether you are a beginner or preparing for interviews.',
+    solutionTitle: '3 AI Explanation Modes',
+    solutionDesc: 'Switch effortlessly between ELI5 (Explain Like I\'m 10), Beginner Mode, and Interview Prep Mode inside the Mind Map Hub.',
+    color: '#22C55E'
+  }
+];
+
+// Target Audience Category Cards
+const studentCategories = [
+  {
+    title: 'School Students',
+    badge: 'K-12 & High School',
+    desc: 'Break down complex math and science concepts into simple ELI5 explanations and fun visual maps.',
+    icon: GraduationCap,
+    color: '#2563EB',
+    bg: '#EFF6FF'
+  },
+  {
+    title: 'College & University',
+    badge: 'Undergrad & Masters',
+    desc: 'Generate structured bullet notes, download clean PDF summaries, and sync study sessions to Google Calendar.',
+    icon: BookOpen,
+    color: '#0EA5E9',
+    bg: '#F0F9FF'
+  },
+  {
+    title: 'Competitive Exam Aspirants',
+    badge: 'GATE, GRE, USMLE, SAT',
+    desc: 'Master exam topics with adaptive difficulty scaling, 15-question anti-duplication quizzes, and spaced repetition.',
+    icon: Target,
+    color: '#8B5CF6',
+    bg: '#F5F3FF'
+  },
+  {
+    title: 'Self Learners & Professionals',
+    badge: 'Lifetime Learners',
+    desc: 'Listen to AI-generated voice notes while commuting and test active recall with 3D flip flashcards.',
+    icon: Volume2,
+    color: '#22C55E',
+    bg: '#F0FDF4'
+  }
 ];
 
 // Features list for Section 4
@@ -219,11 +292,11 @@ export default function LandingPage() {
         {/* Center Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-inter font-bold text-[#64748B]">
           <a href="#home" className="hover:text-[#2563EB] transition-colors">Home</a>
+          <a href="#market-problem" className="hover:text-[#2563EB] transition-colors">What We Solve</a>
           <a href="#features" className="hover:text-[#2563EB] transition-colors">Features</a>
+          <a href="#students" className="hover:text-[#2563EB] transition-colors">For Students</a>
           <a href="#workflow" className="hover:text-[#2563EB] transition-colors">How It Works</a>
-          <a href="#why-choose" className="hover:text-[#2563EB] transition-colors">Benefits</a>
           <a href="#faq" className="hover:text-[#2563EB] transition-colors">FAQ</a>
-          <a href="#contact" className="hover:text-[#2563EB] transition-colors">Contact</a>
         </nav>
 
         {/* Right Action Buttons */}
@@ -303,11 +376,11 @@ export default function LandingPage() {
 
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
                 <a
-                  href="#workflow"
+                  href="#market-problem"
                   className="px-8 py-4 rounded-2xl bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E2E8F0] text-[#1E293B] text-xs sm:text-sm font-inter font-bold flex items-center gap-2 shadow-xs transition-colors"
                 >
                   <Play className="w-3.5 h-3.5 text-[#2563EB] fill-[#2563EB]" />
-                  <span>See How It Works</span>
+                  <span>What We Solve</span>
                 </a>
               </motion.div>
             </motion.div>
@@ -327,12 +400,9 @@ export default function LandingPage() {
             transition={{ delay: 0.3, duration: 0.6 }}
             className="relative flex items-center justify-center min-h-[420px]"
           >
-            {/* Soft Ambient Glow */}
             <div className="absolute w-72 h-72 rounded-full bg-[#DBEAFE] blur-3xl -top-6 -left-6 pointer-events-none"></div>
 
-            {/* Central Notebook Paper Platform */}
             <div className="relative w-full max-w-lg bg-[#FFFFFF] rounded-3xl p-6 border border-[#E2E8F0] shadow-lg space-y-5">
-              {/* Header Bar */}
               <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center">
@@ -348,7 +418,6 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              {/* Central Paper Mock Grid */}
               <div className="grid grid-cols-2 gap-3 text-left">
                 <div className="p-3.5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
                   <div className="text-[10px] text-[#64748B] font-bold uppercase">Today's Goal</div>
@@ -364,7 +433,6 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Floating Card 1: Concept Map Card (Top Left) */}
             <motion.div
               animate={{ y: [-8, 8, -8] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
@@ -379,7 +447,6 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Floating Card 2: Practice Quiz Card (Bottom Right) */}
             <motion.div
               animate={{ y: [8, -8, 8] }}
               transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
@@ -394,6 +461,100 @@ export default function LandingPage() {
               </div>
             </motion.div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* ==========================================
+          NEW SECTION: WHAT WE SOLVE IN THE CURRENT MARKET
+          ========================================== */}
+      <section id="market-problem" className="py-20 px-6 lg:px-12 bg-[#FFFFFF] border-y border-[#E2E8F0]">
+        <div className="max-w-7xl mx-auto space-y-12 text-center">
+          <div className="space-y-3 max-w-2xl mx-auto">
+            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Market Innovation</span>
+            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Traditional Learning Lacks Personalization. We Solve That.</h2>
+            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
+              See how our Autonomous Multi-Agent AI system transforms static study habits into an active, adaptive learning journey.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            {problemVsSolution.map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="p-7 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft space-y-4 flex flex-col justify-between"
+              >
+                {/* Traditional Problem Box */}
+                <div className="p-4 rounded-2xl bg-[#FEF2F2] border border-[#FCA5A5] space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#DC2626]">
+                    <XCircle className="w-4 h-4 text-[#DC2626]" />
+                    <span>Traditional Study Methods: {item.problemTitle}</span>
+                  </div>
+                  <p className="text-xs text-[#7F1D1D] leading-relaxed font-inter">{item.problemDesc}</p>
+                </div>
+
+                {/* Our Multi-Agent Solution Box */}
+                <div className="p-4 rounded-2xl bg-[#F0FDF4] border border-[#86EFAC] space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#15803D]">
+                    <ShieldCheck className="w-4 h-4 text-[#15803D]" />
+                    <span>What We Solve: {item.solutionTitle}</span>
+                  </div>
+                  <p className="text-xs text-[#14532D] leading-relaxed font-inter">{item.solutionDesc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ==========================================
+          NEW SECTION: TAILORED FOR EVERY TYPE OF STUDENT
+          ========================================== */}
+      <section id="students" className="py-20 px-6 lg:px-12 bg-gradient-to-b from-[#F8FBFF] to-[#FFFFFF]">
+        <div className="max-w-7xl mx-auto space-y-12 text-center">
+          <div className="space-y-3 max-w-2xl mx-auto">
+            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Student Profiles</span>
+            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Crafted for Every Type of Student</h2>
+            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
+              Whether you are preparing for high school exams, college finals, or competitive entrance tests.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+            {studentCategories.map((cat, idx) => {
+              const Icon = cat.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  whileHover={{ y: -6 }}
+                  className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-soft space-y-4 flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className="w-12 h-12 rounded-2xl flex items-center justify-center border"
+                        style={{ backgroundColor: cat.bg, borderColor: '#DBEAFE', color: cat.color }}
+                      >
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE]">
+                        {cat.badge}
+                      </span>
+                    </div>
+                    <h3 className="font-poppins text-lg font-bold text-[#1E293B]">{cat.title}</h3>
+                    <p className="text-xs text-[#64748B] font-inter leading-relaxed">{cat.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -482,7 +643,6 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Horizontal Workflow Track */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 items-stretch relative">
             {workflowSteps.map((wf, idx) => {
               const Icon = wf.icon;
@@ -511,106 +671,6 @@ export default function LandingPage() {
               );
             })}
           </div>
-        </div>
-      </section>
-
-      {/* ==========================================
-          6. WHY CHOOSE OUR PLATFORM (4 HUMAN CARDS)
-          ========================================== */}
-      <section id="why-choose" className="py-20 px-6 lg:px-12 bg-[#FFFFFF]">
-        <div className="max-w-7xl mx-auto space-y-12 text-center">
-          <div className="space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Thoughtful Benefits</span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Why Students Love Learning Here</h2>
-            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
-              Designed to help students stay calm, motivated, and organized every single day.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left items-stretch">
-            {whyChooseList.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ y: -6 }}
-                  className="p-6 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft space-y-3 flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="w-11 h-11 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] flex items-center justify-center">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <h3 className="font-poppins text-base font-bold text-[#1E293B]">{item.title}</h3>
-                    <p className="text-xs text-[#64748B] font-inter leading-relaxed">{item.description}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ==========================================
-          7. DASHBOARD PREVIEW MOCKUP SECTION
-          ========================================== */}
-      <section className="py-20 px-6 lg:px-12 bg-gradient-to-b from-[#F8FBFF] to-[#FFFFFF] border-y border-[#E2E8F0]">
-        <div className="max-w-7xl mx-auto space-y-12 text-center">
-          <div className="space-y-3 max-w-2xl mx-auto">
-            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Calm & Inspiring Space</span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Your Personal Study Command Center</h2>
-            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
-              Manage study plans, class notes, concept maps, and practice progress peacefully.
-            </p>
-          </div>
-
-          {/* Slightly Floating Mockup */}
-          <motion.div
-            animate={{ y: [-6, 6, -6] }}
-            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-            className="max-w-5xl mx-auto rounded-3xl p-6 sm:p-8 bg-[#FFFFFF] border border-[#E2E8F0] shadow-lg space-y-6 text-left"
-          >
-            {/* Top Bar Mockup */}
-            <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0]">
-              <div className="flex items-center gap-3">
-                <div className="flex gap-1.5">
-                  <span className="w-3 h-3 rounded-full bg-[#EF4444]"></span>
-                  <span className="w-3 h-3 rounded-full bg-[#F59E0B]"></span>
-                  <span className="w-3 h-3 rounded-full bg-[#22C55E]"></span>
-                </div>
-                <span className="text-xs font-inter text-[#64748B] font-bold">Good Evening 👋 Welcome Back!</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] text-xs font-bold border border-[#DBEAFE]">
-                  You're making steady progress. Keep going!
-                </span>
-              </div>
-            </div>
-
-            {/* Mockup Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] space-y-2">
-                <div className="text-xs font-bold text-[#2563EB]">📖 Today's Plan</div>
-                <div className="font-poppins font-bold text-sm text-[#1E293B]">Binary Trees & Algorithms</div>
-                <div className="text-[11px] text-[#64748B]">1.5 hours planned</div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2">
-                <div className="text-xs font-bold text-[#22C55E]">🧠 Concept Map & Quiz</div>
-                <div className="font-poppins font-bold text-sm text-[#1E293B]">Visual Relationship Diagram</div>
-                <div className="text-[11px] text-[#64748B]">5 Practice Questions</div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#FEF3C7]/40 border border-[#FDE68A] space-y-2">
-                <div className="text-xs font-bold text-[#D97706]">📊 Learning Streak</div>
-                <div className="font-poppins font-bold text-sm text-[#1E293B]">Steady Improvement</div>
-                <div className="text-[11px] text-[#64748B]">5 Days Streak Active</div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
@@ -734,7 +794,6 @@ export default function LandingPage() {
           ========================================== */}
       <footer id="contact" className="py-12 px-6 lg:px-12 bg-[#FFFFFF] border-t border-[#E2E8F0] text-xs font-inter text-[#64748B]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-left pb-8 border-b border-[#E2E8F0]">
-          {/* Col 1: Brand */}
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-xl object-cover" />
@@ -745,19 +804,17 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Col 2: Quick Links */}
           <div className="space-y-2">
             <div className="font-poppins font-bold text-xs text-[#1E293B]">Quick Links</div>
             <ul className="space-y-1.5 text-xs text-[#64748B]">
               <li><a href="#home" className="hover:text-[#2563EB]">Home</a></li>
+              <li><a href="#market-problem" className="hover:text-[#2563EB]">What We Solve</a></li>
               <li><a href="#features" className="hover:text-[#2563EB]">Features</a></li>
-              <li><a href="#workflow" className="hover:text-[#2563EB]">How It Works</a></li>
-              <li><a href="#why-choose" className="hover:text-[#2563EB]">Benefits</a></li>
+              <li><a href="#students" className="hover:text-[#2563EB]">For Students</a></li>
               <li><a href="#faq" className="hover:text-[#2563EB]">FAQ</a></li>
             </ul>
           </div>
 
-          {/* Col 3: Resources */}
           <div className="space-y-2">
             <div className="font-poppins font-bold text-xs text-[#1E293B]">Resources</div>
             <ul className="space-y-1.5 text-xs text-[#64748B]">
@@ -768,7 +825,6 @@ export default function LandingPage() {
             </ul>
           </div>
 
-          {/* Col 4: Contact & Social */}
           <div className="space-y-3">
             <div className="font-poppins font-bold text-xs text-[#1E293B]">Contact & Support</div>
             <p className="text-xs text-[#64748B]">Questions or feedback? Reach out to our team anytime.</p>
