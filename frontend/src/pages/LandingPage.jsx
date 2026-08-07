@@ -32,8 +32,20 @@ import {
   ShieldAlert,
   ShieldCheck,
   Layers,
-  Volume2
+  Volume2,
+  Activity,
+  Bot,
+  RefreshCw,
+  Sparkle
 } from 'lucide-react';
+
+// Typing Animation Text Phrases
+const typingPhrases = [
+  "Study Smarter with Autonomous Multi-Agent AI",
+  "Master Concepts with Active Recall 3D Flashcards",
+  "Practice 15 Unique Anti-Duplication Quizzes",
+  "Sync Timetable Directly to Google Calendar & iCal"
+];
 
 // Stat items for Section 3
 const statsList = [
@@ -41,6 +53,64 @@ const statsList = [
   { count: '500+', label: 'Study Plans Built', icon: CalendarDays },
   { count: '100+', label: 'Subjects Covered', icon: BookOpen },
   { count: '95%', label: 'Student Confidence Boost', icon: Heart },
+];
+
+// Interactive Flow Chart Nodes for Multi-Agent Architecture
+const flowchartNodes = [
+  {
+    step: 'Node 01',
+    title: 'Student Input Goal',
+    subtitle: 'Exam Date & Subjects',
+    icon: GraduationCap,
+    color: '#2563EB',
+    bg: '#EFF6FF',
+    desc: 'Student inputs available study hours and target exam dates.'
+  },
+  {
+    step: 'Node 02',
+    title: 'Research Agent',
+    subtitle: 'Deep Web Crawling',
+    icon: Search,
+    color: '#0EA5E9',
+    bg: '#F0F9FF',
+    desc: 'Extracts core definitions, real-world examples, and key formulas.'
+  },
+  {
+    step: 'Node 03',
+    title: 'Summarizer Agent',
+    subtitle: 'Bullet Notes & Voice AI',
+    icon: FileText,
+    color: '#8B5CF6',
+    bg: '#F5F3FF',
+    desc: 'Generates structured notes, PDF exports, and audio narration.'
+  },
+  {
+    step: 'Node 04',
+    title: 'Mind Map Hub',
+    subtitle: '3 AI Explanation Modes',
+    icon: Network,
+    color: '#EC4899',
+    bg: '#FDF2F8',
+    desc: 'Constructs visual maps with ELI5, Beginner, and Interview modes.'
+  },
+  {
+    step: 'Node 05',
+    title: 'Quiz Agent Engine',
+    subtitle: '15-Question Fresh Quiz',
+    icon: ClipboardCheck,
+    color: '#F59E0B',
+    bg: '#FEF3C7',
+    desc: 'Checks SQLite history to serve 100% unique practice questions.'
+  },
+  {
+    step: 'Node 06',
+    title: 'Scheduler Agent',
+    subtitle: 'Adaptive Timetable',
+    icon: CalendarDays,
+    color: '#22C55E',
+    bg: '#F0FDF4',
+    desc: 'Calculates spaced repetition study slots and exports .ics calendar.'
+  }
 ];
 
 // Problem vs Solution Comparison Data
@@ -157,41 +227,6 @@ const featuresList = [
   },
 ];
 
-// Workflow Steps for Section 5
-const workflowSteps = [
-  { step: '01', role: 'Student Goal', name: 'Subject & Exam Date', icon: GraduationCap, color: '#2563EB' },
-  { step: '02', role: 'Step 1', name: 'Gather Resources', icon: Search, color: '#0EA5E9' },
-  { step: '03', role: 'Step 2', name: 'Write Clear Notes', icon: FileText, color: '#8B5CF6' },
-  { step: '04', role: 'Step 3', name: 'Build Concept Map', icon: Network, color: '#EC4899' },
-  { step: '05', role: 'Step 4', name: 'Practice Questions', icon: ClipboardCheck, color: '#F59E0B' },
-  { step: '06', role: 'Step 5', name: 'Structure Schedule', icon: CalendarDays, color: '#22C55E' },
-  { step: '07', role: 'Result', name: 'My Study Plan', icon: Target, color: '#2563EB' },
-];
-
-// Why Choose Us Cards for Section 6
-const whyChooseList = [
-  {
-    icon: Heart,
-    title: 'Student-Centered Design',
-    description: 'Built by people who understand students. Reduces study anxiety and helps you focus comfortably.',
-  },
-  {
-    icon: Target,
-    title: 'Personalized Study Time',
-    description: 'Challenging subjects automatically receive extra time so you stay confident and exam-ready.',
-  },
-  {
-    icon: Network,
-    title: 'Visual Learning Support',
-    description: 'Interactive concept maps convert long textbook paragraphs into clear, memorable visual diagrams.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Adaptive Learning Feedback',
-    description: 'Practice quiz results automatically update future study plans to strengthen topics you need help with.',
-  },
-];
-
 // Testimonials for Section 8
 const testimonialsList = [
   {
@@ -246,6 +281,11 @@ export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
 
+  // Typing Animation State
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [typedText, setTypedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -257,6 +297,31 @@ export default function LandingPage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Typing Animation Logic
+  useEffect(() => {
+    const currentPhrase = typingPhrases[phraseIndex];
+    let timer;
+
+    if (!isDeleting && typedText.length < currentPhrase.length) {
+      timer = setTimeout(() => {
+        setTypedText(currentPhrase.substring(0, typedText.length + 1));
+      }, 50);
+    } else if (!isDeleting && typedText.length === currentPhrase.length) {
+      timer = setTimeout(() => {
+        setIsDeleting(true);
+      }, 2000);
+    } else if (isDeleting && typedText.length > 0) {
+      timer = setTimeout(() => {
+        setTypedText(currentPhrase.substring(0, typedText.length - 1));
+      }, 30);
+    } else if (isDeleting && typedText.length === 0) {
+      setIsDeleting(false);
+      setPhraseIndex((prev) => (prev + 1) % typingPhrases.length);
+    }
+
+    return () => clearTimeout(timer);
+  }, [typedText, isDeleting, phraseIndex]);
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -292,10 +357,10 @@ export default function LandingPage() {
         {/* Center Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-inter font-bold text-[#64748B]">
           <a href="#home" className="hover:text-[#2563EB] transition-colors">Home</a>
+          <a href="#flowchart" className="hover:text-[#2563EB] transition-colors">AI Ecosystem</a>
           <a href="#market-problem" className="hover:text-[#2563EB] transition-colors">What We Solve</a>
           <a href="#features" className="hover:text-[#2563EB] transition-colors">Features</a>
           <a href="#students" className="hover:text-[#2563EB] transition-colors">For Students</a>
-          <a href="#workflow" className="hover:text-[#2563EB] transition-colors">How It Works</a>
           <a href="#faq" className="hover:text-[#2563EB] transition-colors">FAQ</a>
         </nav>
 
@@ -319,7 +384,7 @@ export default function LandingPage() {
       </header>
 
       {/* ==========================================
-          2. HERO SECTION WITH HUMAN STUDENT COPYWRITING
+          2. HERO SECTION WITH TYPING ANIMATION
           ========================================== */}
       <section id="home" className="pt-32 pb-20 px-6 lg:px-12 bg-gradient-to-b from-[#F8FBFF] via-[#FFFFFF] to-[#EFF6FF] relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
@@ -347,6 +412,14 @@ export default function LandingPage() {
                 Reach Your Goals.
               </span>
             </motion.h1>
+
+            {/* Typing Animation Subheading */}
+            <div className="h-14 flex items-center">
+              <p className="text-[#2563EB] font-poppins font-extrabold text-base sm:text-lg tracking-tight flex items-center">
+                <span>{typedText}</span>
+                <span className="w-0.5 h-6 bg-[#2563EB] ml-1 animate-pulse"></span>
+              </p>
+            </div>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -376,11 +449,11 @@ export default function LandingPage() {
 
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
                 <a
-                  href="#market-problem"
+                  href="#flowchart"
                   className="px-8 py-4 rounded-2xl bg-[#FFFFFF] hover:bg-[#EFF6FF] border border-[#E2E8F0] text-[#1E293B] text-xs sm:text-sm font-inter font-bold flex items-center gap-2 shadow-xs transition-colors"
                 >
-                  <Play className="w-3.5 h-3.5 text-[#2563EB] fill-[#2563EB]" />
-                  <span>What We Solve</span>
+                  <Activity className="w-3.5 h-3.5 text-[#2563EB]" />
+                  <span>View AI Flowchart</span>
                 </a>
               </motion.div>
             </motion.div>
@@ -460,6 +533,85 @@ export default function LandingPage() {
                 <div className="text-[10px] text-[#64748B]">Encouraging Questions</div>
               </div>
             </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ==========================================
+          NEW VISUAL FLOWCHART: OUR MULTI-AGENT CULTURE & ECOSYSTEM
+          ========================================== */}
+      <section id="flowchart" className="py-20 px-6 lg:px-12 bg-[#F8FBFF] border-y border-[#E2E8F0]">
+        <div className="max-w-7xl mx-auto space-y-12 text-center">
+          <div className="space-y-3 max-w-2xl mx-auto">
+            <span className="px-3.5 py-1 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold shadow-xs">
+              ⚡ Live Multi-Agent Culture & Engine Flowchart
+            </span>
+            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">How Our Autonomous AI Agents Coordinate</h2>
+            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
+              An interactive flowchart showing how ResearchAgent, SummarizerAgent, QuizAgent, and SchedulerAgent work in harmony.
+            </p>
+          </div>
+
+          {/* Animated Flowchart Matrix */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left relative">
+            {flowchartNodes.map((node, idx) => {
+              const Icon = node.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  whileHover={{ scale: 1.03 }}
+                  className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-soft relative flex flex-col justify-between space-y-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold text-[#64748B] uppercase">{node.step}</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] animate-ping"></span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center border shadow-xs"
+                      style={{ backgroundColor: node.bg, borderColor: '#DBEAFE', color: node.color }}
+                    >
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-poppins font-bold text-base text-[#1E293B]">{node.title}</h3>
+                    <div className="text-xs font-inter font-bold text-[#2563EB]">{node.subtitle}</div>
+                    <p className="text-xs text-[#64748B] font-inter leading-relaxed">{node.desc}</p>
+                  </div>
+
+                  {idx < flowchartNodes.length - 1 && (
+                    <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 z-10">
+                      <div className="w-6 h-6 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-xs shadow-md">
+                        →
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Feedback Loop Re-alignment Banner */}
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="p-6 rounded-3xl bg-gradient-to-r from-[#EFF6FF] to-[#DBEAFE] border border-[#BFDBFE] text-left flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center shadow-md">
+                <RefreshCw className="w-5 h-5 animate-spin" />
+              </div>
+              <div>
+                <div className="font-poppins font-bold text-sm text-[#1E293B]">Continuous Adaptive Feedback Loop</div>
+                <div className="text-xs text-[#64748B]">Quiz performance dynamically reschedules difficult topics until 100% mastery is achieved.</div>
+              </div>
+            </div>
+            <span className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-poppins font-bold shadow-xs whitespace-nowrap">
+              Active Feedback Loop 🔄
+            </span>
           </motion.div>
         </div>
       </section>
@@ -629,52 +781,6 @@ export default function LandingPage() {
       </section>
 
       {/* ==========================================
-          5. AI WORKFLOW SECTION (HUMAN WORKFLOW GUIDE)
-          ========================================== */}
-      <section id="workflow" className="py-20 px-6 lg:px-12 bg-[#EFF6FF] border-y border-[#DBEAFE] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto space-y-12 text-center relative z-10">
-          <div className="space-y-3 max-w-2xl mx-auto">
-            <span className="px-3.5 py-1 rounded-full bg-[#FFFFFF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold shadow-xs">
-              📘 Step-by-Step Learning Process
-            </span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">How Your Study Companion Works</h2>
-            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
-              From entering your subjects to receiving a personalized, stress-free study plan.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 items-stretch relative">
-            {workflowSteps.map((wf, idx) => {
-              const Icon = wf.icon;
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ scale: 1.04 }}
-                  className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#DBEAFE] shadow-sm flex flex-col justify-between items-center text-center space-y-3 relative group"
-                >
-                  <div className="text-[10px] font-mono font-bold text-[#64748B]">{wf.step}</div>
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center border shadow-xs"
-                    style={{ backgroundColor: `${wf.color}15`, borderColor: `${wf.color}40`, color: wf.color }}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-[10px] font-inter font-bold uppercase tracking-wider text-[#64748B]">{wf.role}</div>
-                    <div className="font-poppins font-bold text-xs text-[#1E293B] mt-0.5">{wf.name}</div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ==========================================
           8. TESTIMONIALS SECTION (STUDENT REVIEWS)
           ========================================== */}
       <section className="py-20 px-6 lg:px-12 bg-[#FFFFFF]">
@@ -808,6 +914,7 @@ export default function LandingPage() {
             <div className="font-poppins font-bold text-xs text-[#1E293B]">Quick Links</div>
             <ul className="space-y-1.5 text-xs text-[#64748B]">
               <li><a href="#home" className="hover:text-[#2563EB]">Home</a></li>
+              <li><a href="#flowchart" className="hover:text-[#2563EB]">AI Ecosystem</a></li>
               <li><a href="#market-problem" className="hover:text-[#2563EB]">What We Solve</a></li>
               <li><a href="#features" className="hover:text-[#2563EB]">Features</a></li>
               <li><a href="#students" className="hover:text-[#2563EB]">For Students</a></li>
