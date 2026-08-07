@@ -1,43 +1,76 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-export const useSpeech = () => {
-  const [speaking, setSpeaking] = useState(false);
-  const [supported, setSupported] = useState(false);
+export function useSpeech() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const synthRef = useRef(window.speechSynthesis || null);
+  const utteranceRef = useRef(null);
 
   useEffect(() => {
-    if ('speechSynthesis' in window) {
-      setSupported(true);
-    }
+    return () => {
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+    };
   }, []);
 
   const speak = (text) => {
-    if (!supported) return;
-    window.speechSynthesis.cancel(); // cancel previous speech
-    
-    // Strip markdown formatting symbols for smooth speech
-    const cleanText = text
-      .replace(/#+/g, '')
-      .replace(/\*+/g, '')
-      .replace(/`+/g, '')
-      .replace(/\[.*?\]\(.*?\)/g, '');
+    if (!synthRef.current || !text) return;
+
+    // Cancel any ongoing speech
+    synthRef.current.cancel();
+
+    // Clean markdown text for clear speech
+    const cleanText = text.replace(/[\#\*\_`]/g, '').trim();
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
 
-    utterance.onstart = () => setSpeaking(true);
-    utterance.onend = () => setSpeaking(false);
-    utterance.onerror = () => setSpeaking(false);
+    utterance.onend = () => {
+      setIsPlaying(false);
+      setIsPaused(false);
+    };
 
-    window.speechSynthesis.speak(utterance);
+    utterance.onerror = () => {
+      setIsPlaying(false);
+      setIsPaused(false);
+    };
+
+    utteranceRef.current = utterance;
+    synthRef.current.speak(utterance);
+    setIsPlaying(true);
+    setIsPaused(false);
   };
 
-  const stop = () => {
-    if (supported) {
-      window.speechSynthesis.cancel();
-      setSpeaking(false);
+  const pause = () => {
+    if (synthRef.current && isPlaying) {
+      synthRef.current.pause();
+      setIsPaused(true);
     }
   };
 
-  return { speak, stop, speaking, supported };
-};
+  const resume = () => {
+    if (synthRef.current && isPaused) {
+      synthRef.current.resume();
+      setIsPaused(false);
+    }
+  };
+
+  const stop = () => {
+    if (synthRef.current) {
+      synthRef.current.cancel();
+      setIsPlaying(false);
+      setIsPaused(false);
+    }
+  };
+
+  return {
+    isPlaying,
+    isPaused,
+    speak,
+    pause,
+    resume,
+    stop
+  };
+}

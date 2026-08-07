@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { 
   Volume2, 
   VolumeX, 
+  Pause,
+  Play,
   Download, 
   Copy, 
   Check, 
@@ -26,7 +28,6 @@ function renderCleanSummaryContent(summaryText) {
     const trimmed = line.trim();
     if (!trimmed) return <div key={idx} className="h-2"></div>;
 
-    // Headings starting with #, ##, ###
     if (trimmed.startsWith('#')) {
       const cleanHeading = trimmed.replace(/^[#\s]+/, '').replace(/[\*\_`]/g, '').trim();
       let IconComponent = Star;
@@ -42,12 +43,10 @@ function renderCleanSummaryContent(summaryText) {
       );
     }
 
-    // Clean inline markdown special characters (#, *, _, `) from regular paragraph text
     const cleanParagraph = trimmed
       .replace(/[\#\*\_`]/g, '')
       .trim();
 
-    // Bullet point items starting with -, *, •
     if (line.trim().startsWith('-') || line.trim().startsWith('*') || line.trim().startsWith('•')) {
       return (
         <div key={idx} className="flex items-start gap-2.5 my-2 ml-2 text-xs sm:text-sm leading-relaxed text-[#1E293B]">
@@ -66,7 +65,7 @@ function renderCleanSummaryContent(summaryText) {
 }
 
 export default function SummaryCard({ summaryText, bulletPoints, topic, onExportPDF }) {
-  const { speak, stop, speaking } = useSpeech();
+  const { isPlaying, isPaused, speak, pause, resume, stop } = useSpeech();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const [copied, setCopied] = React.useState(false);
@@ -77,6 +76,18 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
     setCopied(true);
     addToast('Clean summary copied to clipboard!', 'success');
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleVoiceToggle = () => {
+    if (isPlaying) {
+      if (isPaused) {
+        resume();
+      } else {
+        pause();
+      }
+    } else {
+      speak(summaryText ? summaryText.replace(/[\#\*\_`]/g, '') : '');
+    }
   };
 
   return (
@@ -105,20 +116,44 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
             <Network className="w-[18px] h-[18px] text-[#2563EB]" /> Mind Map
           </motion.button>
 
-          {/* Text to Speech Voice Button */}
+          {/* Voice AI Audio Reader Toggle Button */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => (speaking ? stop() : speak(summaryText ? summaryText.replace(/[\#\*\_`]/g, '') : ''))}
+            onClick={handleVoiceToggle}
             className={`px-3.5 py-2 rounded-xl text-xs font-inter font-bold flex items-center gap-1.5 transition-all ${
-              speaking
-                ? 'bg-[#FEE2E2] text-[#EF4444] border border-[#FCA5A5] animate-pulse'
+              isPlaying && !isPaused
+                ? 'bg-[#EFF6FF] text-[#2563EB] border border-[#2563EB] shadow-xs'
                 : 'bg-[#F8FBFF] hover:bg-[#EFF6FF] text-[#1E293B] border border-[#E2E8F0]'
             }`}
           >
-            {speaking ? <VolumeX className="w-[18px] h-[18px] text-[#EF4444]" /> : <Volume2 className="w-[18px] h-[18px] text-[#2563EB]" />}
-            <span>{speaking ? 'Stop Voice' : 'Voice'}</span>
+            {isPlaying && !isPaused ? (
+              <>
+                <Pause className="w-4 h-4 text-[#2563EB]" />
+                <span>Pause Voice</span>
+              </>
+            ) : isPaused ? (
+              <>
+                <Play className="w-4 h-4 text-[#2563EB]" />
+                <span>Resume Voice</span>
+              </>
+            ) : (
+              <>
+                <Volume2 className="w-4 h-4 text-[#2563EB]" />
+                <span>Listen to Notes</span>
+              </>
+            )}
           </motion.button>
+
+          {isPlaying && (
+            <button
+              onClick={stop}
+              className="px-2.5 py-2 rounded-xl bg-[#FEE2E2] text-[#EF4444] border border-[#FCA5A5] text-xs font-bold"
+              title="Stop Voice"
+            >
+              <VolumeX className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Copy Button */}
           <motion.button
@@ -131,7 +166,7 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
             {copied ? <Check className="w-[18px] h-[18px] text-[#22C55E]" /> : <Copy className="w-[18px] h-[18px]" />}
           </motion.button>
 
-          {/* PDF Export Button (18px icon) */}
+          {/* PDF Export Button */}
           {onExportPDF && (
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -145,7 +180,22 @@ export default function SummaryCard({ summaryText, bulletPoints, topic, onExport
         </div>
       </div>
 
-      {/* Bullet Points Quick Revision Box (ListChecks 18px) */}
+      {/* Voice Audio Wave Banner when Playing */}
+      {isPlaying && (
+        <div className="p-3 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-between text-xs text-[#2563EB] font-poppins font-bold">
+          <div className="flex items-center gap-2">
+            <Volume2 className="w-4 h-4 text-[#2563EB] animate-pulse" />
+            <span>AI Voice Reader Active — Reading '{topic}' Notes...</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="w-1 h-3 bg-[#2563EB] animate-bounce"></span>
+            <span className="w-1 h-4 bg-[#2563EB] animate-bounce delay-100"></span>
+            <span className="w-1 h-2 bg-[#2563EB] animate-bounce delay-200"></span>
+          </div>
+        </div>
+      )}
+
+      {/* Bullet Points Quick Revision Box */}
       {bulletPoints && bulletPoints.length > 0 && (
         <div className="p-5 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-3">
           <h4 className="text-xs font-poppins font-extrabold text-[#2563EB] uppercase tracking-wider flex items-center gap-2">

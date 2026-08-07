@@ -7,6 +7,7 @@ import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import LoadingSkeleton from './components/LoadingSkeleton';
+import CommandPalette from './components/CommandPalette';
 
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -40,6 +41,7 @@ const AppLayout = ({ children }) => {
           {children}
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 };
