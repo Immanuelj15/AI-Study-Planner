@@ -109,9 +109,6 @@ export default function PomodoroTimer() {
       {/* Strict Focus Mode Modal */}
       {showFocusMode && (
         <FocusModeContainer
-          subjectName="Operating Systems"
-          topic="Process Scheduling & Memory Invariants"
-          plannedMinutes={25}
           onClose={() => setShowFocusMode(false)}
         />
       )}

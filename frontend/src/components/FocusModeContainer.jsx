@@ -34,8 +34,8 @@ import {
 import { useToast } from '../context/ToastContext';
 
 export default function FocusModeContainer({ 
-  subjectName: initialSubject = "Operating Systems", 
-  topic: initialTopic = "Process Scheduling & Memory Invariants", 
+  subjectName: initialSubject = "", 
+  topic: initialTopic = "", 
   plannedMinutes: initialMinutes = 25, 
   learningContent = null,
   onClose,
@@ -180,14 +180,23 @@ export default function FocusModeContainer({
 
   // Start Focus Session
   const handleStartSession = async () => {
+    if (!subjectName || !subjectName.trim()) {
+      addToast("Please select a Subject first!", "error");
+      return;
+    }
+    if (!topic || !topic.trim()) {
+      addToast("Please enter a study Topic first!", "error");
+      return;
+    }
+
     try {
       if (document.documentElement.requestFullscreen) {
         document.documentElement.requestFullscreen().catch(() => {});
       }
 
       const res = await focusAPI.start({
-        subject_name: subjectName,
-        topic: topic,
+        subject_name: subjectName.trim(),
+        topic: topic.trim(),
         planned_duration_minutes: plannedMinutes
       });
 
@@ -358,6 +367,7 @@ export default function FocusModeContainer({
                   onChange={(e) => setSubjectName(e.target.value)}
                   className="w-full p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] text-xs font-inter font-bold text-[#1E293B]"
                 >
+                  <option value="">-- Choose a Subject --</option>
                   <option value="Operating Systems">Operating Systems</option>
                   <option value="Data Structures & Algorithms">Data Structures & Algorithms</option>
                   <option value="Database Management Systems">Database Management Systems</option>
@@ -375,7 +385,7 @@ export default function FocusModeContainer({
                   type="text"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  placeholder="Enter study topic..."
+                  placeholder="Enter study topic (e.g. Process Scheduling, B-Trees)..."
                   className="w-full p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] text-xs font-inter font-bold text-[#1E293B]"
                   required
                 />
@@ -418,10 +428,15 @@ export default function FocusModeContainer({
                 Cancel
               </button>
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={!subjectName.trim() || !topic.trim() ? {} : { scale: 1.02 }}
+                whileTap={!subjectName.trim() || !topic.trim() ? {} : { scale: 0.98 }}
                 onClick={handleStartSession}
-                className="flex-1 py-3 rounded-2xl bg-[#2563EB] hover:bg-blue-700 text-white font-poppins font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
+                disabled={!subjectName.trim() || !topic.trim()}
+                className={`flex-1 py-3 rounded-2xl font-poppins font-bold text-xs flex items-center justify-center gap-2 transition-all ${
+                  !subjectName.trim() || !topic.trim()
+                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300'
+                    : 'bg-[#2563EB] hover:bg-blue-700 text-white shadow-md shadow-blue-500/20'
+                }`}
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Start Focus Session</span>
