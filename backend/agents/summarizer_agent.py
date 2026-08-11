@@ -11,7 +11,7 @@ class SummarizerAgent:
     Responsibilities:
     - Receive research output & student learning profile
     - Tailor note style (Fast Learner -> concise/advanced, Slow -> detailed step-by-step, Visual -> enhanced diagrams)
-    - Generate beginner-friendly notes & React Flow compatible mindmap JSON
+    - Generate beginner-friendly notes & React Flow compatible mindmap JSON customized to the specific study topic
     """
     def __init__(self, name: str = "Summarizer_Agent"):
         self.name = name
@@ -20,7 +20,11 @@ class SummarizerAgent:
         topic = research_data.get("topic", "Study Topic")
         logger.info(f"[{self.name}] Summarizing research for topic: {topic}")
         
-        system_prompt = "You are an expert AI Educator & Note Summarizer. Output strictly valid JSON."
+        system_prompt = (
+            f"You are an expert AI Educator & Mind Map Generator. "
+            f"Generate accurate, topic-specific concepts and explanations tailored ONLY to '{topic}'. "
+            f"Do NOT output generic or irrelevant OS/DB placeholders."
+        )
 
         learning_style = student_profile.get("learning_style", "Mixed") if student_profile else "Mixed"
         learning_speed = student_profile.get("learning_speed", "Medium") if student_profile else "Medium"
@@ -42,26 +46,28 @@ Given research data on "{topic}":
 
 Adaptation Directive: {style_instruction}
 
-Create tailored study notes and an educational React Flow mind map JSON.
-For mind map nodes, ensure every sub-node includes a title AND a 1-line concept explanation separated by \\n.
+Create tailored study notes and an educational React Flow mind map JSON specifically explaining "{topic}".
+For mind map nodes:
+- Ensure every sub-node contains a title AND a 1-line accurate concept explanation tailored to "{topic}" separated by \\n.
+- DO NOT use generic OS or DB indexing placeholders unless the topic is actually Operating Systems or Databases.
 
 Return ONLY valid JSON with this EXACT structure:
 {{
-  "summary": "### Introduction\\nIntroduction text here...\\n\\n### Important Concepts\\nConcept details...\\n\\n### Definitions\\nDetailed definitions...\\n\\n### Examples\\nDetailed examples...\\n\\n### Advantages\\nAdvantages list...\\n\\n### Disadvantages\\nDisadvantages list...\\n\\n### Applications\\nApplications text...\\n\\n### Interview Tips\\nInterview tips...\\n\\n### Revision Notes\\nQuick revision summary...",
+  "summary": "### Introduction\\nDetailed introduction to {topic}...\\n\\n### Important Concepts\\nConcept details...\\n\\n### Definitions\\nDetailed definitions...\\n\\n### Examples\\nDetailed examples...\\n\\n### Advantages\\nAdvantages list...\\n\\n### Disadvantages\\nDisadvantages list...\\n\\n### Applications\\nApplications text...\\n\\n### Interview Tips\\nInterview tips...\\n\\n### Revision Notes\\nQuick revision summary...",
   "bullet_points": [
-    "Key takeaways 1",
-    "Key takeaways 2",
-    "Key takeaways 3",
-    "Key takeaways 4"
+    "Key takeaway 1 for {topic}",
+    "Key takeaway 2 for {topic}",
+    "Key takeaway 3 for {topic}",
+    "Key takeaway 4 for {topic}"
   ],
   "mindmap_json": {{
     "nodes": [
       {{ "id": "root", "data": {{ "label": "🎯 {topic}" }}, "position": {{ "x": 380, "y": 30 }} }},
-      {{ "id": "def", "data": {{ "label": "📖 Core Definition\\nDetailed 1-line definition of {topic}" }}, "position": {{ "x": 80, "y": 170 }} }},
-      {{ "id": "concepts", "data": {{ "label": "💡 Key Invariants\\nCore principles and rules governing {topic}" }}, "position": {{ "x": 380, "y": 170 }} }},
-      {{ "id": "apps", "data": {{ "label": "🚀 Real-World Applications\\nIndustrial use cases in OS and DB indexing" }}, "position": {{ "x": 680, "y": 170 }} }},
-      {{ "id": "math", "data": {{ "label": "⚡ Complexity & Math\\nTime: O(log N) | Space: O(1) Auxiliary" }}, "position": {{ "x": 220, "y": 310 }} }},
-      {{ "id": "interview", "data": {{ "label": "💼 Interview Key Takeaway\\nEdge cases & overflow prevention" }}, "position": {{ "x": 540, "y": 310 }} }}
+      {{ "id": "def", "data": {{ "label": "📖 Core Definition\\nAccurate 1-line definition of {topic}" }}, "position": {{ "x": 80, "y": 170 }} }},
+      {{ "id": "concepts", "data": {{ "label": "💡 Key Principles\\nCore mechanisms governing {topic}" }}, "position": {{ "x": 380, "y": 170 }} }},
+      {{ "id": "apps", "data": {{ "label": "🚀 Real-World Applications\\nHow {topic} is applied in production systems" }}, "position": {{ "x": 680, "y": 170 }} }},
+      {{ "id": "math", "data": {{ "label": "⚡ Math & Metrics\\nKey equations and complexity bounds for {topic}" }}, "position": {{ "x": 220, "y": 310 }} }},
+      {{ "id": "interview", "data": {{ "label": "💼 Interview Takeaway\\nKey technical question & solution for {topic}" }}, "position": {{ "x": 540, "y": 310 }} }}
     ],
     "edges": [
       {{ "id": "e-root-def", "source": "root", "target": "def", "animated": true }},
@@ -85,16 +91,22 @@ Return ONLY valid JSON with this EXACT structure:
         return self._generate_fallback(topic, research_data)
 
     def _generate_fallback(self, topic: str, research_data: Dict[str, Any]) -> Dict[str, Any]:
-        concepts_str = "\n- ".join(research_data.get("concepts", ["Core principles", "Structure"]))
-        defs_str = "\n- ".join(research_data.get("definitions", ["Fundamental definition"]))
-        examples_str = "\n- ".join(research_data.get("examples", ["Standard implementation example"]))
-        formulas_str = "\n- ".join(research_data.get("formulas", ["Time/Space equations"]))
-        qa_str = "\n- ".join(research_data.get("interview_questions", ["Key interview takeaway"]))
+        concepts_list = research_data.get("concepts", [f"Core principles of {topic}"])
+        defs_list = research_data.get("definitions", [f"Fundamental definition of {topic}"])
+        examples_list = research_data.get("examples", [f"Practical implementation of {topic}"])
+        formulas_list = research_data.get("formulas", [f"Performance metrics for {topic}"])
+        qa_list = research_data.get("interview_questions", [f"Key technical interview question for {topic}"])
+
+        concepts_str = "\n- ".join(concepts_list)
+        defs_str = "\n- ".join(defs_list)
+        examples_str = "\n- ".join(examples_list)
+        formulas_str = "\n- ".join(formulas_list)
+        qa_str = "\n- ".join(qa_list)
 
         summary_md = f"""# Comprehensive Study Guide: {topic}
 
 ### Introduction
-{topic} is a key concept that forms the backbone of modern computer science and engineering problem solving. Understanding its core principles allows developers to write performant, scalable code.
+{topic} is a core academic and industrial discipline. Understanding its underlying principles enables engineers and students to design performant, robust systems.
 
 ### Important Concepts
 - {concepts_str}
@@ -102,37 +114,41 @@ Return ONLY valid JSON with this EXACT structure:
 ### Definitions
 - {defs_str}
 
-### Examples
+### Practical Examples
 - {examples_str}
 
-### Advantages
-- High efficiency and computational speed.
-- Predictable space and time complexity bounds.
-- Wide industrial applicability in databases and system software.
+### Mathematical Principles & Formulas
+- {formulas_str}
 
-### Disadvantages
-- Requires pre-requisites (e.g. sorted arrays or structural overhead).
-- Higher initial implementation complexity compared to basic linear approaches.
-
-### Applications
-- Database indexing algorithms (B-Trees, Binary Search Trees).
-- Search engines and real-time routing engines.
-- Memory management and dynamic memory allocation.
+### Key Applications
+- Industrial production deployments and algorithm execution in {topic}.
 
 ### Interview Tips
 - {qa_str}
 
 ### Revision Notes
-- Remember key complexity formulas: {formulas_str}
-- Always double check edge cases like empty inputs, boundary indices, and numerical overflow.
+- Focus on foundational principles, edge case handling, and complexity trade-offs in {topic}.
 """
 
         bullet_points = [
-            f"{topic} optimizes processing efficiency from brute force to structured execution.",
-            f"Requires key prerequisites to guarantee O(log N) or high performance bounds.",
-            f"Essential topic frequently tested in technical coding interviews.",
-            f"Applied extensively across database systems, OS kernels, and algorithm design."
+            f"{topic} provides structured problem-solving paradigms for complex engineering tasks.",
+            f"Understanding key invariants in {topic} optimizes computational time and space complexity.",
+            f"Frequently evaluated in technical coding interviews and competitive exams.",
+            f"Widely adopted across modern software systems, AI pipelines, and data architectures."
         ]
+
+        def_text = defs_list[0] if defs_list else f"Core operational mechanism of {topic}"
+        concept_text = concepts_list[0] if concepts_list else f"Fundamental structural principles of {topic}"
+        app_text = examples_list[0] if examples_list else f"Real-world production usage of {topic}"
+        math_text = formulas_list[0] if formulas_list else f"Time & Space complexity for {topic}"
+        interview_text = qa_list[0] if qa_list else f"Top interview question for {topic}"
+
+        # Clean line breaks for mindmap node labels
+        def_short = (def_text[:60] + '...') if len(def_text) > 60 else def_text
+        concept_short = (concept_text[:60] + '...') if len(concept_text) > 60 else concept_text
+        app_short = (app_text[:60] + '...') if len(app_text) > 60 else app_text
+        math_short = (math_text[:60] + '...') if len(math_text) > 60 else math_text
+        interview_short = (interview_text[:60] + '...') if len(interview_text) > 60 else interview_text
 
         mindmap = {
             "nodes": [
@@ -143,27 +159,27 @@ Return ONLY valid JSON with this EXACT structure:
                 },
                 {
                     "id": "def",
-                    "data": {"label": f"📖 Core Definition\nDivide & conquer algorithm for {topic}"},
+                    "data": {"label": f"📖 Core Definition\n{def_short}"},
                     "position": {"x": 80, "y": 170}
                 },
                 {
                     "id": "concepts",
-                    "data": {"label": f"💡 Key Invariants\nCore principles and rules governing {topic}"},
+                    "data": {"label": f"💡 Key Principles\n{concept_short}"},
                     "position": {"x": 380, "y": 170}
                 },
                 {
                     "id": "apps",
-                    "data": {"label": f"🚀 Real-World Applications\nIndustrial use cases in OS and DB indexing"},
+                    "data": {"label": f"🚀 Applications\n{app_short}"},
                     "position": {"x": 680, "y": 170}
                 },
                 {
                     "id": "math",
-                    "data": {"label": f"⚡ Complexity & Math\nTime: O(log N) | Space: O(1) Auxiliary"},
+                    "data": {"label": f"⚡ Math & Complexity\n{math_short}"},
                     "position": {"x": 220, "y": 310}
                 },
                 {
                     "id": "interview",
-                    "data": {"label": f"💼 Interview Key Takeaway\nEdge cases & overflow prevention"},
+                    "data": {"label": f"💼 Interview Focus\n{interview_short}"},
                     "position": {"x": 540, "y": 310}
                 }
             ],

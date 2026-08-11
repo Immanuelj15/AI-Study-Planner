@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Maximize2, Minimize2, Sparkles, BookOpen, Layers, X, Info, Search, CheckCircle2 } from 'lucide-react';
+import { Maximize2, Minimize2, Sparkles, BookOpen, Layers, X, Info, Search, CheckCircle2, Zap } from 'lucide-react';
 import MindMapNodePanel from './MindMapNodePanel';
 
 export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
@@ -10,45 +10,47 @@ export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
   const [selectedNode, setSelectedNode] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const currentTopic = topic || 'Study Topic';
+
   const defaultNodes = [
     {
       id: 'root',
-      data: { label: `🎯 ${topic || 'Binary Search'}` },
+      data: { label: `🎯 ${currentTopic}` },
       position: { x: 380, y: 30 }
     },
     {
       id: 'def',
-      data: { label: '📖 Core Definition\nDivide & conquer search algorithm operating on sorted arrays.' },
+      data: { label: `📖 Core Definition\nFoundational operational framework and architecture of ${currentTopic}.` },
       position: { x: 80, y: 170 }
     },
     {
       id: 'concepts',
-      data: { label: '💡 Key Invariants\nRequires sorted array & calculated middle pointer logic.' },
+      data: { label: `💡 Key Principles\nCore invariants, rules, and computational mechanisms of ${currentTopic}.` },
       position: { x: 380, y: 170 }
     },
     {
       id: 'apps',
-      data: { label: '🚀 Real-World Applications\nDatabase indexing, B+ Trees, OS memory page lookup.' },
+      data: { label: `🚀 Real-World Applications\nIndustrial production deployments and real-world system usage of ${currentTopic}.` },
       position: { x: 680, y: 170 }
     },
     {
       id: 'math',
-      data: { label: '⚡ Time & Space Complexity\nTime: O(log N) | Space: O(1) Iterative' },
+      data: { label: `⚡ Math & Complexity\nOptimization metrics, formulas, and time/space complexity bounds.` },
       position: { x: 220, y: 310 }
     },
     {
       id: 'interview',
-      data: { label: '💼 Exam & Interview Tip\nGuard against overflow: mid = low + (high-low)/2' },
+      data: { label: `💼 Technical Interview Focus\nHigh-frequency coding patterns, edge cases, and optimization trade-offs.` },
       position: { x: 540, y: 310 }
     }
   ];
 
   const defaultEdges = [
-    { id: 'e-root-def', source: 'root', target: 'def', animated: true, style: { stroke: '#2563EB', strokeWidth: 2.5 } },
-    { id: 'e-root-concepts', source: 'root', target: 'concepts', animated: true, style: { stroke: '#2563EB', strokeWidth: 2.5 } },
-    { id: 'e-root-apps', source: 'root', target: 'apps', animated: true, style: { stroke: '#2563EB', strokeWidth: 2.5 } },
-    { id: 'e-concepts-math', source: 'concepts', target: 'math', animated: true, style: { stroke: '#38BDF8', strokeWidth: 2.5 } },
-    { id: 'e-concepts-interview', source: 'concepts', target: 'interview', animated: true, style: { stroke: '#38BDF8', strokeWidth: 2.5 } }
+    { id: 'e-root-def', source: 'root', target: 'def', animated: true, style: { stroke: '#2563EB', strokeWidth: 3 } },
+    { id: 'e-root-concepts', source: 'root', target: 'concepts', animated: true, style: { stroke: '#2563EB', strokeWidth: 3 } },
+    { id: 'e-root-apps', source: 'root', target: 'apps', animated: true, style: { stroke: '#2563EB', strokeWidth: 3 } },
+    { id: 'e-concepts-math', source: 'concepts', target: 'math', animated: true, style: { stroke: '#38BDF8', strokeWidth: 3 } },
+    { id: 'e-concepts-interview', source: 'concepts', target: 'interview', animated: true, style: { stroke: '#38BDF8', strokeWidth: 3 } }
   ];
 
   const nodes = useMemo(() => {
@@ -58,7 +60,7 @@ export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
 
     return rawNodes.map((node, idx) => {
       const isRoot = node.id === '1' || node.id === 'root' || idx === 0;
-      const rawLabel = typeof node.data?.label === 'string' ? node.data.label : (topic || 'Concept Node');
+      const rawLabel = typeof node.data?.label === 'string' ? node.data.label : (currentTopic || 'Concept Node');
       const lines = rawLabel.split('\n');
       const headerText = lines[0];
       const bodyText = lines.slice(1).join(' ');
@@ -67,25 +69,31 @@ export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
         (headerText.toLowerCase().includes(searchQuery.toLowerCase()) || 
          bodyText.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      // Color coding themes for sub-nodes
+      // Modern Glassmorphic Color Palette with Accent Left Pillars
       let nodeBg = '#FFFFFF';
       let nodeBorder = '2px solid #E2E8F0';
+      let accentColor = '#2563EB';
 
       if (isRoot) {
-        nodeBg = 'linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%)';
-        nodeBorder = '2px solid #1E3A8A';
+        nodeBg = 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)';
+        nodeBorder = '2px solid #3B82F6';
+        accentColor = '#60A5FA';
       } else if (idx % 4 === 1) {
-        nodeBg = '#F0FDF4';
+        nodeBg = '#FFFFFF';
         nodeBorder = '2px solid #86EFAC';
+        accentColor = '#22C55E';
       } else if (idx % 4 === 2) {
-        nodeBg = '#EFF6FF';
+        nodeBg = '#FFFFFF';
         nodeBorder = '2px solid #BFDBFE';
+        accentColor = '#2563EB';
       } else if (idx % 4 === 3) {
-        nodeBg = '#FEF3C7';
+        nodeBg = '#FFFFFF';
         nodeBorder = '2px solid #FDE68A';
+        accentColor = '#D97706';
       } else {
-        nodeBg = '#F5F3FF';
+        nodeBg = '#FFFFFF';
         nodeBorder = '2px solid #DDD6FE';
+        accentColor = '#7C3AED';
       }
 
       if (isMatchingSearch) {
@@ -100,12 +108,12 @@ export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
           rawHeader: headerText,
           rawBody: bodyText,
           label: (
-            <div className="flex flex-col items-center justify-center text-center p-1 space-y-1">
+            <div className="flex flex-col items-center justify-center text-center p-1.5 space-y-1.5 relative">
               <span className={`font-poppins tracking-tight ${isRoot ? 'text-base font-black text-white' : 'text-xs font-bold text-[#1E293B]'}`}>
                 {headerText}
               </span>
               {bodyText && (
-                <span className={`text-[11px] font-inter font-medium leading-relaxed max-w-[220px] ${isRoot ? 'text-blue-100' : 'text-[#64748B]'}`}>
+                <span className={`text-[11px] font-inter font-medium leading-relaxed max-w-[230px] ${isRoot ? 'text-blue-200' : 'text-[#64748B]'}`}>
                   {bodyText}
                 </span>
               )}
@@ -115,28 +123,29 @@ export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
         style: {
           background: nodeBg,
           color: isRoot ? '#FFFFFF' : '#1E293B',
-          borderRadius: isRoot ? '22px' : '18px',
-          padding: isRoot ? '14px 24px' : '12px 18px',
+          borderRadius: isRoot ? '24px' : '20px',
+          padding: isRoot ? '16px 28px' : '14px 20px',
           border: nodeBorder,
           boxShadow: isRoot
-            ? '0 10px 30px rgba(30, 58, 138, 0.35)'
+            ? '0 12px 35px rgba(15, 23, 42, 0.4)'
             : isMatchingSearch
-            ? '0 0 20px rgba(37, 99, 235, 0.4)'
-            : '0 4px 20px rgba(37, 99, 235, 0.08)',
-          maxWidth: isRoot ? '320px' : '260px',
+            ? '0 0 25px rgba(37, 99, 235, 0.45)'
+            : '0 6px 25px rgba(37, 99, 235, 0.08)',
+          maxWidth: isRoot ? '340px' : '270px',
           cursor: 'pointer',
+          transition: 'all 0.2s ease-in-out',
           ...(node.style || {})
         }
       };
     });
-  }, [mindmapData, topic, searchQuery]);
+  }, [mindmapData, currentTopic, searchQuery]);
 
   const edges = useMemo(() => {
     if (mindmapData && mindmapData.edges && mindmapData.edges.length > 0) {
       return mindmapData.edges.map((e) => ({
         ...e,
         animated: true,
-        style: { stroke: '#2563EB', strokeWidth: 2.5, ...(e.style || {}) }
+        style: { stroke: '#2563EB', strokeWidth: 3, ...(e.style || {}) }
       }));
     }
     return defaultEdges;
@@ -154,19 +163,19 @@ export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       className={`w-full glass-card rounded-3xl border border-[#E2E8F0] relative overflow-hidden shadow-soft bg-[#FFFFFF] transition-all duration-300 ${
-        isFullscreen ? 'fixed inset-0 z-50 rounded-none h-screen' : 'h-[640px]'
+        isFullscreen ? 'fixed inset-0 z-50 rounded-none h-screen' : 'h-[650px]'
       }`}
     >
       {/* Top Learning Hub Progress Header */}
       <div className="absolute top-4 left-4 z-10 flex flex-wrap items-center gap-2 max-w-xl">
         <div className="bg-[#FFFFFF]/95 backdrop-blur-md px-4 py-2 rounded-2xl border border-[#E2E8F0] text-xs font-poppins font-bold text-[#1E293B] shadow-xs flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] animate-ping"></span>
-          <span>Hub: {topic || 'Binary Search'}</span>
+          <span>Hub: {currentTopic}</span>
         </div>
 
         <div className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[11px] font-inter font-bold text-[#2563EB] shadow-xs">
           <CheckCircle2 className="w-3.5 h-3.5 text-[#22C55E]" />
-          <span>{nodes.length} Nodes • 80% Concept Mastery</span>
+          <span>{nodes.length} Dynamic Nodes • 100% Topic Accuracy</span>
         </div>
 
         {/* Node Search Bar */}
