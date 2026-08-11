@@ -8,7 +8,8 @@ from schemas.schemas import (
     ResearchRequest, ResearchOutput,
     SummarizeRequest, SummaryResponse,
     QuizGenerationRequest, QuizItem,
-    PlanGenerationRequest, StudyPlanResponse
+    PlanGenerationRequest, StudyPlanResponse,
+    ChatTutorRequest, ChatTutorResponse
 )
 from services.auth import get_current_user
 from agents.autogen_manager import autogen_manager
