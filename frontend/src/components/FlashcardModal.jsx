@@ -162,28 +162,26 @@ export default function FlashcardModal({ topic, bulletPoints = [], onClose }) {
               transition={{ duration: 0.55, ease: 'easeInOut' }}
               className="w-full h-full relative [transform-style:preserve-3d]"
             >
-              {/* FRONT SIDE (Dark Modern Glassmorphic Card) */}
-              <div className="absolute inset-0 w-full h-full rounded-3xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#2563EB] text-white p-7 flex flex-col justify-between shadow-xl border border-white/10 [backface-visibility:hidden] relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
+              {/* FRONT SIDE (Sleek Light Glassmorphic Card) */}
+              <div className="absolute inset-0 w-full h-full rounded-3xl bg-gradient-to-br from-[#EFF6FF] via-[#F8FBFF] to-[#FFFFFF] border-2 border-[#2563EB] text-[#1E293B] p-7 flex flex-col justify-between shadow-xl [backface-visibility:hidden] relative overflow-hidden">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-white font-poppins font-bold text-[10px] tracking-wider border border-white/20 uppercase">
+                  <span className="px-3 py-1 rounded-full bg-[#2563EB] text-white font-poppins font-bold text-[10px] tracking-wider uppercase shadow-xs">
                     FRONT • KEY TERM
                   </span>
-                  <RotateCw className="w-4 h-4 text-blue-200" />
+                  <RotateCw className="w-4 h-4 text-[#2563EB]" />
                 </div>
 
                 <div className="text-center my-auto space-y-3 px-2">
-                  <span className="text-[11px] uppercase tracking-widest text-blue-300 font-bold block">
+                  <span className="text-[11px] uppercase tracking-widest text-[#2563EB] font-bold block">
                     {topic || 'CONCEPT RECALL'}
                   </span>
-                  <h3 className="font-poppins font-black text-xl lg:text-2xl text-white leading-snug">
+                  <h3 className="font-poppins font-black text-xl lg:text-2xl text-[#1E293B] leading-snug">
                     {currentCard.term}
                   </h3>
                 </div>
 
-                <div className="text-center text-[11px] text-blue-200 font-medium flex items-center justify-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
+                <div className="text-center text-[11px] text-[#64748B] font-medium flex items-center justify-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
                   <span>Tap card or press Spacebar to reveal definition</span>
                 </div>
               </div>

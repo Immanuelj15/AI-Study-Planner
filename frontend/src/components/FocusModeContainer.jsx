@@ -797,12 +797,17 @@ export default function FocusModeContainer({
                 className="w-full h-full relative [transform-style:preserve-3d]"
               >
                 {/* Front */}
-                <div className="absolute inset-0 w-full h-full rounded-3xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#2563EB] text-white p-7 flex flex-col justify-between shadow-xl border border-white/10 [backface-visibility:hidden]">
-                  <div className="text-xs font-bold text-blue-200">FRONT • KEY TERM</div>
-                  <div className="text-center my-auto">
-                    <h3 className="font-poppins font-black text-xl text-white">{flashcardDeck[flashcardIdx].term}</h3>
+                <div className="absolute inset-0 w-full h-full rounded-3xl bg-gradient-to-br from-[#EFF6FF] via-[#F8FBFF] to-[#FFFFFF] border-2 border-[#2563EB] text-[#1E293B] p-7 flex flex-col justify-between shadow-xl [backface-visibility:hidden]">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="px-3 py-1 rounded-full bg-[#2563EB] text-white font-poppins font-bold text-[10px] tracking-wider uppercase shadow-xs">
+                      FRONT • KEY TERM
+                    </span>
+                    <RotateCw className="w-4 h-4 text-[#2563EB]" />
                   </div>
-                  <div className="text-center text-[11px] text-blue-200">Tap card to flip definition 🔄</div>
+                  <div className="text-center my-auto">
+                    <h3 className="font-poppins font-black text-xl text-[#1E293B]">{flashcardDeck[flashcardIdx].term}</h3>
+                  </div>
+                  <div className="text-center text-[11px] text-[#64748B] font-medium">Tap card to flip definition 🔄</div>
                 </div>
 
                 {/* Back */}
