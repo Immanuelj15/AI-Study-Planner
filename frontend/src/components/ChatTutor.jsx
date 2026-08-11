@@ -39,19 +39,6 @@ export default function ChatTutor({ topic = "General Computer Science", hideTrig
 
   return (
     <>
-      {/* Floating Chat Trigger Button */}
-      {!isOpen && !hideTrigger && (
-        <motion.button
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.94 }}
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white shadow-xl flex items-center gap-2 font-poppins font-bold text-xs shadow-blue-500/30"
-        >
-          <Bot className="w-5 h-5 animate-bounce" />
-          <span>Ask AI Tutor</span>
-        </motion.button>
-      )}
-
       {/* Floating Chat Drawer */}
       <AnimatePresence>
         {isOpen && (
