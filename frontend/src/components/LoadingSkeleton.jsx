@@ -45,13 +45,21 @@ const agentsList = [
   },
 ];
 
-export default function LoadingSkeleton({ text = "Preparing Your Study Plan..." }) {
+export default function LoadingSkeleton({ text = "Preparing Your Study Plan...", onComplete }) {
   const [activeStep, setActiveStep] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveStep((prev) => (prev < agentsList.length ? prev + 1 : prev));
-    }, 650);
+      setActiveStep((prev) => {
+        if (prev < agentsList.length - 1) {
+          return prev + 1;
+        } else {
+          clearInterval(timer);
+          if (onComplete) setTimeout(onComplete, 600);
+          return agentsList.length;
+        }
+      });
+    }, 1400);
 
     return () => clearInterval(timer);
   }, []);
