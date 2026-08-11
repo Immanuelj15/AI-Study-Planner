@@ -4,6 +4,7 @@ import { focusAPI, subjectsAPI, agentAPI } from '../services/api';
 import MindMapComponent from './MindMapComponent';
 import QuizComponent from './QuizComponent';
 import ChatTutor from './ChatTutor';
+import ContentSkeleton from './ContentSkeleton';
 import { 
   Maximize2, 
   Minimize2, 
@@ -52,10 +53,17 @@ export default function FocusModeContainer({
   const [plannedMinutes, setPlannedMinutes] = useState(initialMinutes);
   const [subjectsList, setSubjectsList] = useState([]);
 
-  // Active Interactive Tab in Focus Mode: 'notes' | 'mindmap' | 'flashcards' | 'quiz'
   const [activeTab, setActiveTab] = useState('notes');
+  const [isTabLoading, setIsTabLoading] = useState(false);
   const [showAIChat, setShowAIChat] = useState(false);
   const [isReadingAudio, setIsReadingAudio] = useState(false);
+
+  const handleTabChange = (tabName) => {
+    if (tabName === activeTab) return;
+    setActiveTab(tabName);
+    setIsTabLoading(true);
+    setTimeout(() => setIsTabLoading(false), 600);
+  };
 
   // Flashcard State inside Focus Mode
   const [flashcardIdx, setFlashcardIdx] = useState(0);
@@ -662,7 +670,7 @@ export default function FocusModeContainer({
       <div className="bg-[#FFFFFF] border-b border-[#E2E8F0] px-6 py-2 flex items-center justify-between shrink-0 z-10">
         <div className="flex items-center gap-2 overflow-x-auto text-xs font-poppins font-bold">
           <button
-            onClick={() => setActiveTab('notes')}
+            onClick={() => handleTabChange('notes')}
             className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
               activeTab === 'notes'
                 ? 'bg-[#2563EB] text-white shadow-xs'
@@ -674,7 +682,7 @@ export default function FocusModeContainer({
           </button>
 
           <button
-            onClick={() => setActiveTab('mindmap')}
+            onClick={() => handleTabChange('mindmap')}
             className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
               activeTab === 'mindmap'
                 ? 'bg-[#2563EB] text-white shadow-xs'
@@ -686,7 +694,7 @@ export default function FocusModeContainer({
           </button>
 
           <button
-            onClick={() => setActiveTab('flashcards')}
+            onClick={() => handleTabChange('flashcards')}
             className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
               activeTab === 'flashcards'
                 ? 'bg-[#2563EB] text-white shadow-xs'
@@ -698,7 +706,7 @@ export default function FocusModeContainer({
           </button>
 
           <button
-            onClick={() => setActiveTab('quiz')}
+            onClick={() => handleTabChange('quiz')}
             className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
               activeTab === 'quiz'
                 ? 'bg-[#2563EB] text-white shadow-xs'
@@ -728,19 +736,23 @@ export default function FocusModeContainer({
 
       {/* Main Center Content Container */}
       <main className="flex-1 overflow-y-auto p-6 max-w-6xl mx-auto w-full relative">
-        {/* TAB 1: STUDY NOTES VIEW */}
-        {activeTab === 'notes' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <div className="glass-card rounded-3xl p-8 border border-[#E2E8F0] bg-[#FFFFFF] space-y-6 shadow-soft">
-              <div className="border-b border-[#E2E8F0] pb-4 flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold text-[#2563EB] uppercase tracking-wider">{subjectName} • Deep Focus Study Guide</div>
-                  <h1 className="font-poppins font-black text-2xl text-[#1E293B] mt-1">{topic}</h1>
-                </div>
-                <span className="px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-xs border border-[#DBEAFE]">
-                  AI Note Generated
-                </span>
-              </div>
+        {isTabLoading ? (
+          <ContentSkeleton text={`Loading ${activeTab.toUpperCase()} View...`} />
+        ) : (
+          <>
+            {/* TAB 1: STUDY NOTES VIEW */}
+            {activeTab === 'notes' && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                <div className="glass-card rounded-3xl p-8 border border-[#E2E8F0] bg-[#FFFFFF] space-y-6 shadow-soft">
+                  <div className="border-b border-[#E2E8F0] pb-4 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-[#2563EB] uppercase tracking-wider">{subjectName} • Deep Focus Study Guide</div>
+                      <h1 className="font-poppins font-black text-2xl text-[#1E293B] mt-1">{topic}</h1>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-xs border border-[#DBEAFE]">
+                      AI Note Generated
+                    </span>
+                  </div>
 
               <div className="space-y-6 text-sm leading-relaxed text-[#1E293B]">
                 {/* 1. Core Intuition */}
@@ -946,6 +958,8 @@ export default function FocusModeContainer({
               )}
             </div>
           </motion.div>
+        )}
+          </>
         )}
 
         {/* AI TUTOR CHAT DRAWER */}
