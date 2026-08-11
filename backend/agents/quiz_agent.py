@@ -86,7 +86,8 @@ Return ONLY a JSON object with this exact structure:
   ]
 }}
 """
-        response_str = call_groq_llm(prompt, system_prompt)
+        res_val = call_groq_llm(prompt, system_prompt, agent_name=self.name)
+        response_str, source = res_val if isinstance(res_val, tuple) else (res_val, "REAL_GROQ")
         parsed_questions = []
 
         if response_str:

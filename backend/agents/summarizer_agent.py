@@ -79,11 +79,13 @@ Return ONLY valid JSON with this EXACT structure:
   }}
 }}
 """
-        response_str = call_groq_llm(prompt, system_prompt)
+        res_val = call_groq_llm(prompt, system_prompt, agent_name=self.name)
+        response_str, source = res_val if isinstance(res_val, tuple) else (res_val, "REAL_GROQ")
         if response_str:
             try:
                 parsed = json.loads(response_str)
                 if "summary" in parsed and "mindmap_json" in parsed:
+                    parsed["source"] = source
                     return parsed
             except Exception as e:
                 logger.error(f"Failed to parse summarizer JSON from Groq: {e}")

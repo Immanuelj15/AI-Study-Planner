@@ -17,6 +17,7 @@ class User(Base):
     quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
     learning_profile = relationship("StudentLearningProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     focus_sessions = relationship("FocusSession", back_populates="user", cascade="all, delete-orphan")
+    ai_logs = relationship("AIUsageLog", backref="user", cascade="all, delete-orphan")
 
 
 class Subject(Base):
@@ -155,4 +156,23 @@ class FocusSession(Base):
     ended_at = Column(DateTime, nullable=True)
 
     user = relationship("User", back_populates="focus_sessions")
+
+
+class AIUsageLog(Base):
+    __tablename__ = "ai_usage_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    agent_name = Column(String(100), nullable=False, index=True)
+    model = Column(String(100), default="llama-3.3-70b-versatile")
+    prompt_tokens = Column(Integer, default=0)
+    completion_tokens = Column(Integer, default=0)
+    total_tokens = Column(Integer, default=0)
+    response_time_ms = Column(Float, default=0.0)
+    status = Column(String(50), default="200 OK")
+    source = Column(String(50), default="REAL_GROQ") # REAL_GROQ, CACHE, FALLBACK
+    fallback_used = Column(Integer, default=0) # 0 for false, 1 for true
+    cached = Column(Integer, default=0) # 0 for false, 1 for true
+    error_type = Column(String(255), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
 

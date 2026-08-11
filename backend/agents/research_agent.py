@@ -36,11 +36,13 @@ Conduct comprehensive academic research and return a JSON object with EXACTLY th
   "interview_questions": ["Key interview question 1 with brief answer", "Key interview question 2 with brief answer"]
 }}
 """
-        response_str = call_groq_llm(prompt, system_prompt)
+        res_val = call_groq_llm(prompt, system_prompt, agent_name=self.name)
+        response_str, source = res_val if isinstance(res_val, tuple) else (res_val, "REAL_GROQ")
         
         if response_str:
             try:
                 data = json.loads(response_str)
+                data["source"] = source
                 return data
             except Exception as e:
                 logger.error(f"Failed to parse research JSON from Groq: {e}")
@@ -48,6 +50,7 @@ Conduct comprehensive academic research and return a JSON object with EXACTLY th
         # High quality fallback mock output
         return {
             "topic": topic,
+            "source": "FALLBACK",
             "concepts": [
                 f"Fundamental principles of {topic}",
                 f"Core structural design & paradigm in {topic}",
