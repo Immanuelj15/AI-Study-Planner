@@ -1,31 +1,54 @@
 import json
 import logging
 import datetime
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from services.groq_client import call_groq_llm
 
 logger = logging.getLogger(__name__)
 
 class SchedulerAgent:
     """
-    Agent 4: Scheduler Agent
+    Agent 4: Adaptive Scheduler Agent
     Responsibilities:
-    - Receive: Subjects, Exam Date, Daily Available Hours, Difficulty, Quiz Scores
-    - Generate: Daily Study Plan, Weekly Study Plan, Revision Schedule, Priority Schedule
-    - Feedback Loop: Dynamically recalculates schedule hours based on weak/strong quiz scores.
+    - Receive: Subjects, Exam Date, Daily Available Hours, Difficulty, Quiz Scores, Student Learning Profile
+    - Generate: Personalized Daily/Weekly Study Plan tailored to Learning Speed & Learning Style
+    - Feedback Loop: Dynamically recalculates schedule hours based on weak/strong quiz scores (+50% for weak, -30% for strong)
     """
     def __init__(self, name: str = "Scheduler_Agent"):
         self.name = name
 
-    def generate_initial_plan(self, subjects: List[Dict[str, Any]], exam_date_str: str, daily_hours: float) -> List[Dict[str, Any]]:
+    def generate_initial_plan(
+        self,
+        subjects: List[Dict[str, Any]],
+        exam_date_str: str,
+        daily_hours: float,
+        student_profile: Optional[Dict[str, Any]] = None
+    ) -> List[Dict[str, Any]]:
         logger.info(f"[{self.name}] Generating study schedule for {len(subjects)} subjects up to exam: {exam_date_str}")
         
         system_prompt = "You are an expert Academic Study Planner AI. Output ONLY a valid JSON object containing a 'schedule' array."
+
+        profile_instruction = ""
+        if student_profile:
+            speed = student_profile.get("learning_speed", "Medium")
+            style = student_profile.get("learning_style", "Mixed")
+            trend = student_profile.get("improvement_trend", "Stable")
+
+            if speed == "Fast" or trend == "Fast Learner":
+                profile_instruction = "Tailor for a FAST LEARNER: Create concise intensive sessions, allocate more time to hard revision, and schedule advanced mock quizzes."
+            elif trend == "Late Bloomer" or speed == "Slow" or trend == "Struggling Learner":
+                profile_instruction = "Tailor for a LATE BLOOMER / STRUGGLING LEARNER: Allocate dedicated step-by-step revision blocks, extra mindmap sessions, and AI tutor review checkpoints."
+            elif style == "Visual":
+                profile_instruction = "Tailor for a VISUAL LEARNER: Include dedicated interactive Mind Map diagram exploration sessions for each topic."
+            elif style == "Practice":
+                profile_instruction = "Tailor for a PRACTICE LEARNER: Include extra practice quiz & scenario solving sessions."
 
         prompt = f"""
 Generate an adaptive study plan for a student preparing for an exam on {exam_date_str}.
 Daily available study time: {daily_hours} hours.
 Subjects: {json.dumps(subjects, indent=2)}
+
+Adaptation Directive: {profile_instruction}
 
 Calculate dates starting from today and distribute daily hours rationally across subjects.
 Higher difficulty subjects should receive higher priority and more hours.

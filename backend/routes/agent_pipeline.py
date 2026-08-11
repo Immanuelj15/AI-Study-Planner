@@ -153,11 +153,21 @@ def generate_study_plan(
     db.query(StudyPlan).filter(StudyPlan.user_id == current_user.id, StudyPlan.status == "Pending").delete()
     db.commit()
 
-    # Call Scheduler Agent
+    # Fetch Student Learning Profile for Adaptive Scheduling
+    from services.adaptive_learning_engine import adaptive_engine
+    profile_obj = adaptive_engine.get_or_create_profile(db, current_user.id)
+    profile_dict = {
+        "learning_speed": profile_obj.learning_speed,
+        "learning_style": profile_obj.learning_style,
+        "improvement_trend": profile_obj.improvement_trend
+    }
+
+    # Call Scheduler Agent with Adaptive Profile
     plan_items = autogen_manager.scheduler_agent.generate_initial_plan(
         subjects=subject_objs,
         exam_date_str=req.exam_date,
-        daily_hours=req.daily_hours
+        daily_hours=req.daily_hours,
+        student_profile=profile_dict
     )
 
     created_plans = []
