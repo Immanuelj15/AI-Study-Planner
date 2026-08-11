@@ -58,7 +58,7 @@ Adaptation Directive: {style_instruction}
 
 Create tailored study notes, 4 bullet takeaways, and an educational React Flow mind map JSON specifically explaining "{topic}" at the {diff_clean} level.
 For mind map nodes:
-- Ensure every sub-node contains a title AND a 1-line accurate concept explanation tailored to "{topic}" at the {diff_clean} level separated by \\n.
+- Ensure every sub-node contains a title AND EXACTLY 3 clear bullet points explaining key aspects of "{topic}" separated by \\n• .
 - DO NOT use generic OS or DB indexing placeholders unless the topic is actually Operating Systems or Databases.
 
 Return ONLY valid JSON with this EXACT structure:
@@ -73,11 +73,11 @@ Return ONLY valid JSON with this EXACT structure:
   "mindmap_json": {{
     "nodes": [
       {{ "id": "root", "data": {{ "label": "{topic}" }}, "position": {{ "x": 380, "y": 30 }} }},
-      {{ "id": "def", "data": {{ "label": "Core Definition\\nAccurate 1-line definition of {topic}" }}, "position": {{ "x": 80, "y": 170 }} }},
-      {{ "id": "concepts", "data": {{ "label": "Key Principles\\nCore mechanisms governing {topic}" }}, "position": {{ "x": 380, "y": 170 }} }},
-      {{ "id": "apps", "data": {{ "label": "Real-World Applications\\nHow {topic} is applied in production systems" }}, "position": {{ "x": 680, "y": 170 }} }},
-      {{ "id": "math", "data": {{ "label": "Math & Metrics\\nKey equations and complexity bounds for {topic}" }}, "position": {{ "x": 220, "y": 310 }} }},
-      {{ "id": "interview", "data": {{ "label": "Interview Takeaway\\nKey technical question & solution for {topic}" }}, "position": {{ "x": 540, "y": 310 }} }}
+      {{ "id": "def", "data": {{ "label": "Core Definition\\n• Primary operational framework of {topic}\\n• Enforces core system invariants\\n• Guarantees optimal runtime correctness" }}, "position": {{ "x": 80, "y": 170 }} }},
+      {{ "id": "concepts", "data": {{ "label": "Key Principles\\n• Fundamental algorithmic paradigm\\n• Structured data flow & state model\\n• Key internal memory bounds" }}, "position": {{ "x": 380, "y": 170 }} }},
+      {{ "id": "apps", "data": {{ "label": "Real-World Applications\\n• Enterprise production deployment\\n• Distributed system optimization\\n• High-frequency query handling" }}, "position": {{ "x": 680, "y": 170 }} }},
+      {{ "id": "math", "data": {{ "label": "Math & Complexity\\n• Time Complexity: O(log N) or O(N log N)\\n• Space Complexity: O(1) auxiliary bound\\n• Mathematical recurrence relation" }}, "position": {{ "x": 220, "y": 310 }} }},
+      {{ "id": "interview", "data": {{ "label": "Interview Focus\\n• High-frequency interview question\\n• Null boundary & overflow handling\\n• Production optimization trade-offs" }}, "position": {{ "x": 540, "y": 310 }} }}
     ],
     "edges": [
       {{ "id": "e-root-def", "source": "root", "target": "def", "animated": true }},
@@ -161,12 +161,26 @@ Return ONLY valid JSON with this EXACT structure:
         math_text = formulas_list[0] if formulas_list else f"Time & Space complexity for {topic}"
         interview_text = qa_list[0] if qa_list else f"Top interview question for {topic}"
 
-        # Clean line breaks for mindmap node labels
-        def_short = (def_text[:60] + '...') if len(def_text) > 60 else def_text
-        concept_short = (concept_text[:60] + '...') if len(concept_text) > 60 else concept_text
-        app_short = (app_text[:60] + '...') if len(app_text) > 60 else app_text
-        math_short = (math_text[:60] + '...') if len(math_text) > 60 else math_text
-        interview_short = (interview_text[:60] + '...') if len(interview_text) > 60 else interview_text
+        # 3 Structured Bullet Points per Sub-Node
+        def_p1 = f"Foundational architectural framework of {topic}."
+        def_p2 = f"Enforces core system invariants & reliable execution."
+        def_p3 = f"Optimizes runtime performance across environments."
+
+        concept_p1 = concepts_list[0] if len(concepts_list) > 0 else f"Core operational principle governing {topic}."
+        concept_p2 = concepts_list[1] if len(concepts_list) > 1 else f"Structured data flow & state management model."
+        concept_p3 = concepts_list[2] if len(concepts_list) > 2 else f"System invariants & execution guarantees."
+
+        app_p1 = examples_list[0] if len(examples_list) > 0 else f"Enterprise database indexing & B+ tree lookups."
+        app_p2 = examples_list[1] if len(examples_list) > 1 else f"Kernel virtual memory management & dispatching."
+        app_p3 = f"Real-time distributed search & routing clusters."
+
+        math_p1 = formulas_list[0] if len(formulas_list) > 0 else f"Time Complexity: O(log N) average bound."
+        math_p2 = formulas_list[1] if len(formulas_list) > 1 else f"Space Complexity: O(1) auxiliary bound."
+        math_p3 = f"Mathematical growth & asymptotic bounds."
+
+        interview_p1 = qa_list[0] if len(qa_list) > 0 else f"High-frequency question on operational trade-offs."
+        interview_p2 = f"Edge case handling: Null pointers & boundary conditions."
+        interview_p3 = f"Optimization: Minimize cache misses & memory footprint."
 
         mindmap = {
             "nodes": [
@@ -177,27 +191,27 @@ Return ONLY valid JSON with this EXACT structure:
                 },
                 {
                     "id": "def",
-                    "data": {"label": f"Core Definition\n{def_short}"},
+                    "data": {"label": f"Core Definition\n• {def_p1}\n• {def_p2}\n• {def_p3}"},
                     "position": {"x": 80, "y": 170}
                 },
                 {
                     "id": "concepts",
-                    "data": {"label": f"Key Principles\n{concept_short}"},
+                    "data": {"label": f"Key Principles\n• {concept_p1}\n• {concept_p2}\n• {concept_p3}"},
                     "position": {"x": 380, "y": 170}
                 },
                 {
                     "id": "apps",
-                    "data": {"label": f"Applications\n{app_short}"},
+                    "data": {"label": f"Applications\n• {app_p1}\n• {app_p2}\n• {app_p3}"},
                     "position": {"x": 680, "y": 170}
                 },
                 {
                     "id": "math",
-                    "data": {"label": f"Math & Complexity\n{math_short}"},
+                    "data": {"label": f"Math & Complexity\n• {math_p1}\n• {math_p2}\n• {math_p3}"},
                     "position": {"x": 220, "y": 310}
                 },
                 {
                     "id": "interview",
-                    "data": {"label": f"Interview Focus\n{interview_short}"},
+                    "data": {"label": f"Interview Focus\n• {interview_p1}\n• {interview_p2}\n• {interview_p3}"},
                     "position": {"x": 540, "y": 310}
                 }
             ],

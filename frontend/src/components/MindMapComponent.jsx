@@ -61,9 +61,27 @@ export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
     return rawNodes.map((node, idx) => {
       const isRoot = node.id === '1' || node.id === 'root' || idx === 0;
       const rawLabel = typeof node.data?.label === 'string' ? node.data.label : (currentTopic || 'Concept Node');
-      const lines = rawLabel.split('\n');
-      const headerText = lines[0];
-      const bodyText = lines.slice(1).join(' ');
+      const lines = rawLabel.split('\n').map(s => s.trim()).filter(Boolean);
+      const headerText = lines[0] || currentTopic;
+      const bodyLines = lines.slice(1);
+      const bodyText = bodyLines.join(' ');
+
+      // Extract 3 bullet points per node
+      let points = [];
+      bodyLines.forEach(line => {
+        const clean = line.replace(/^[•\-\*\d\.]+\s*/, '').trim();
+        if (clean) points.push(clean);
+      });
+
+      if (points.length < 3) {
+        const clauses = bodyText.split(/(?<=[.!?])\s+|[;,]\s+/).map(s => s.trim()).filter(s => s.length > 5);
+        if (clauses.length >= 3) {
+          points = clauses.slice(0, 3);
+        } else if (clauses.length > 0) {
+          points = clauses;
+        }
+      }
+      points = points.slice(0, 3);
 
       const isMatchingSearch = searchQuery.trim() && 
         (headerText.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -108,12 +126,25 @@ export default function MindMapComponent({ mindmapData, topic, onAskAITutor }) {
           rawHeader: headerText,
           rawBody: bodyText,
           label: (
-            <div className="flex flex-col items-center justify-center text-center p-1.5 space-y-1.5 relative">
-              <span className={`font-poppins tracking-tight ${isRoot ? 'text-base font-black text-white' : 'text-xs font-bold text-[#1E293B]'}`}>
+            <div className="flex flex-col items-center justify-center text-center p-1 space-y-1.5 relative max-w-[240px]">
+              <span className={`font-poppins tracking-tight ${isRoot ? 'text-base font-black text-white' : 'text-xs font-extrabold text-[#1E293B] border-b border-[#E2E8F0] pb-1 w-full'}`}>
                 {headerText}
               </span>
-              {bodyText && (
-                <span className={`text-[11px] font-inter font-medium leading-relaxed max-w-[230px] ${isRoot ? 'text-blue-200' : 'text-[#64748B]'}`}>
+              {isRoot ? (
+                <span className="text-[11px] font-inter font-medium text-blue-200">
+                  {bodyLines.join(' ') || 'Root Concept Engine'}
+                </span>
+              ) : points.length > 0 ? (
+                <ul className="text-left w-full space-y-1 mt-1 text-[11px] font-inter font-medium text-[#475569]">
+                  {points.map((pt, pIdx) => (
+                    <li key={pIdx} className="flex items-start gap-1.5 bg-[#F8FBFF] px-2.5 py-1 rounded-xl border border-[#E2E8F0] shadow-2xs hover:border-[#2563EB]/40 transition-all">
+                      <span className="text-[#2563EB] font-bold text-[10px] shrink-0 mt-0.5">•</span>
+                      <span className="line-clamp-2 leading-tight text-[#1E293B]">{pt}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : bodyText && (
+                <span className="text-[11px] font-inter font-medium leading-relaxed text-[#64748B]">
                   {bodyText}
                 </span>
               )}
