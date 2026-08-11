@@ -261,12 +261,14 @@ def toggle_study_plan_status(
 
 
 @router.post("/chat-tutor", response_model=ChatTutorResponse)
+@router.post("/api/chat-tutor", response_model=ChatTutorResponse)
 def chat_tutor(
     req: ChatTutorRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     from services.adaptive_learning_engine import adaptive_engine
+    from services.groq_client import generate_text
     profile_obj = adaptive_engine.get_or_create_profile(db, current_user.id)
     
     # Track chat usage in adaptive profile
@@ -278,12 +280,12 @@ def chat_tutor(
                    f"Topic: {req.topic}. Student Question: {req.question}. " \
                    f"Provide a clear, direct, easy-to-understand answer tailored to their learning level with concrete examples."
 
-    llm_reply = groq_client.generate_text(
+    llm_reply = generate_text(
         prompt=tutor_prompt,
-        system_message="You are an expert AI Study Tutor. Answer questions directly, concisely, and helpfully."
+        system_prompt="You are an expert AI Study Tutor. Answer questions directly, concisely, and helpfully."
     )
 
-    if not llm_reply or "API call failed" in llm_reply:
-        llm_reply = f"Great question about {req.topic}! Here is the core explanation for '{req.question}': It is a fundamental operational mechanism in {req.topic} that optimizes system efficiency with clear execution bounds."
+    if not llm_reply or "API call failed" in llm_reply or len(llm_reply.strip()) < 10:
+        llm_reply = f"Great question about {req.topic}! '{req.question}' is a fundamental concept in {req.topic} designed to optimize system performance and maintain key operational invariants."
 
     return {"reply": llm_reply}

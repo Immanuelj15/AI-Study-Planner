@@ -127,8 +127,21 @@ export default function ChatTutor({ topic = "General Computer Science", hideTrig
                 </div>
               ))}
               {loading && (
-                <div className="flex gap-2 text-xs text-[#64748B] items-center italic">
-                  <Sparkles className="w-3.5 h-3.5 text-[#2563EB] animate-spin" /> Tutor is thinking...
+                <div className="flex gap-2.5 justify-start items-start animate-pulse">
+                  <div className="w-7 h-7 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] flex items-center justify-center shrink-0 mt-0.5">
+                    <Bot className="w-4 h-4 text-[#2563EB] animate-spin" />
+                  </div>
+                  <div className="max-w-[80%] p-3.5 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2 rounded-bl-none">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#2563EB]">
+                      <Sparkles className="w-3.5 h-3.5 animate-spin text-[#2563EB]" />
+                      <span>AI Tutor is formulating response...</span>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="h-2.5 bg-[#DBEAFE] rounded-full w-48 animate-pulse" />
+                      <div className="h-2.5 bg-[#DBEAFE] rounded-full w-36 animate-pulse" />
+                      <div className="h-2.5 bg-[#DBEAFE] rounded-full w-24 animate-pulse" />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
