@@ -150,7 +150,14 @@ export default function Dashboard() {
           </div>
           <div className="space-y-0.5">
             <div className="text-[11px] text-blue-100 font-medium">Remaining Study Time</div>
-            <div className="font-poppins font-bold text-base">{remainingHours.toFixed(1)} Hrs</div>
+            <div className="font-poppins font-bold text-base flex items-center gap-1">
+              <span>{remainingHours.toFixed(1)} Hrs</span>
+              {todayPlans.length > 0 && remainingHours === 0 ? (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#22C55E]/30 text-[#86EFAC] font-bold">🎉 All Done!</span>
+              ) : todayPlans.length === 0 ? (
+                <span className="text-[10px] text-blue-200 font-normal"> (No Plan Yet)</span>
+              ) : null}
+            </div>
           </div>
           <div className="space-y-0.5">
             <div className="text-[11px] text-blue-100 font-medium">Active Streak</div>
