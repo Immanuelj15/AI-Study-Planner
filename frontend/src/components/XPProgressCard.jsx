@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { Zap, Trophy, Star, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function XPProgressCard({ streak = 0, completedCount = 0 }) {
-  const currentXP = (streak * 50) + (completedCount * 100);
+  // Brand new users start at 0 XP and earn +100 XP per completed study session & +20 XP per streak day after Day 1
+  const currentXP = (completedCount * 100) + (streak > 1 ? (streak - 1) * 20 : 0);
   
   let levelName = "Level 1 Novice";
   let levelBadge = "L1";
