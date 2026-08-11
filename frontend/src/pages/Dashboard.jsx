@@ -277,7 +277,13 @@ export default function Dashboard() {
 
             {/* Right 1 Column: XP Progress Card */}
             <motion.div variants={itemVariants} className="space-y-6">
-              <XPProgressCard streak={metrics?.study_streak_days || 0} completedCount={todayPlans.filter(p => p.status === 'Completed').length} />
+              <XPProgressCard 
+                streak={metrics?.study_streak_days || 0} 
+                completedCount={todayPlans.filter(p => p.status === 'Completed').length}
+                totalQuizzes={metrics?.quiz_performance?.total_quizzes_taken || 0}
+                mindmapUsage={metrics?.mindmap_usage || 0}
+                readingTime={metrics?.average_reading_time || 0}
+              />
               <ProgressCard metrics={metrics} />
             </motion.div>
           </div>

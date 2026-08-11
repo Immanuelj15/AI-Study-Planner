@@ -2,10 +2,20 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Trophy, Star, Sparkles, ShieldCheck } from 'lucide-react';
 
-export default function XPProgressCard({ streak = 0, completedCount = 0 }) {
-  // Brand new users start at 0 XP and earn +100 XP per completed study session & +20 XP per streak day after Day 1
-  const currentXP = (completedCount * 100) + (streak > 1 ? (streak - 1) * 20 : 0);
-  
+export default function XPProgressCard({ streak = 0, completedCount = 0, totalQuizzes = 0, mindmapUsage = 0, readingTime = 0 }) {
+  // Calculate total XP dynamically across all learning activities:
+  // - Completed study sessions: +100 XP each
+  // - Practice Quizzes taken: +100 XP each
+  // - Mindmap & Notes sessions: +50 XP each
+  // - Daily streak: +20 XP per day
+  const quizXP = (totalQuizzes || 0) * 100;
+  const planXP = (completedCount || 0) * 100;
+  const mindmapXP = (mindmapUsage || 0) * 50;
+  const readingXP = readingTime > 0 ? 50 : 0;
+  const streakXP = streak > 0 ? streak * 20 : 0;
+
+  const currentXP = quizXP + planXP + mindmapXP + readingXP + streakXP;
+
   let levelName = "Level 1 Novice";
   let levelBadge = "L1";
   let nextLevelXP = 250;
@@ -61,16 +71,16 @@ export default function XPProgressCard({ streak = 0, completedCount = 0 }) {
         </div>
       </div>
 
-      {/* XP Earning Tips */}
+      {/* XP Earning Breakdown */}
       <div className="grid grid-cols-3 gap-2 text-[10px] font-medium text-[#64748B] pt-1">
         <div className="p-2 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] text-center">
-          ⚡ <span className="font-bold text-[#1E293B]">+50 XP</span> Notes Read
+          ⚡ <span className="font-bold text-[#1E293B]">+50 XP</span> Notes/Maps
         </div>
         <div className="p-2 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] text-center">
-          🏆 <span className="font-bold text-[#1E293B]">+100 XP</span> Quiz Master
+          🏆 <span className="font-bold text-[#1E293B]">+100 XP</span> Quiz / Plan
         </div>
         <div className="p-2 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] text-center">
-          🔥 <span className="font-bold text-[#1E293B]">+20 XP</span> Daily Login
+          🔥 <span className="font-bold text-[#1E293B]">+20 XP</span> Daily Streak
         </div>
       </div>
     </div>
