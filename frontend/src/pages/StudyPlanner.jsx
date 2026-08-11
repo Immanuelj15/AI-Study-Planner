@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { agentAPI, subjectsAPI } from '../services/api';
+import { agentAPI, subjectsAPI, adaptiveAPI } from '../services/api';
 import StudyCard from '../components/StudyCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
@@ -77,10 +77,14 @@ export default function StudyPlanner() {
   const handleToggleStatus = async (planId) => {
     try {
       const res = await agentAPI.togglePlanStatus(planId);
-      addToast(`Session marked as ${res.data.status}! Great work! 🎉`, 'success');
+      const newStatus = res.data.status;
+      addToast(`Session marked as ${newStatus}! Great work! 🎉`, 'success');
       setPlans((prev) =>
-        prev.map((p) => (p.id === planId ? { ...p, status: res.data.status } : p))
+        prev.map((p) => (p.id === planId ? { ...p, status: newStatus } : p))
       );
+      if (newStatus === 'Completed') {
+        adaptiveAPI.trackEvent({ event_type: 'revision' }).catch(() => {});
+      }
     } catch (err) {
       addToast('Something went wrong. Please try again.', 'error');
     }
