@@ -17,8 +17,8 @@ import {
   Sparkles, 
   Clock, 
   BookOpen, 
-  AlertTriangle,
   ArrowRight,
+  ArrowDown,
   Brain,
   Award,
   ChevronLeft,
@@ -30,7 +30,9 @@ import {
   MessageSquare,
   Bot,
   Volume2,
-  VolumeX
+  VolumeX,
+  Headphones,
+  CheckSquare
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
@@ -85,6 +87,61 @@ export default function FocusModeContainer({
 
   // Exit Modal State
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+
+  // Web Audio Ambient Focus Soundscape Generator
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const audioCtxRef = useRef(null);
+
+  const toggleFocusSoundscape = () => {
+    if (isPlayingAudio) {
+      if (audioCtxRef.current) {
+        audioCtxRef.current.close();
+        audioCtxRef.current = null;
+      }
+      setIsPlayingAudio(false);
+      addToast('Focus Soundscape Muted', 'info');
+    } else {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        audioCtxRef.current = ctx;
+
+        const bufferSize = ctx.sampleRate * 2;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          b3 = 0.86650 * b3 + white * 0.3104856;
+          b4 = 0.55000 * b4 + white * 0.5329522;
+          b5 = -0.7616 * b5 - white * 0.0168980;
+          output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+          output[i] *= 0.03;
+          b6 = white * 0.115926;
+        }
+
+        const whiteNoise = ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(432, ctx.currentTime);
+
+        whiteNoise.connect(filter);
+        filter.connect(ctx.destination);
+        whiteNoise.start();
+
+        setIsPlayingAudio(true);
+        addToast('Deep Focus Binaural Soundscape Active (432Hz)', 'success');
+      } catch (err) {
+        console.error('Audio synth error:', err);
+      }
+    }
+  };
 
   const { addToast } = useToast();
   const timerRef = useRef(null);
@@ -645,6 +702,19 @@ export default function FocusModeContainer({
         {/* Right Action Buttons */}
         <div className="flex items-center gap-2">
           <button
+            onClick={toggleFocusSoundscape}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              isPlayingAudio
+                ? 'bg-[#10B981] text-white shadow-xs border border-[#059669]'
+                : 'bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE] hover:bg-[#DBEAFE]'
+            }`}
+            title="Toggle 432Hz Binaural Focus Ambient Soundscape"
+          >
+            <Headphones className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{isPlayingAudio ? 'Focus Audio Active' : 'Focus Soundscape'}</span>
+          </button>
+
+          <button
             onClick={() => setShowAIChat(!showAIChat)}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
               showAIChat
@@ -778,21 +848,64 @@ export default function FocusModeContainer({
 
                 {/* 2. Visual Flow Concept Box */}
                 <div className="p-5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] space-y-3">
-                  <div className="font-poppins font-bold text-xs text-[#1E293B] flex items-center gap-2">
-                    <Brain className="w-4 h-4 text-[#2563EB]" /> Visual Concept Flow Diagram:
+                  <div className="font-poppins font-bold text-xs text-[#1E293B] flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Brain className="w-4 h-4 text-[#2563EB]" /> Visual Concept Flowchart Diagram:
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] text-[10px] font-bold border border-[#DBEAFE]">
+                      Interactive Execution Flow
+                    </span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center text-xs">
-                    <div className="p-3 rounded-xl bg-white border border-[#E2E8F0]">
-                      <div className="font-poppins font-bold text-[#2563EB]">Step 1: Input Validation</div>
-                      <div className="text-[11px] text-[#64748B] mt-0.5">Check boundary bounds & initial state</div>
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-3 text-center text-xs">
+                    {/* Step 1 Card */}
+                    <div className="flex-1 w-full p-4 rounded-2xl bg-white border-2 border-[#2563EB]/20 shadow-xs hover:border-[#2563EB] transition-all">
+                      <div className="flex items-center justify-center gap-1.5 font-poppins font-extrabold text-[#2563EB]">
+                        <span className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-[10px]">1</span>
+                        <span>Step 1: Input Validation</span>
+                      </div>
+                      <div className="text-[11px] text-[#64748B] mt-1">Check boundary bounds & initial state</div>
                     </div>
-                    <div className="p-3 rounded-xl bg-white border border-[#E2E8F0]">
-                      <div className="font-poppins font-bold text-[#0EA5E9]">Step 2: Core Execution</div>
-                      <div className="text-[11px] text-[#64748B] mt-0.5">Execute invariant logic efficiently</div>
+
+                    {/* Flow Connector Arrow 1 */}
+                    <div className="hidden md:flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center text-[#2563EB] shadow-xs">
+                        <ArrowRight className="w-4 h-4 animate-pulse" />
+                      </div>
                     </div>
-                    <div className="p-3 rounded-xl bg-white border border-[#E2E8F0]">
-                      <div className="font-poppins font-bold text-[#22C55E]">Step 3: Verified Output</div>
-                      <div className="text-[11px] text-[#64748B] mt-0.5">Return result with 100% correctness</div>
+                    <div className="flex md:hidden items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center text-[#2563EB]">
+                        <ArrowDown className="w-3.5 h-3.5 animate-pulse" />
+                      </div>
+                    </div>
+
+                    {/* Step 2 Card */}
+                    <div className="flex-1 w-full p-4 rounded-2xl bg-white border-2 border-[#0EA5E9]/20 shadow-xs hover:border-[#0EA5E9] transition-all">
+                      <div className="flex items-center justify-center gap-1.5 font-poppins font-extrabold text-[#0EA5E9]">
+                        <span className="w-5 h-5 rounded-full bg-[#0EA5E9] text-white flex items-center justify-center text-[10px]">2</span>
+                        <span>Step 2: Core Execution</span>
+                      </div>
+                      <div className="text-[11px] text-[#64748B] mt-1">Execute invariant logic efficiently</div>
+                    </div>
+
+                    {/* Flow Connector Arrow 2 */}
+                    <div className="hidden md:flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#F0FDF4] border border-[#DCFCE7] flex items-center justify-center text-[#22C55E] shadow-xs">
+                        <ArrowRight className="w-4 h-4 animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="flex md:hidden items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-[#F0FDF4] border border-[#DCFCE7] flex items-center justify-center text-[#22C55E]">
+                        <ArrowDown className="w-3.5 h-3.5 animate-pulse" />
+                      </div>
+                    </div>
+
+                    {/* Step 3 Card */}
+                    <div className="flex-1 w-full p-4 rounded-2xl bg-white border-2 border-[#22C55E]/20 shadow-xs hover:border-[#22C55E] transition-all">
+                      <div className="flex items-center justify-center gap-1.5 font-poppins font-extrabold text-[#22C55E]">
+                        <span className="w-5 h-5 rounded-full bg-[#22C55E] text-white flex items-center justify-center text-[10px]">3</span>
+                        <span>Step 3: Verified Output</span>
+                      </div>
+                      <div className="text-[11px] text-[#64748B] mt-1">Return result with 100% correctness</div>
                     </div>
                   </div>
                 </div>
