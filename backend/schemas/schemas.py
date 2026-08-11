@@ -43,6 +43,15 @@ class SubjectResponse(BaseModel):
         from_attributes = True
 
 
+# --- AI Tutor Chat Schemas ---
+class ChatTutorRequest(BaseModel):
+    topic: str
+    question: str
+
+class ChatTutorResponse(BaseModel):
+    reply: str
+
+
 # --- Study Plan Schemas ---
 class PlanGenerationRequest(BaseModel):
     exam_date: str

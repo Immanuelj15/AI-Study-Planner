@@ -56,6 +56,7 @@ export const agentAPI = {
   generatePlan: (data) => api.post('/generate-plan', data),
   getStudyPlan: () => api.get('/study-plan'),
   togglePlanStatus: (planId) => api.post(`/study-plan/${planId}/toggle`),
+  chatTutor: (data) => api.post('/chat-tutor', data),
 };
 
 export const quizAPI = {

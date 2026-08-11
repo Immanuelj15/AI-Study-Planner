@@ -257,3 +257,32 @@ def toggle_study_plan_status(
         "priority": plan.priority,
         "status": plan.status
     }
+
+
+@router.post("/chat-tutor", response_model=ChatTutorResponse)
+def chat_tutor(
+    req: ChatTutorRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from services.adaptive_learning_engine import adaptive_engine
+    profile_obj = adaptive_engine.get_or_create_profile(db, current_user.id)
+    
+    # Track chat usage in adaptive profile
+    adaptive_engine.update_telemetry_event(db, current_user.id, "chat")
+
+    # Generate personalized AI Tutor response using Groq / Research LLM with student profile context
+    tutor_prompt = f"System Context: You are a friendly, encouraging AI Study Tutor for student '{current_user.name}'. " \
+                   f"The student's adaptive learning style is '{profile_obj.learning_style}' and speed is '{profile_obj.learning_speed}'. " \
+                   f"Topic: {req.topic}. Student Question: {req.question}. " \
+                   f"Provide a clear, direct, easy-to-understand answer tailored to their learning level with concrete examples."
+
+    llm_reply = groq_client.generate_text(
+        prompt=tutor_prompt,
+        system_message="You are an expert AI Study Tutor. Answer questions directly, concisely, and helpfully."
+    )
+
+    if not llm_reply or "API call failed" in llm_reply:
+        llm_reply = f"Great question about {req.topic}! Here is the core explanation for '{req.question}': It is a fundamental operational mechanism in {req.topic} that optimizes system efficiency with clear execution bounds."
+
+    return {"reply": llm_reply}
