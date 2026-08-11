@@ -73,4 +73,13 @@ export const adaptiveAPI = {
   getRecommendation: () => api.get('/adaptive/recommendation'),
 };
 
+export const focusAPI = {
+  start: (data) => api.post('/focus/start', data),
+  interruption: (sessionId, type) => api.post(`/focus/${sessionId}/interruption`, { interruption_type: type }),
+  resume: (sessionId) => api.post(`/focus/${sessionId}/resume`),
+  complete: (sessionId, data) => api.post(`/focus/${sessionId}/complete`, data),
+  cancel: (sessionId) => api.post(`/focus/${sessionId}/cancel`),
+  getAnalytics: () => api.get('/focus/analytics'),
+};
+
 export default api;

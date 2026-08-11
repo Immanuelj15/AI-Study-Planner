@@ -163,3 +163,37 @@ class TelemetryEventRequest(BaseModel):
     duration_seconds: Optional[float] = 0.0
     score: Optional[float] = None
     topic: Optional[str] = None
+
+
+# --- Focus Mode Schemas ---
+class FocusSessionStartRequest(BaseModel):
+    subject_name: Optional[str] = "General Study"
+    topic: Optional[str] = "General Review"
+    planned_duration_minutes: Optional[int] = 25
+
+class FocusSessionInterruptionRequest(BaseModel):
+    interruption_type: str  # "tab_switch", "blur", "fullscreen_exit"
+
+class FocusSessionCompleteRequest(BaseModel):
+    actual_duration_seconds: int
+    completed: Optional[bool] = True
+
+class FocusSessionResponse(BaseModel):
+    id: int
+    user_id: int
+    subject_name: str
+    topic: str
+    planned_duration_minutes: int
+    actual_duration_seconds: int
+    tab_switch_count: int
+    blur_count: int
+    fullscreen_exit_count: int
+    total_interruption_count: int
+    completed: bool
+    session_status: str
+    started_at: datetime
+    ended_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+

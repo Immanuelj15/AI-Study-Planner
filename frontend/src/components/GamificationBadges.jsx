@@ -1,10 +1,30 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Award, Flame, Trophy, Network, BookOpen, Star, CheckCircle2 } from 'lucide-react';
+import { Award, Flame, Trophy, Network, BookOpen, Star, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
 
 const badgesList = [
   {
     id: 1,
+    title: 'Distraction Free',
+    desc: 'Zero interruptions in Focus Mode',
+    icon: ShieldCheck,
+    unlocked: true,
+    color: '#0EA5E9',
+    bg: '#F0F9FF',
+    border: '#BAE6FD'
+  },
+  {
+    id: 2,
+    title: 'Focus Master',
+    desc: 'Completed 25-min strict focus session',
+    icon: Zap,
+    unlocked: true,
+    color: '#2563EB',
+    bg: '#EFF6FF',
+    border: '#DBEAFE'
+  },
+  {
+    id: 3,
     title: 'Study Streak',
     desc: 'Maintained active study streak',
     icon: Flame,
@@ -14,37 +34,27 @@ const badgesList = [
     border: '#FDE68A'
   },
   {
-    id: 2,
+    id: 4,
     title: 'Quiz Master',
     desc: 'Scored 80%+ on practice quiz',
     icon: Trophy,
-    unlocked: true,
-    color: '#2563EB',
-    bg: '#EFF6FF',
-    border: '#DBEAFE'
-  },
-  {
-    id: 3,
-    title: 'Mind Map Explorer',
-    desc: 'Built interactive concept maps',
-    icon: Network,
     unlocked: true,
     color: '#7C3AED',
     bg: '#F5F3FF',
     border: '#DDD6FE'
   },
   {
-    id: 4,
-    title: 'AI Learner',
-    desc: 'Created 5 easy-to-understand notes',
-    icon: BookOpen,
+    id: 5,
+    title: 'Mind Map Explorer',
+    desc: 'Built interactive concept maps',
+    icon: Network,
     unlocked: true,
     color: '#15803D',
     bg: '#F0FDF4',
     border: '#86EFAC'
   },
   {
-    id: 5,
+    id: 6,
     title: 'Weekly Champion',
     desc: 'Completed all planned sessions',
     icon: Star,
@@ -56,6 +66,8 @@ const badgesList = [
 ];
 
 export default function GamificationBadges() {
+  const unlockedCount = badgesList.filter((b) => b.unlocked).length;
+
   return (
     <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft font-inter">
       {/* Header */}
@@ -70,7 +82,7 @@ export default function GamificationBadges() {
           </div>
         </div>
         <span className="px-2.5 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE] text-[11px] font-inter font-bold shrink-0">
-          4 of 5 Unlocked
+          {unlockedCount} of {badgesList.length} Unlocked
         </span>
       </div>
 

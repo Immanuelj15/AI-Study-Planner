@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { dashboardAPI } from '../services/api';
+import { dashboardAPI, focusAPI } from '../services/api';
 import { WeeklyBarChart, SubjectDoughnutChart, MonthlyProgressChart } from '../components/AnalyticsChart';
 import LoadingSkeleton from '../components/LoadingSkeleton';
-import { BarChart3, TrendingUp, Award, Target, Flame, Activity, BookOpen, PlusCircle, Heart } from 'lucide-react';
+import { BarChart3, TrendingUp, Award, Target, Flame, Activity, BookOpen, PlusCircle, Heart, ShieldCheck, Clock, Zap, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Analytics() {
   const [metrics, setMetrics] = useState(null);
+  const [focusStats, setFocusStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -17,8 +18,12 @@ export default function Analytics() {
 
   const fetchAnalytics = async () => {
     try {
-      const res = await dashboardAPI.getAnalytics();
-      setMetrics(res.data);
+      const [dashRes, focusRes] = await Promise.all([
+        dashboardAPI.getAnalytics(),
+        focusAPI.getAnalytics().catch(() => ({ data: null }))
+      ]);
+      setMetrics(dashRes.data);
+      setFocusStats(focusRes.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -45,7 +50,7 @@ export default function Analytics() {
           <BarChart3 className="w-6 h-6 text-[#2563EB]" /> My Learning Progress
         </h1>
         <p className="text-[#64748B] font-inter text-xs">
-          Track your study streaks, subject mastery, and weekly revision hours peacefully.
+          Track your study streaks, subject mastery, and focus analytics.
         </p>
       </div>
 
@@ -100,6 +105,43 @@ export default function Analytics() {
           </div>
           <div className="text-[10px] font-inter text-[#2563EB] font-bold">
             {metrics?.total_study_hours > 0 ? 'Steady Revision' : '0 Hours Completed'}
+          </div>
+        </div>
+      </div>
+
+      {/* Focus Mode Analytics Section */}
+      <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-4 shadow-soft">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center text-[#2563EB]">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-poppins font-bold text-base text-[#1E293B]">Strict Focus Mode Analytics</h3>
+              <p className="text-xs text-[#64748B]">Real-time tab switch & distraction telemetry</p>
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-xs border border-[#DBEAFE]">
+            {focusStats?.total_focus_sessions || 0} Sessions Completed
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+          <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+            <div className="font-poppins font-black text-xl text-[#2563EB]">{focusStats?.total_focus_minutes || 0} Mins</div>
+            <div className="text-[10px] font-bold text-[#64748B] uppercase mt-0.5">Total Focus Time</div>
+          </div>
+          <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+            <div className="font-poppins font-black text-xl text-[#0EA5E9]">{focusStats?.avg_duration_minutes || 0} Mins</div>
+            <div className="text-[10px] font-bold text-[#64748B] uppercase mt-0.5">Avg Session Duration</div>
+          </div>
+          <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+            <div className="font-poppins font-black text-xl text-[#D97706]">{focusStats?.avg_interruptions || 0}</div>
+            <div className="text-[10px] font-bold text-[#64748B] uppercase mt-0.5">Avg Interruptions / Session</div>
+          </div>
+          <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+            <div className="font-poppins font-black text-xs text-[#22C55E] mt-1">{focusStats?.best_study_time || 'Morning'}</div>
+            <div className="text-[10px] font-bold text-[#64748B] uppercase mt-1">Optimal Focus Period</div>
           </div>
         </div>
       </div>

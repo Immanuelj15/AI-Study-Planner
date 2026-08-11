@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause, RotateCcw, Timer, Coffee, Heart } from 'lucide-react';
+import { Play, Pause, RotateCcw, Timer, Coffee, Heart, Sparkles, ShieldCheck } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import FocusModeContainer from './FocusModeContainer';
 
 export default function PomodoroTimer() {
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
   const [isActive, setIsActive] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
+  const [showFocusMode, setShowFocusMode] = useState(false);
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -71,17 +73,27 @@ export default function PomodoroTimer() {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={toggleTimer}
-            className={`px-6 py-2.5 rounded-xl font-poppins font-bold text-xs flex items-center gap-2 shadow-xs ${
+            className={`px-5 py-2.5 rounded-xl font-poppins font-bold text-xs flex items-center gap-2 shadow-xs ${
               isActive ? 'bg-[#EF4444] text-white' : 'bg-[#2563EB] text-white'
             }`}
           >
             {isActive ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            <span>{isActive ? 'Pause Timer' : 'Start Focus'}</span>
+            <span>{isActive ? 'Pause Timer' : 'Quick Timer'}</span>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowFocusMode(true)}
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white font-poppins font-bold text-xs flex items-center gap-1.5 shadow-md shadow-blue-500/20"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>Strict Focus Mode</span>
           </motion.button>
 
           <button
@@ -93,6 +105,16 @@ export default function PomodoroTimer() {
           </button>
         </div>
       </div>
+
+      {/* Strict Focus Mode Modal */}
+      {showFocusMode && (
+        <FocusModeContainer
+          subjectName="Operating Systems"
+          topic="Process Scheduling & Memory Invariants"
+          plannedMinutes={25}
+          onClose={() => setShowFocusMode(false)}
+        />
+      )}
     </div>
   );
 }

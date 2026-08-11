@@ -16,6 +16,7 @@ class User(Base):
     study_plans = relationship("StudyPlan", back_populates="user", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
     learning_profile = relationship("StudentLearningProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    focus_sessions = relationship("FocusSession", back_populates="user", cascade="all, delete-orphan")
 
 
 class Subject(Base):
@@ -133,3 +134,25 @@ class StudentLearningProfile(Base):
     last_updated = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     user = relationship("User", back_populates="learning_profile")
+
+
+class FocusSession(Base):
+    __tablename__ = "focus_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    subject_name = Column(String(150), nullable=False, default="General Study")
+    topic = Column(String(200), nullable=False, default="General Review")
+    planned_duration_minutes = Column(Integer, default=25)
+    actual_duration_seconds = Column(Integer, default=0)
+    tab_switch_count = Column(Integer, default=0)
+    blur_count = Column(Integer, default=0)
+    fullscreen_exit_count = Column(Integer, default=0)
+    total_interruption_count = Column(Integer, default=0)
+    completed = Column(Integer, default=0) # 0 for false, 1 for true
+    session_status = Column(String(50), default="NOT_STARTED") # NOT_STARTED, FOCUS_ACTIVE, PAUSED_TAB_SWITCH, PAUSED_WINDOW_BLUR, PAUSED_FULLSCREEN_EXIT, COMPLETED, CANCELLED
+    started_at = Column(DateTime, default=datetime.datetime.utcnow)
+    ended_at = Column(DateTime, nullable=True)
+
+    user = relationship("User", back_populates="focus_sessions")
+
