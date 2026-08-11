@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, User, Sparkles, X, MessageSquare, Minimize2, Maximize2 } from 'lucide-react';
 import { agentAPI } from '../services/api';
 
-export default function ChatTutor({ topic = "General Computer Science" }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function ChatTutor({ topic = "General Computer Science", hideTrigger = false, defaultOpen = false }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
@@ -44,7 +44,7 @@ export default function ChatTutor({ topic = "General Computer Science" }) {
   return (
     <>
       {/* Floating Chat Trigger Button */}
-      {!isOpen && (
+      {!isOpen && !hideTrigger && (
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.94 }}

@@ -742,30 +742,83 @@ export default function FocusModeContainer({
                 </span>
               </div>
 
-              <div className="space-y-5 text-sm leading-relaxed text-[#1E293B]">
+              <div className="space-y-6 text-sm leading-relaxed text-[#1E293B]">
+                {/* 1. Core Intuition */}
                 <div className="space-y-2">
-                  <h3 className="font-poppins font-bold text-base text-[#1E293B]">1. Core Concepts & Definitions</h3>
-                  <p>
-                    {topic} forms a foundational pillar in computer science problem solving. Understanding its underlying invariants allows developers to write optimal algorithms operating within strict time and space bounds.
+                  <h3 className="font-poppins font-bold text-base text-[#1E293B] flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-lg bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center text-xs font-black">1</span>
+                    Core Intuition & Definition
+                  </h3>
+                  <p className="text-xs text-[#475569] leading-relaxed">
+                    <strong className="text-[#1E293B]">{topic}</strong> forms a foundational pillar in {subjectName}. It provides an optimal operational framework to process data, optimize runtime execution, and enforce strict system invariants without boundary failure.
                   </p>
                 </div>
 
+                {/* Invariant Box */}
                 <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-xs text-[#2563EB] font-bold space-y-1">
                   <div className="flex items-center gap-1.5 font-poppins text-sm">
-                    <Sparkles className="w-4 h-4 text-[#2563EB]" /> Key Invariant Takeaway:
+                    <Sparkles className="w-4 h-4 text-[#2563EB]" /> Key Takeaway Invariant:
                   </div>
                   <p className="text-[#1E293B] font-medium leading-relaxed">
-                    Always maintain logarithmic execution bounds O(log N) while guarding against boundary overflow errors and unhandled reference crashes.
+                    Always maintain optimal logarithmic execution bounds <code className="bg-white px-1.5 py-0.5 rounded border border-[#DBEAFE] font-mono text-[#2563EB]">O(log N)</code> while guarding against boundary overflow errors and null/undefined reference crashes.
                   </p>
                 </div>
 
+                {/* 2. Visual Flow Concept Box */}
+                <div className="p-5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] space-y-3">
+                  <div className="font-poppins font-bold text-xs text-[#1E293B] flex items-center gap-2">
+                    <Brain className="w-4 h-4 text-[#2563EB]" /> Visual Concept Flow Diagram:
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-center text-xs">
+                    <div className="p-3 rounded-xl bg-white border border-[#E2E8F0]">
+                      <div className="font-poppins font-bold text-[#2563EB]">Step 1: Input Validation</div>
+                      <div className="text-[11px] text-[#64748B] mt-0.5">Check boundary bounds & initial state</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white border border-[#E2E8F0]">
+                      <div className="font-poppins font-bold text-[#0EA5E9]">Step 2: Core Execution</div>
+                      <div className="text-[11px] text-[#64748B] mt-0.5">Execute invariant logic efficiently</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white border border-[#E2E8F0]">
+                      <div className="font-poppins font-bold text-[#22C55E]">Step 3: Verified Output</div>
+                      <div className="text-[11px] text-[#64748B] mt-0.5">Return result with 100% correctness</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Real-World Applications */}
                 <div className="space-y-2">
-                  <h3 className="font-poppins font-bold text-base text-[#1E293B]">2. Real-World Applications</h3>
-                  <ul className="list-disc pl-5 space-y-1.5 text-xs text-[#64748B]">
-                    <li>Database B+ Tree indexing & logarithmic lookup engines.</li>
-                    <li>Operating system kernel virtual memory page routing.</li>
-                    <li>Real-time search engine query optimization.</li>
+                  <h3 className="font-poppins font-bold text-base text-[#1E293B] flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-lg bg-[#F0FDF4] text-[#15803D] flex items-center justify-center text-xs font-black">2</span>
+                    Real-World Applications & Examples
+                  </h3>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-[#475569]">
+                    <li className="p-3 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-start gap-2">
+                      <span className="text-[#2563EB] font-bold">•</span>
+                      <span><strong>High-Performance Indexing:</strong> Used in production database B+ tree lookup engines.</span>
+                    </li>
+                    <li className="p-3 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-start gap-2">
+                      <span className="text-[#2563EB] font-bold">•</span>
+                      <span><strong>OS Kernel Routing:</strong> Deployed in virtual memory page tables and process dispatchers.</span>
+                    </li>
+                    <li className="p-3 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-start gap-2">
+                      <span className="text-[#2563EB] font-bold">•</span>
+                      <span><strong>Real-Time Search:</strong> Query optimization in distributed search engine clusters.</span>
+                    </li>
+                    <li className="p-3 rounded-xl bg-[#F8FBFF] border border-[#E2E8F0] flex items-start gap-2">
+                      <span className="text-[#2563EB] font-bold">•</span>
+                      <span><strong>Embedded Systems:</strong> Memory-constrained hardware firmware execution.</span>
+                    </li>
                   </ul>
+                </div>
+
+                {/* 4. Exam & Interview Tips */}
+                <div className="p-4 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] text-xs text-[#92400E] space-y-1">
+                  <div className="font-poppins font-bold text-sm flex items-center gap-1.5">
+                    💡 Exam & Interview Strategy Tip:
+                  </div>
+                  <p className="font-medium text-[#78350F] leading-relaxed">
+                    Always state the edge cases out loud during interviews: empty array/input, single-element collection, boundary limits, and integer overflow risks.
+                  </p>
                 </div>
               </div>
             </div>
@@ -903,7 +956,7 @@ export default function FocusModeContainer({
               <button onClick={() => setShowAIChat(false)}><X className="w-4 h-4" /></button>
             </div>
             <div className="flex-1 p-3 overflow-y-auto">
-              <ChatTutor topic={topic} />
+              <ChatTutor topic={topic} hideTrigger={true} defaultOpen={true} />
             </div>
           </div>
         )}
