@@ -655,7 +655,7 @@ export default function FocusModeContainer({
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>📖 Study Notes</span>
+            <span>Study Notes</span>
           </button>
 
           <button
@@ -667,7 +667,7 @@ export default function FocusModeContainer({
             }`}
           >
             <Network className="w-3.5 h-3.5" />
-            <span>🗺️ Mind Map</span>
+            <span>Mind Map</span>
           </button>
 
           <button
@@ -679,7 +679,7 @@ export default function FocusModeContainer({
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>🎴 3D Flashcards</span>
+            <span>3D Flashcards</span>
           </button>
 
           <button
@@ -691,7 +691,7 @@ export default function FocusModeContainer({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>🎯 Practice Quiz</span>
+            <span>Practice Quiz</span>
           </button>
         </div>
 
