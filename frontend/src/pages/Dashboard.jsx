@@ -228,10 +228,6 @@ export default function Dashboard() {
             <AICoachPanel weakTopic={weakSubjects[0] || "Operating Systems"} strongTopic={strongSubjects[0] || "Binary Search"} />
           </motion.div>
 
-          {/* Interactive Learning Journey Timeline */}
-          <motion.div variants={itemVariants}>
-            <LearningTimeline />
-          </motion.div>
 
           {/* 2-Column Schedule & XP Progress */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
