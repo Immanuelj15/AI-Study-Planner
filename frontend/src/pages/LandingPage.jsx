@@ -539,35 +539,6 @@ export default function LandingPage() {
       </section>
 
       {/* ==========================================
-          4. STATISTICS COUNTER SECTION (COUNTUP)
-          ========================================== */}
-      <section className="py-16 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 items-stretch text-center">
-          {statsList.map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
-                className="p-8 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft flex flex-col items-center justify-center space-y-3 hover:border-[#2563EB] transition-colors"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center border border-[#DBEAFE]">
-                  <Icon className="w-6 h-6" />
-                </div>
-                <div className="font-poppins font-black text-4xl sm:text-5xl text-[#1E293B]">
-                  <AnimatedCounter end={stat.end} suffix={stat.suffix} />
-                </div>
-                <div className="text-xs font-inter font-bold text-[#64748B]">{stat.label}</div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ==========================================
           5. WHAT WE SOLVE IN THE CURRENT MARKET
           ========================================== */}
       <section id="market-problem" className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto">
@@ -744,52 +715,6 @@ export default function LandingPage() {
                 </motion.div>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* ==========================================
-          9. TESTIMONIALS CAROUSEL
-          ========================================== */}
-      <section className="py-20 px-4 sm:px-8 w-[92%] max-w-[1536px] mx-auto border-t border-[#E2E8F0]">
-        <div className="space-y-12 text-center">
-          <div className="space-y-3 max-w-3xl mx-auto">
-            <span className="text-xs font-inter font-bold text-[#2563EB] tracking-wider uppercase">Student Reviews</span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-[#1E293B]">Loved by Students Everywhere</h2>
-            <p className="text-xs sm:text-sm text-[#64748B] font-inter">
-              Hear from students who transformed their study efficiency with our AI companion.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
-            {testimonialsList.map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
-                whileHover={{ y: -6 }}
-                className="p-7 rounded-3xl bg-[#F8FBFF] border border-[#E2E8F0] shadow-soft space-y-4 flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="flex gap-1 text-[#F59E0B]">
-                    {[...Array(item.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-[#F59E0B]" />
-                    ))}
-                  </div>
-                  <p className="text-xs text-[#1E293B] font-inter leading-relaxed italic">"{item.review}"</p>
-                </div>
-
-                <div className="flex items-center gap-3 pt-3 border-t border-[#E2E8F0]">
-                  <img src={item.avatar} alt={item.name} className="w-10 h-10 rounded-full object-cover shadow-sm" />
-                  <div>
-                    <div className="font-poppins font-bold text-xs text-[#1E293B]">{item.name}</div>
-                    <div className="text-[10px] text-[#64748B] font-inter">{item.role}</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
