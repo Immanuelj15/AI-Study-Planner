@@ -18,7 +18,7 @@ class AdaptiveLearningEngine:
     - Learning Speed: Fast | Medium | Slow
     - Understanding Level: Beginner | Intermediate | Advanced
     - Confidence Level: Low | Medium | High
-    - Improvement Trend: Fast Learner | Late Bloomer | Struggling Learner | Stable
+    - Improvement Trend: New Student | Fast Learner | Late Bloomer | Struggling Learner | Stable
     """
     def __init__(self):
         pass
@@ -32,14 +32,14 @@ class AdaptiveLearningEngine:
                 learning_style="Mixed",
                 understanding_level="Intermediate",
                 confidence_level="Medium",
-                average_reading_time=120.0,
-                average_quiz_time=180.0,
-                average_quiz_score=75.0,
-                mindmap_usage=1,
-                revision_frequency=1,
+                average_reading_time=0.0,
+                average_quiz_time=0.0,
+                average_quiz_score=0.0,
+                mindmap_usage=0,
+                revision_frequency=0,
                 chat_usage=0,
-                consistency_score=85.0,
-                improvement_trend="Stable",
+                consistency_score=0.0,
+                improvement_trend="New Student",
                 preferred_study_time="Morning (9:00 AM - 11:30 AM)",
                 last_updated=datetime.datetime.utcnow()
             )
@@ -53,12 +53,21 @@ class AdaptiveLearningEngine:
 
         if event_type == "reading":
             if duration_seconds > 0:
-                profile.average_reading_time = round((profile.average_reading_time + duration_seconds) / 2.0, 1)
+                if profile.average_reading_time == 0:
+                    profile.average_reading_time = duration_seconds
+                else:
+                    profile.average_reading_time = round((profile.average_reading_time + duration_seconds) / 2.0, 1)
         elif event_type == "quiz":
             if duration_seconds > 0:
-                profile.average_quiz_time = round((profile.average_quiz_time + duration_seconds) / 2.0, 1)
+                if profile.average_quiz_time == 0:
+                    profile.average_quiz_time = duration_seconds
+                else:
+                    profile.average_quiz_time = round((profile.average_quiz_time + duration_seconds) / 2.0, 1)
             if score is not None:
-                profile.average_quiz_score = round((profile.average_quiz_score * 0.7) + (score * 0.3), 1)
+                if profile.average_quiz_score == 0:
+                    profile.average_quiz_score = round(float(score), 1)
+                else:
+                    profile.average_quiz_score = round((profile.average_quiz_score * 0.7) + (score * 0.3), 1)
         elif event_type == "mindmap":
             profile.mindmap_usage += 1
         elif event_type == "chat":
@@ -76,8 +85,12 @@ class AdaptiveLearningEngine:
         profile.improvement_trend = self._detect_improvement_trend(db, user_id, profile)
 
         # Classify Confidence & Understanding Levels
-        profile.confidence_level = "High" if profile.average_quiz_score >= 85 else ("Low" if profile.average_quiz_score < 65 else "Medium")
-        profile.understanding_level = "Advanced" if profile.average_quiz_score >= 88 else ("Beginner" if profile.average_quiz_score < 65 else "Intermediate")
+        if profile.average_quiz_score > 0:
+            profile.confidence_level = "High" if profile.average_quiz_score >= 85 else ("Low" if profile.average_quiz_score < 65 else "Medium")
+            profile.understanding_level = "Advanced" if profile.average_quiz_score >= 88 else ("Beginner" if profile.average_quiz_score < 65 else "Intermediate")
+        else:
+            profile.confidence_level = "Medium"
+            profile.understanding_level = "Intermediate"
 
         profile.last_updated = datetime.datetime.utcnow()
         db.commit()
@@ -85,26 +98,26 @@ class AdaptiveLearningEngine:
         return profile
 
     def _detect_learning_style(self, p: StudentLearningProfile) -> str:
-        # High Mind Map usage vs text reading
-        if p.mindmap_usage > 5 and p.mindmap_usage > p.revision_frequency:
+        if p.mindmap_usage > 3 and p.mindmap_usage > p.revision_frequency:
             return "Visual"
-        # Long reading time & summary usage vs chat
-        if p.average_reading_time > 180 and p.chat_usage <= 2:
+        if p.average_reading_time > 150 and p.chat_usage <= 2:
             return "Reading"
-        # High quiz attempts & practice sessions
-        if p.average_quiz_time > 0 and p.average_quiz_score > 0 and p.mindmap_usage <= 3 and p.average_reading_time < 120:
+        if p.average_quiz_score > 0 and p.mindmap_usage <= 2 and p.average_reading_time < 120:
             return "Practice"
         return "Mixed"
 
     def _detect_learning_speed(self, p: StudentLearningProfile) -> str:
-        if p.average_quiz_score >= 85 and p.average_reading_time <= 100:
+        if p.average_quiz_score >= 85 and p.average_reading_time <= 100 and p.average_reading_time > 0:
             return "Fast"
-        if p.average_quiz_score < 65 or p.average_reading_time >= 240:
+        if (p.average_quiz_score > 0 and p.average_quiz_score < 65) or p.average_reading_time >= 240:
             return "Slow"
         return "Medium"
 
     def _detect_improvement_trend(self, db: Session, user_id: int, p: StudentLearningProfile) -> str:
         results = db.query(QuizResult).filter(QuizResult.user_id == user_id).order_by(QuizResult.id.asc()).all()
+        if not results and p.mindmap_usage == 0 and p.average_reading_time == 0:
+            return "New Student"
+
         if not results:
             return "Stable"
 
@@ -130,7 +143,10 @@ class AdaptiveLearningEngine:
         reasons = []
         recommendations = []
 
-        if p.improvement_trend == "Late Bloomer":
+        if p.improvement_trend == "New Student" or (p.average_quiz_score == 0 and p.mindmap_usage == 0 and p.average_reading_time == 0):
+            reasons.append("Welcome to your personalized AI learning portal!")
+            recommendations.append("Start reading notes, exploring interactive mind maps, or taking a 5-minute quiz to help the AI detect your unique learning style.")
+        elif p.improvement_trend == "Late Bloomer":
             reasons.append(f"Your initial quiz scores started at low levels, but you improved to {p.average_quiz_score}% with steady revision.")
             recommendations.append("We maintained an encouraging Easy → Medium progression without reducing difficulty prematurely.")
         elif p.improvement_trend == "Fast Learner":
@@ -143,10 +159,10 @@ class AdaptiveLearningEngine:
             reasons.append(f"Your overall learning pace is steady with an average quiz accuracy of {p.average_quiz_score}%.")
             recommendations.append("Maintaining balanced visual mind maps, practice quizzes, and structured daily study hours.")
 
-        if p.learning_style == "Visual":
+        if p.learning_style == "Visual" and p.mindmap_usage > 0:
             reasons.append(f"You interact frequently with visual mind maps ({p.mindmap_usage} view sessions).")
             recommendations.append("All summary notes will feature enhanced concept relationship diagrams.")
-        elif p.learning_style == "Reading":
+        elif p.learning_style == "Reading" and p.average_reading_time > 0:
             reasons.append(f"You spend detailed time reading class notes (avg {int(p.average_reading_time)}s per session).")
             recommendations.append("We provide comprehensive bullet notes with voice AI audio reader narration.")
 

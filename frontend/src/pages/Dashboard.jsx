@@ -274,7 +274,7 @@ export default function Dashboard() {
 
             {/* Right 1 Column: XP Progress Card */}
             <motion.div variants={itemVariants} className="space-y-6">
-              <XPProgressCard streak={metrics?.study_streak_days || 0} />
+              <XPProgressCard streak={metrics?.study_streak_days || 0} completedCount={todayPlans.filter(p => p.status === 'Completed').length} />
               <ProgressCard metrics={metrics} />
             </motion.div>
           </div>

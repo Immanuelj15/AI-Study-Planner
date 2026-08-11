@@ -2,9 +2,27 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Trophy, Star, Sparkles, ShieldCheck } from 'lucide-react';
 
-export default function XPProgressCard({ streak = 5 }) {
-  const currentXP = 750 + (streak * 50);
-  const nextLevelXP = 1000;
+export default function XPProgressCard({ streak = 0, completedCount = 0 }) {
+  const currentXP = (streak * 50) + (completedCount * 100);
+  
+  let levelName = "Level 1 Novice";
+  let levelBadge = "L1";
+  let nextLevelXP = 250;
+
+  if (currentXP >= 1000) {
+    levelName = "Level 4 Master";
+    levelBadge = "L4";
+    nextLevelXP = 2000;
+  } else if (currentXP >= 500) {
+    levelName = "Level 3 Scholar";
+    levelBadge = "L3";
+    nextLevelXP = 1000;
+  } else if (currentXP >= 250) {
+    levelName = "Level 2 Apprentice";
+    levelBadge = "L2";
+    nextLevelXP = 500;
+  }
+
   const levelProgress = Math.min(100, Math.round((currentXP / nextLevelXP) * 100));
 
   return (
@@ -12,10 +30,10 @@ export default function XPProgressCard({ streak = 5 }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#38BDF8] text-white flex items-center justify-center font-poppins font-black text-sm shadow-md">
-            L3
+            {levelBadge}
           </div>
           <div>
-            <div className="font-poppins font-bold text-sm text-[#1E293B]">Level 3 Scholar</div>
+            <div className="font-poppins font-bold text-sm text-[#1E293B]">{levelName}</div>
             <div className="text-[11px] text-[#64748B]">Earn XP by reading notes & taking quizzes</div>
           </div>
         </div>
@@ -28,7 +46,7 @@ export default function XPProgressCard({ streak = 5 }) {
       {/* Progress Bar Track */}
       <div className="space-y-1.5">
         <div className="flex justify-between text-xs font-semibold text-[#64748B]">
-          <span>Progress to Level 4 Master</span>
+          <span>Progress to Next Rank</span>
           <span className="text-[#2563EB] font-bold">{currentXP} / {nextLevelXP} XP</span>
         </div>
 
