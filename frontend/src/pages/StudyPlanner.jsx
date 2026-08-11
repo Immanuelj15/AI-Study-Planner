@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { agentAPI, subjectsAPI, adaptiveAPI } from '../services/api';
 import StudyCard from '../components/StudyCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import SessionVerificationModal from '../components/SessionVerificationModal';
 import { useToast } from '../context/ToastContext';
 import { 
   CalendarDays, 
@@ -24,6 +25,7 @@ export default function StudyPlanner() {
   const [generating, setGenerating] = useState(false);
   const [examDate, setExamDate] = useState('2026-08-15');
   const [dailyHours, setDailyHours] = useState(3.5);
+  const [verifyingSession, setVerifyingSession] = useState(null);
   
   // Filter States
   const [selectedSubject, setSelectedSubject] = useState('ALL');
@@ -74,7 +76,18 @@ export default function StudyPlanner() {
     }
   };
 
-  const handleToggleStatus = async (planId) => {
+  const handleToggleStatus = (planId) => {
+    const targetPlan = plans.find((p) => p.id === planId);
+    if (!targetPlan) return;
+
+    if (targetPlan.status === 'Completed') {
+      executeToggleStatus(planId);
+    } else {
+      setVerifyingSession(targetPlan);
+    }
+  };
+
+  const executeToggleStatus = async (planId) => {
     try {
       const res = await agentAPI.togglePlanStatus(planId);
       const newStatus = res.data.status;
@@ -183,42 +196,42 @@ export default function StudyPlanner() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleExportICS}
-                className="px-3.5 py-2 rounded-2xl bg-[#EFF6FF] hover:bg-[#DBEAFE] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold flex items-center gap-1.5 shadow-xs"
+                className="px-4 py-2.5 rounded-2xl bg-[#EFF6FF] text-[#2563EB] font-poppins font-bold text-xs border border-[#DBEAFE] flex items-center gap-2 shadow-xs"
               >
                 <Calendar className="w-4 h-4 text-[#2563EB]" />
                 <span>Export Calendar (.ics)</span>
               </motion.button>
             )}
 
-            <div className="px-3.5 py-2 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-[#2563EB] text-xs font-inter font-bold flex items-center gap-1.5">
-              <Clock className="w-4 h-4" />
+            <div className="px-4 py-2 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] text-xs font-inter font-bold text-[#1E293B] flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#2563EB]" />
               <span>{totalHours} Total Hours</span>
             </div>
 
-            <div className="px-3.5 py-2 rounded-2xl bg-[#DCFCE7] border border-[#86EFAC] text-[#15803D] text-xs font-inter font-bold flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4" />
+            <div className="px-4 py-2 rounded-2xl bg-[#DCFCE7] border border-[#86EFAC] text-xs font-inter font-bold text-[#15803D] flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#22C55E]" />
               <span>{completionPercentage}% Complete</span>
             </div>
           </div>
         </div>
 
-        {/* Form Controls */}
-        <form onSubmit={handleGeneratePlan} className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-5 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+        {/* Timetable Configuration Form */}
+        <form onSubmit={handleGeneratePlan} className="pt-2 border-t border-[#E2E8F0] grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <div className="space-y-1.5">
-            <label className="text-xs font-inter font-bold text-[#1E293B] flex items-center gap-1.5">
+            <label className="text-xs font-poppins font-bold text-[#1E293B] flex items-center gap-1.5">
               <Target className="w-3.5 h-3.5 text-[#2563EB]" /> Exam Target Date
             </label>
             <input
               type="date"
-              required
               value={examDate}
               onChange={(e) => setExamDate(e.target.value)}
-              className="w-full glass-input py-2.5 px-3 rounded-xl text-xs font-inter bg-[#FFFFFF]"
+              className="w-full glass-input px-4 py-2.5 rounded-2xl text-xs font-inter bg-white border border-[#E2E8F0]"
+              required
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-inter font-bold text-[#1E293B] flex items-center gap-1.5">
+            <label className="text-xs font-poppins font-bold text-[#1E293B] flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-[#2563EB]" /> Daily Available Hours
             </label>
             <input
@@ -226,101 +239,105 @@ export default function StudyPlanner() {
               step="0.5"
               min="1"
               max="16"
-              required
               value={dailyHours}
               onChange={(e) => setDailyHours(e.target.value)}
-              className="w-full glass-input py-2.5 px-3 rounded-xl text-xs font-inter bg-[#FFFFFF]"
+              className="w-full glass-input px-4 py-2.5 rounded-2xl text-xs font-inter bg-white border border-[#E2E8F0]"
+              required
             />
           </div>
 
-          <div className="flex items-end">
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              type="submit"
-              disabled={generating}
-              className="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] text-white text-xs font-inter font-bold flex items-center justify-center gap-2 shadow-sm"
-            >
-              {generating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              <span>{generating ? 'Structuring Schedule...' : 'Build My Study Plan'}</span>
-            </motion.button>
-          </div>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={generating}
+            className="py-3 px-6 rounded-2xl bg-[#2563EB] hover:bg-blue-700 text-white font-poppins font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 disabled:opacity-50"
+          >
+            {generating ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                <span>Scheduling Timetable...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4" />
+                <span>Build My Study Plan</span>
+              </>
+            )}
+          </motion.button>
         </form>
       </div>
 
-      {/* 2. Interactive Filter Bar */}
+      {/* 2. Filter & Sort Toolbar */}
       {plans.length > 0 && (
-        <div className="glass-card rounded-2xl p-4 border border-[#E2E8F0] bg-[#FFFFFF] flex flex-wrap items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-center gap-2 text-xs font-poppins font-bold text-[#1E293B]">
-            <Filter className="w-4 h-4 text-[#2563EB]" />
-            <span>Filter Sessions:</span>
+        <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0]">
+          <div className="flex items-center gap-2 text-xs font-inter font-bold text-[#64748B]">
+            <Filter className="w-4 h-4 text-[#2563EB]" /> Filter Sessions:
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {/* Subject Filter */}
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              className="glass-input py-1.5 px-3 rounded-xl text-xs font-inter bg-[#F8FBFF]"
+              className="px-3.5 py-2 rounded-xl text-xs font-inter font-bold bg-[#F8FBFF] border border-[#E2E8F0] text-[#1E293B]"
             >
-              <option value="ALL">All Subjects ({subjects.length})</option>
-              {subjects.map((sub) => (
-                <option key={sub.id} value={sub.subject_name}>{sub.subject_name}</option>
+              <option value="ALL">All Subjects ({subjects.length || 1})</option>
+              {subjects.map((sub, i) => (
+                <option key={i} value={sub.subject_name}>{sub.subject_name}</option>
               ))}
             </select>
 
-            {/* Priority Filter */}
             <select
               value={selectedPriority}
               onChange={(e) => setSelectedPriority(e.target.value)}
-              className="glass-input py-1.5 px-3 rounded-xl text-xs font-inter bg-[#F8FBFF]"
+              className="px-3.5 py-2 rounded-xl text-xs font-inter font-bold bg-[#F8FBFF] border border-[#E2E8F0] text-[#1E293B]"
             >
               <option value="ALL">All Priorities</option>
-              <option value="High">High Priority ({highPriorityCount})</option>
+              <option value="High">High Priority</option>
               <option value="Medium">Medium Priority</option>
               <option value="Low">Low Priority</option>
             </select>
 
-            {/* Status Filter */}
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="glass-input py-1.5 px-3 rounded-xl text-xs font-inter bg-[#F8FBFF]"
+              className="px-3.5 py-2 rounded-xl text-xs font-inter font-bold bg-[#F8FBFF] border border-[#E2E8F0] text-[#1E293B]"
             >
               <option value="ALL">All Statuses</option>
-              <option value="Pending">Pending Sessions</option>
-              <option value="Completed">Completed ({completedCount})</option>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
             </select>
           </div>
         </div>
       )}
 
-      {/* 3. Schedule Matrix Sessions Grid */}
-      {filteredPlans.length > 0 ? (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs font-inter font-bold text-[#64748B]">
-            <span className="flex items-center gap-1.5">
-              <Layers className="w-4 h-4 text-[#2563EB]" /> Displaying {filteredPlans.length} of {plans.length} Study Sessions
-            </span>
-            <span className="text-[#2563EB]">Your Personalized Timetable</span>
-          </div>
+      {/* 3. Study Sessions Grid */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between text-xs font-inter font-bold text-[#64748B]">
+          <span className="flex items-center gap-1.5">
+            <Layers className="w-4 h-4 text-[#2563EB]" /> Displaying {filteredPlans.length} of {plans.length} Study Sessions
+          </span>
+          <span className="text-[#2563EB]">Your Personalized Timetable</span>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-            {filteredPlans.map((item, idx) => (
-              <StudyCard key={idx} item={item} onToggleStatus={handleToggleStatus} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredPlans.map((item) => (
+            <StudyCard
+              key={item.id}
+              item={item}
+              onToggleStatus={handleToggleStatus}
+            />
+          ))}
         </div>
-      ) : (
-        <div className="glass-card rounded-3xl p-12 text-center text-[#64748B] font-inter text-xs border border-[#E2E8F0] space-y-3 bg-[#FFFFFF] shadow-soft">
-          <CalendarDays className="w-10 h-10 text-[#94A3B8]/60 mx-auto" />
-          <h3 className="font-poppins text-base font-bold text-[#1E293B]">No study plan yet. Let's create one together!</h3>
-          <p className="max-w-md mx-auto">
-            {plans.length === 0 
-              ? "Set your exam date above and click 'Build My Study Plan' to generate your personalized study timetable." 
-              : "No sessions match your selected filter criteria. Try resetting your subject or priority filters."}
-          </p>
-        </div>
+      </div>
+
+      {/* Session Verification Mastery Checkpoint Modal */}
+      {verifyingSession && (
+        <SessionVerificationModal
+          sessionData={verifyingSession}
+          onConfirm={(planId) => executeToggleStatus(planId)}
+          onClose={() => setVerifyingSession(null)}
+        />
       )}
     </motion.div>
   );
