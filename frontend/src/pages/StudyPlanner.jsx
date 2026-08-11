@@ -71,7 +71,6 @@ export default function StudyPlanner() {
       addToast("Study Plan Created 🎉 Great work!", "success");
     } catch (err) {
       addToast("Something went wrong. Please try again.", "error");
-    } finally {
       setGenerating(false);
     }
   };
@@ -167,7 +166,14 @@ export default function StudyPlanner() {
   const highPriorityCount = useMemo(() => plans.filter((p) => p.priority === 'High').length, [plans]);
   const completionPercentage = plans.length > 0 ? Math.round((completedCount / plans.length) * 100) : 0;
 
-  if (loading) return <LoadingSkeleton text="Preparing your study planner..." />;
+  if (loading || generating) {
+    return (
+      <LoadingSkeleton
+        text="Generating your personalized multi-agent study schedule & notes..."
+        onComplete={() => setGenerating(false)}
+      />
+    );
+  }
 
   return (
     <motion.div

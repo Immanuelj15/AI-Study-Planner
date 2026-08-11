@@ -54,7 +54,6 @@ export default function MindMapViewer() {
     } catch (err) {
       console.error(err);
       addToast('Something went wrong. Please try again.', 'error');
-    } finally {
       setLoading(false);
     }
   };
@@ -74,6 +73,15 @@ export default function MindMapViewer() {
     setAiTutorTopic(`${topic} - ${nodeTitle}`);
     addToast(`AI Tutor pre-loaded for '${nodeTitle}'!`, 'info');
   };
+
+  if (loading) {
+    return (
+      <LoadingSkeleton
+        text="Building Interactive Visual Concept Map & Quiz Engine..."
+        onComplete={() => setLoading(false)}
+      />
+    );
+  }
 
   return (
     <motion.div

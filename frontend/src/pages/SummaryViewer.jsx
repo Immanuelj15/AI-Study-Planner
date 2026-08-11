@@ -43,7 +43,6 @@ export default function SummaryViewer() {
     } catch (err) {
       console.error(err);
       addToast('Something went wrong. Please try again.', 'error');
-    } finally {
       setLoading(false);
     }
   };
@@ -82,6 +81,15 @@ export default function SummaryViewer() {
     doc.save(`${cleanFilename}_Notes.pdf`);
     addToast('PDF downloaded successfully!', 'success');
   };
+
+  if (loading) {
+    return (
+      <LoadingSkeleton
+        text="Writing Easy-to-Understand Class Notes & Quiz Engine..."
+        onComplete={() => setLoading(false)}
+      />
+    );
+  }
 
   return (
     <motion.div

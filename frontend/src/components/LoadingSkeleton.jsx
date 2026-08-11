@@ -53,13 +53,14 @@ export default function LoadingSkeleton({ text = "Preparing Your Study Plan...",
       setActiveStep((prev) => {
         if (prev < agentsList.length - 1) {
           return prev + 1;
-        } else {
+        } else if (prev === agentsList.length - 1) {
           clearInterval(timer);
-          if (onComplete) setTimeout(onComplete, 600);
+          if (onComplete) setTimeout(onComplete, 800);
           return agentsList.length;
         }
+        return prev;
       });
-    }, 1400);
+    }, 1100);
 
     return () => clearInterval(timer);
   }, []);
