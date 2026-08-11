@@ -17,11 +17,100 @@ export default function MindMapNodePanel({ nodeData, onClose, onAskAI }) {
   const headerText = nodeData.header || 'Concept Node';
   const bodyText = nodeData.body || 'Explore concepts and study relationships.';
 
-  // 3 AI Explanation Mode Content Generators
+  // Node-Specific Content Generator for ELI5, Beginner, Interview, Takeaways & Quiz
+  const normHeader = (headerText || '').toLowerCase();
+  
+  let nodeContent;
+  if (normHeader.includes('def') || normHeader.includes('core') || normHeader.includes('intro')) {
+    nodeContent = {
+      eli5: `Think of Core Definition like the foundation of a building. Before building rooms or adding furniture, you must understand what the building is made of and how it stands strong!`,
+      beginner: `Core Definition: ${bodyText || 'Establishes the fundamental operational framework and state representation.'} It defines the mandatory rules and initial parameters.`,
+      interview: `Core Definition Interview Focus: In technical interviews, define exact invariants, memory layout assumptions, and state parameters before writing code.`,
+      takeaways: [
+        'Establishes foundational operational invariants and state parameters.',
+        'Defines initial boundary conditions to prevent null and overflow errors.'
+      ],
+      quizQ: `What is the primary purpose of the Core Definition phase?`,
+      quizOpts: ['To establish foundational invariants and initial boundaries', 'To bypass input validation', 'To increase memory fragmentation'],
+      quizAns: 'To establish foundational invariants and initial boundaries',
+      quizExp: 'Correct! The Core Definition establishes mandatory state invariants and initial boundary conditions.'
+    };
+  } else if (normHeader.includes('principle') || normHeader.includes('concept') || normHeader.includes('key')) {
+    nodeContent = {
+      eli5: `Imagine the rules of a board game! If you follow the rules step-by-step, every turn is predictable and you play without making mistakes!`,
+      beginner: `Key Principles: ${bodyText || 'Governs how data flows and state transitions occur.'} It ensures every operation preserves invariant properties throughout runtime execution.`,
+      interview: `Key Principles Interview Focus: Be ready to explain how invariant preservation prevents race conditions, concurrency bugs, and state corruption under load.`,
+      takeaways: [
+        'Preserves invariant properties throughout state mutations.',
+        'Guarantees consistent, predictable system execution under all workloads.'
+      ],
+      quizQ: `What do Key Principles ensure during system execution?`,
+      quizOpts: ['Preserving state invariants and predictable execution', 'Deleting data randomly', 'Ignoring runtime complexity bounds'],
+      quizAns: 'Preserving state invariants and predictable execution',
+      quizExp: 'Correct! Key principles guarantee that state invariants remain unbroken during operations.'
+    };
+  } else if (normHeader.includes('app') || normHeader.includes('real') || normHeader.includes('usage') || normHeader.includes('world')) {
+    nodeContent = {
+      eli5: `Think of how a bicycle is used to deliver pizzas or ride to school! This is how real engineering systems deploy this concept in production apps!`,
+      beginner: `Real-World Applications: ${bodyText || 'Applied in production database indexing, OS kernels, and distributed search clusters.'} It enables high-throughput data processing.`,
+      interview: `Applications System Design Focus: Discuss trade-offs between memory footprint vs throughput when deploying at production scale.`,
+      takeaways: [
+        'Powers high-throughput database B+ tree indexing and OS kernel dispatchers.',
+        'Deploys in real-time distributed search clusters and routing engines.'
+      ],
+      quizQ: `Why is this concept widely deployed in enterprise software systems?`,
+      quizOpts: ['It enables high-throughput data processing and optimal indexing', 'It requires zero CPU cycles', 'It replaces all databases'],
+      quizAns: 'It enables high-throughput data processing and optimal indexing',
+      quizExp: 'Correct! Enterprise applications rely on it for fast indexing, memory tables, and query routing.'
+    };
+  } else if (normHeader.includes('math') || normHeader.includes('complex') || normHeader.includes('metric') || normHeader.includes('bound')) {
+    nodeContent = {
+      eli5: `Imagine counting steps! Instead of taking 1,000 small steps one by one, math helps us skip steps so we reach the finish line in just 10 big jumps!`,
+      beginner: `Math & Complexity: ${bodyText || 'Analyzes asymptotic time and space complexity bounds.'} Most efficient operations execute in logarithmic O(log N) or linearithmic O(N log N) bounds.`,
+      interview: `Math Formal Proof: Derive the asymptotic bounds using Master Theorem or recurrence relations, comparing worst-case vs amortized average-case bounds.`,
+      takeaways: [
+        'Average-case time complexity: O(log N) or O(N log N) logarithmic bound.',
+        'Auxiliary space complexity: O(1) in-place or O(N) auxiliary memory bound.'
+      ],
+      quizQ: `What is the typical optimal time complexity bound for this operation?`,
+      quizOpts: ['O(log N) or O(N log N) logarithmic execution', 'O(N^3) cubic time', 'O(2^N) exponential time'],
+      quizAns: 'O(log N) or O(N log N) logarithmic execution',
+      quizExp: 'Correct! Logarithmic and linearithmic bounds provide scalable sub-linear performance.'
+    };
+  } else if (normHeader.includes('interview') || normHeader.includes('question') || normHeader.includes('trade') || normHeader.includes('focus')) {
+    nodeContent = {
+      eli5: `Imagine a trick question on a test! The teacher tests if you notice hidden traps before writing your final answer!`,
+      beginner: `Interview Focus: ${bodyText || 'Highlights top technical interview questions, common student pitfalls, and boundary edge cases.'}`,
+      interview: `Senior Engineering Tip: Always check for empty inputs, integer overflow (e.g. mid = low + (high-low)/2), and single-element boundary conditions.`,
+      takeaways: [
+        'Guard against boundary edge cases: empty inputs and integer pointer overflow.',
+        'Demonstrate clear trade-off analysis between execution time vs space memory.'
+      ],
+      quizQ: `Which edge case should ALWAYS be verified first during implementation?`,
+      quizOpts: ['Empty input arrays and boundary pointer overflow', 'Hardware fan speed', 'Screen resolution'],
+      quizAns: 'Empty input arrays and boundary pointer overflow',
+      quizExp: 'Correct! Checking boundary edge cases prevents null pointers and buffer overflow crashes.'
+    };
+  } else {
+    nodeContent = {
+      eli5: `Think of ${headerText} like an engine under the hood of a car. When it works smoothly, everything runs fast and without glitches!`,
+      beginner: `${headerText}: ${bodyText || 'Key concept component.'} Explores core mechanisms, architecture, and operational invariants.`,
+      interview: `${headerText} Interview Focus: Evaluate performance trade-offs, space complexity bounds, and boundary edge cases.`,
+      takeaways: [
+        `Key operational concept for ${headerText}.`,
+        `Optimizes runtime execution and system correctness.`
+      ],
+      quizQ: `What is the key objective of studying ${headerText}?`,
+      quizOpts: [`To master core invariants and system performance`, `To slow down system execution`, `To increase memory leaks`],
+      quizAns: `To master core invariants and system performance`,
+      quizExp: `Correct! Studying ${headerText} builds deep domain mastery and system optimization skills.`
+    };
+  }
+
   const explanations = {
-    eli5: `Think of ${headerText} like sorting toys into bins! Instead of looking at every toy one by one, you cut the pile in half each step until you find what you want in seconds!`,
-    beginner: `${headerText}: ${bodyText} It works by halving the search space on ordered data structures, cutting down operations significantly.`,
-    interview: `${headerText} Interview Focus: Evaluate time complexity bounds O(log N) vs O(N). Guard against integer overflow when calculating mid pointer using mid = low + (high-low)/2.`
+    eli5: nodeContent.eli5,
+    beginner: nodeContent.beginner,
+    interview: nodeContent.interview
   };
 
   const handleToggleBookmark = () => {
@@ -146,33 +235,31 @@ export default function MindMapNodePanel({ nodeData, onClose, onAskAI }) {
                 <Lightbulb className="w-4 h-4 text-[#D97706]" /> Key Takeaways & Real-World Analogy
               </h4>
               <ul className="space-y-2 text-xs text-[#64748B]">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0 mt-0.5" />
-                  <span>Maintains logarithmic complexity O(log N) on sorted inputs.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0 mt-0.5" />
-                  <span>Iterative implementation avoids recursion call stack memory overhead.</span>
-                </li>
+                {nodeContent.takeaways.map((tk, tIdx) => (
+                  <li key={tIdx} className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0 mt-0.5" />
+                    <span>{tk}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Quick 2-Question Node Practice Quiz */}
+            {/* Quick Node Practice Quiz */}
             <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] space-y-3">
               <div className="font-poppins font-bold text-xs text-[#1E293B] flex items-center justify-between">
-                <span>Quick Concept Check (2 Questions)</span>
+                <span>Quick Concept Check (1 Question)</span>
                 <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
               </div>
               <div className="text-xs text-[#1E293B] font-medium">
-                Q1: What is the primary prerequisite condition before applying {headerText}?
+                Q1: {nodeContent.quizQ}
               </div>
               <div className="space-y-1.5 text-xs">
-                {['Input data must be sorted', 'Input array must be empty', 'Memory must be 100% full'].map((opt, i) => (
+                {nodeContent.quizOpts.map((opt, i) => (
                   <button
                     key={i}
                     onClick={() => { setQuizAnswer1(opt); setQuizSubmitted1(true); }}
                     className={`w-full text-left p-2.5 rounded-xl border text-xs transition-all ${
-                      quizSubmitted1 && opt === 'Input data must be sorted'
+                      quizSubmitted1 && opt === nodeContent.quizAns
                         ? 'bg-[#DCFCE7] border-[#22C55E] text-[#15803D] font-bold'
                         : quizAnswer1 === opt
                         ? 'bg-[#FEE2E2] border-[#EF4444] text-[#EF4444]'
@@ -185,7 +272,7 @@ export default function MindMapNodePanel({ nodeData, onClose, onAskAI }) {
               </div>
               {quizSubmitted1 && (
                 <div className="text-[11px] text-[#22C55E] font-bold">
-                  ✓ Correct! Input elements must satisfy sorted order invariants.
+                  ✓ {nodeContent.quizExp}
                 </div>
               )}
             </div>
