@@ -50,17 +50,14 @@ class AdaptiveLearningEngine:
             # Self-healing check for legacy pre-existing rows in SQLite
             quiz_count = db.query(QuizResult).filter(QuizResult.user_id == user_id).count()
             dirty = False
-            if quiz_count == 0:
-                if profile.average_quiz_score != 0.0 or profile.improvement_trend == "Stable":
-                    profile.average_quiz_score = 0.0
-                    profile.average_quiz_time = 0.0
-                    profile.improvement_trend = "New Student"
-                    dirty = True
+            if quiz_count == 0 and profile.average_quiz_score == 75.0:
+                profile.average_quiz_score = 0.0
+                profile.average_quiz_time = 0.0
+                profile.improvement_trend = "New Student"
+                dirty = True
             
-            if profile.average_reading_time == 120.0 and profile.mindmap_usage == 1 and profile.revision_frequency == 1:
+            if profile.average_reading_time == 120.0 and quiz_count == 0:
                 profile.average_reading_time = 0.0
-                profile.mindmap_usage = 0
-                profile.revision_frequency = 0
                 dirty = True
 
             if dirty:
@@ -73,11 +70,11 @@ class AdaptiveLearningEngine:
         profile = self.get_or_create_profile(db, user_id)
 
         if event_type == "reading":
-            if duration_seconds > 0:
-                if profile.average_reading_time == 0:
-                    profile.average_reading_time = duration_seconds
-                else:
-                    profile.average_reading_time = round((profile.average_reading_time + duration_seconds) / 2.0, 1)
+            dur = duration_seconds if duration_seconds > 0 else 120.0
+            if profile.average_reading_time == 0:
+                profile.average_reading_time = round(float(dur), 1)
+            else:
+                profile.average_reading_time = round((profile.average_reading_time + dur) / 2.0, 1)
         elif event_type == "quiz":
             if duration_seconds > 0:
                 if profile.average_quiz_time == 0:
