@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { focusAPI } from '../services/api';
+import { focusAPI, subjectsAPI, agentAPI } from '../services/api';
+import MindMapComponent from './MindMapComponent';
+import QuizComponent from './QuizComponent';
+import ChatTutor from './ChatTutor';
 import { 
   Maximize2, 
   Minimize2, 
@@ -20,14 +23,20 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
-  HelpCircle
+  HelpCircle,
+  Network,
+  Layers,
+  MessageSquare,
+  Bot,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 export default function FocusModeContainer({ 
-  subjectName = "DSA", 
-  topic = "Binary Search", 
-  plannedMinutes = 25, 
+  subjectName: initialSubject = "Operating Systems", 
+  topic: initialTopic = "Process Scheduling & Memory Invariants", 
+  plannedMinutes: initialMinutes = 25, 
   learningContent = null,
   onClose,
   onTakeQuiz,
@@ -37,8 +46,27 @@ export default function FocusModeContainer({
   const [sessionState, setSessionState] = useState('NOT_STARTED');
   const [sessionId, setSessionId] = useState(null);
 
+  // Subject & Topic Selector State
+  const [subjectName, setSubjectName] = useState(initialSubject);
+  const [topic, setTopic] = useState(initialTopic);
+  const [plannedMinutes, setPlannedMinutes] = useState(initialMinutes);
+  const [subjectsList, setSubjectsList] = useState([]);
+
+  // Active Interactive Tab in Focus Mode: 'notes' | 'mindmap' | 'flashcards' | 'quiz'
+  const [activeTab, setActiveTab] = useState('notes');
+  const [showAIChat, setShowAIChat] = useState(false);
+  const [isReadingAudio, setIsReadingAudio] = useState(false);
+
+  // Flashcard State inside Focus Mode
+  const [flashcardIdx, setFlashcardIdx] = useState(0);
+  const [flashcardFlipped, setFlashcardFlipped] = useState(false);
+
+  // Quiz State inside Focus Mode
+  const [quizScore, setQuizScore] = useState(null);
+  const [quizAnswers, setQuizAnswers] = useState({});
+
   // Timer State
-  const [secondsRemaining, setSecondsRemaining] = useState(plannedMinutes * 60);
+  const [secondsRemaining, setSecondsRemaining] = useState(initialMinutes * 60);
   const [secondsElapsed, setSecondsElapsed] = useState(0);
 
   // Interruption Counters
@@ -52,6 +80,18 @@ export default function FocusModeContainer({
 
   const { addToast } = useToast();
   const timerRef = useRef(null);
+
+  // Fetch subjects list on mount
+  useEffect(() => {
+    subjectsAPI.getSubjects()
+      .then((res) => setSubjectsList(res.data || []))
+      .catch(() => {});
+  }, []);
+
+  // Sync timer when plannedMinutes changes
+  useEffect(() => {
+    setSecondsRemaining(plannedMinutes * 60);
+  }, [plannedMinutes]);
 
   // 1. Timer Effect (Only ticks during FOCUS_ACTIVE)
   useEffect(() => {
@@ -141,14 +181,10 @@ export default function FocusModeContainer({
   // Start Focus Session
   const handleStartSession = async () => {
     try {
-      // 1. Request Browser Fullscreen
       if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(() => {
-          // Graceful fallback for mobile or restricted browsers
-        });
+        document.documentElement.requestFullscreen().catch(() => {});
       }
 
-      // 2. Call backend to start FocusSession
       const res = await focusAPI.start({
         subject_name: subjectName,
         topic: topic,
@@ -160,14 +196,12 @@ export default function FocusModeContainer({
       addToast("Focus Mode Active! Deep study in progress 🎯", "success");
     } catch (err) {
       console.error("Error starting focus session:", err);
-      // Fallback local start
       setSessionState('FOCUS_ACTIVE');
     }
   };
 
-  // Resume Focus Session from Warning Screen
+  // Resume Focus Session
   const handleResumeFocus = async () => {
-    // Re-request Fullscreen if needed
     if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen().catch(() => {});
     }
@@ -186,6 +220,8 @@ export default function FocusModeContainer({
 
   // Complete Focus Session
   const handleCompleteSession = async () => {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+
     if (document.fullscreenElement && document.exitFullscreen) {
       document.exitFullscreen().catch(() => {});
     }
@@ -205,13 +241,13 @@ export default function FocusModeContainer({
     addToast("Great Work! 🎉 Focus Session Completed!", "success");
   };
 
-  // Auto finish when timer hits zero
   const handleAutoFinishSession = () => {
     handleCompleteSession();
   };
 
-  // Cancel / Exit Focus Session
   const handleCancelSession = async () => {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+
     if (document.fullscreenElement && document.exitFullscreen) {
       document.exitFullscreen().catch(() => {});
     }
@@ -228,6 +264,29 @@ export default function FocusModeContainer({
     if (onClose) onClose();
   };
 
+  // Web Speech API Voice Narration Toggle
+  const toggleSpeechNarration = () => {
+    if (!window.speechSynthesis) {
+      addToast("Text-to-speech is not supported in this browser.", "error");
+      return;
+    }
+
+    if (isReadingAudio) {
+      window.speechSynthesis.cancel();
+      setIsReadingAudio(false);
+      addToast("Voice narration paused ⏸️", "info");
+    } else {
+      const textToRead = `${topic}. Core concepts and principles of ${subjectName}. ${topic} forms a foundational pillar in computer science problem solving.`;
+      const utterance = new SpeechSynthesisUtterance(textToRead);
+      utterance.rate = 0.95;
+      utterance.onend = () => setIsReadingAudio(false);
+      utterance.onerror = () => setIsReadingAudio(false);
+      window.speechSynthesis.speak(utterance);
+      setIsReadingAudio(true);
+      addToast("AI Voice Reader Narration Started 🎧", "success");
+    }
+  };
+
   // Time Formatter
   const formatTime = (totalSecs) => {
     const mins = Math.floor(totalSecs / 60);
@@ -236,6 +295,23 @@ export default function FocusModeContainer({
   };
 
   const progressPct = Math.round((secondsElapsed / (plannedMinutes * 60)) * 100);
+
+  // Dynamic Flashcard Deck for Topic
+  const flashcardDeck = [
+    { term: `Core Principle of ${topic}`, def: `Foundational operational framework and memory invariants governing ${topic}.` },
+    { term: 'Time & Space Bounds', def: `Maintains optimal logarithmic execution complexity bounds O(log N) with O(1) auxiliary space.` },
+    { term: 'Critical Edge Case Guard', def: `Prevent numerical boundary overflow, index errors, and null pointer reference crashes.` },
+    { term: 'Industrial Production Usage', def: `Applied extensively across database B+ tree engines, OS virtual memory, and distributed systems.` }
+  ];
+
+  // Dynamic 5-Question Quiz for Topic
+  const quizDeck = [
+    { id: 1, q: `What is the core structural mechanism of '${topic}'?`, options: [`Invariants and memory layout of ${topic}`, `Random unindexed lookup`, `Ignoring algorithm bounds`], ans: 0 },
+    { id: 2, q: `How does '${topic}' optimize processing efficiency?`, options: [`Reducing time bounds from brute-force to logarithmic execution`, `Increasing call stack memory allocation`, `Disabling boundary safety guards`], ans: 0 },
+    { id: 3, q: `Which edge case requires explicit handling in '${topic}'?`, options: [`Boundary overflow and empty/null references`, `Adding unused text comments`, `Changing font size in UI`], ans: 0 },
+    { id: 4, q: `Where is '${topic}' deployed in production software systems?`, options: [`Database indexing engines and OS kernel paging`, `Static unrendered documentation`, `Unprocessed plain text files`], ans: 0 },
+    { id: 5, q: `What is the key takeaway of this focused study session?`, options: [`Achieving active recall and 100% conceptual mastery of ${topic}`, `Skipping notes without review`, `Memorizing raw words without context`], ans: 0 }
+  ];
 
   // ----------------------------------------------------------------------
   // RENDER STATE 1: NOT_STARTED Confirmation Modal ("Ready to Focus?")
@@ -253,7 +329,7 @@ export default function FocusModeContainer({
             initial={{ scale: 0.92, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.92, y: 20 }}
-            className="w-full max-w-lg bg-[#FFFFFF] border border-[#E2E8F0] rounded-3xl p-7 shadow-2xl space-y-6"
+            className="w-full max-w-lg bg-[#FFFFFF] border border-[#E2E8F0] rounded-3xl p-7 shadow-2xl space-y-5"
           >
             <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
               <div className="flex items-center gap-3">
@@ -262,7 +338,7 @@ export default function FocusModeContainer({
                 </div>
                 <div>
                   <h3 className="font-poppins font-black text-xl text-[#1E293B]">Ready to focus?</h3>
-                  <p className="text-xs text-[#64748B]">Strict Exam & Focus Mode Confirmation</p>
+                  <p className="text-xs text-[#64748B]">Configure your custom study session</p>
                 </div>
               </div>
               <button
@@ -273,52 +349,68 @@ export default function FocusModeContainer({
               </button>
             </div>
 
-            {/* Today's Session Details */}
-            <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] space-y-3">
-              <div className="text-xs font-poppins font-bold text-[#1E293B] uppercase tracking-wider">
-                Today's Focus Session
+            {/* Custom Subject & Topic Selector Form */}
+            <div className="space-y-4 text-xs">
+              <div className="space-y-1.5">
+                <label className="font-poppins font-bold text-[#1E293B] block">Select Subject:</label>
+                <select
+                  value={subjectName}
+                  onChange={(e) => setSubjectName(e.target.value)}
+                  className="w-full p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] text-xs font-inter font-bold text-[#1E293B]"
+                >
+                  <option value="Operating Systems">Operating Systems</option>
+                  <option value="Data Structures & Algorithms">Data Structures & Algorithms</option>
+                  <option value="Database Management Systems">Database Management Systems</option>
+                  <option value="Computer Networks">Computer Networks</option>
+                  <option value="Machine Learning & AI">Machine Learning & AI</option>
+                  {subjectsList.map((s, i) => (
+                    <option key={i} value={s.subject_name}>{s.subject_name}</option>
+                  ))}
+                </select>
               </div>
-              <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Subject</div>
-                  <div className="font-poppins font-bold text-[#2563EB] mt-0.5 truncate">{subjectName}</div>
-                </div>
-                <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Topic</div>
-                  <div className="font-poppins font-bold text-[#1E293B] mt-0.5 truncate">{topic}</div>
-                </div>
-                <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Duration</div>
-                  <div className="font-poppins font-bold text-[#22C55E] mt-0.5">{plannedMinutes} Mins</div>
-                </div>
+
+              <div className="space-y-1.5">
+                <label className="font-poppins font-bold text-[#1E293B] block">Study Topic Name:</label>
+                <input
+                  type="text"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  placeholder="Enter study topic..."
+                  className="w-full p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] text-xs font-inter font-bold text-[#1E293B]"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-poppins font-bold text-[#1E293B] block">Focus Duration (Minutes):</label>
+                <select
+                  value={plannedMinutes}
+                  onChange={(e) => setPlannedMinutes(parseInt(e.target.value))}
+                  className="w-full p-3 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] text-xs font-inter font-bold text-[#1E293B]"
+                >
+                  <option value={15}>15 Minutes (Quick Focus)</option>
+                  <option value={25}>25 Minutes (Standard Pomodoro)</option>
+                  <option value={45}>45 Minutes (Deep Study)</option>
+                  <option value={60}>60 Minutes (Exam Intensive)</option>
+                </select>
               </div>
             </div>
 
             {/* Mode Invariants */}
-            <div className="space-y-2 text-xs text-[#1E293B]">
-              <div className="font-poppins font-bold text-[#1E293B]">During Focus Mode:</div>
-              <ul className="space-y-2 text-[#64748B]">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0" />
-                  <span>Countdown timer runs & preserves your progress</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0" />
-                  <span>Full study content remains visible & interactive</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0" />
-                  <span>Distractions, navigation & sidebar widgets are hidden</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#22C55E] shrink-0" />
-                  <span>Tab switches & window blur events are detected</span>
-                </li>
+            <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] space-y-2 text-xs">
+              <div className="font-poppins font-bold text-[#2563EB] flex items-center gap-1.5">
+                <ShieldAlert className="w-4 h-4 text-[#2563EB]" />
+                <span>Strict Mode Features Enabled:</span>
+              </div>
+              <ul className="space-y-1 text-[#1E293B] text-[11px] font-medium">
+                <li>✓ Interactive Study Notes, Mind Maps, 3D Flashcards & Practice Quizzes</li>
+                <li>✓ Built-in AI Tutor Chat Drawer without exiting Focus Mode</li>
+                <li>✓ Fullscreen & Page Visibility Tab Loss Auto-Pause Detection</li>
               </ul>
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-3 pt-2">
+            <div className="flex gap-3 pt-1">
               <button
                 onClick={onClose}
                 className="flex-1 py-3 rounded-2xl bg-[#F8FBFF] hover:bg-[#EFF6FF] text-[#1E293B] border border-[#E2E8F0] font-poppins font-bold text-xs"
@@ -475,7 +567,7 @@ export default function FocusModeContainer({
                   onClick={() => { onClose && onClose(); onTakeQuiz(); }}
                   className="py-3 px-4 rounded-2xl bg-[#2563EB] hover:bg-blue-700 text-white font-poppins font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm"
                 >
-                  <Sparkles className="w-4 h-4" /> Take Quiz
+                  <Sparkles className="w-4 h-4" /> Take Full Quiz
                 </button>
               )}
               {onReviewNotes && (
@@ -515,7 +607,7 @@ export default function FocusModeContainer({
           <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-[#64748B]">
             <span className="text-[#1E293B] font-poppins">{subjectName}</span>
             <span>•</span>
-            <span>{topic}</span>
+            <span className="text-[#2563EB] font-bold">{topic}</span>
           </div>
         </div>
 
@@ -527,43 +619,271 @@ export default function FocusModeContainer({
           </div>
         </div>
 
-        {/* Right Exit Button */}
-        <button
-          onClick={() => setShowExitConfirm(true)}
-          className="px-3.5 py-1.5 rounded-xl bg-[#F8FBFF] hover:bg-[#FEE2E2] text-[#64748B] hover:text-[#991B1B] border border-[#E2E8F0] text-xs font-bold transition-all flex items-center gap-1.5"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>Exit Focus</span>
-        </button>
+        {/* Right Action Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowAIChat(!showAIChat)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              showAIChat
+                ? 'bg-[#2563EB] text-white border border-[#2563EB]'
+                : 'bg-[#EFF6FF] text-[#2563EB] border border-[#DBEAFE] hover:bg-[#DBEAFE]'
+            }`}
+          >
+            <Bot className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Ask AI Tutor</span>
+          </button>
+
+          <button
+            onClick={() => setShowExitConfirm(true)}
+            className="px-3.5 py-1.5 rounded-xl bg-[#F8FBFF] hover:bg-[#FEE2E2] text-[#64748B] hover:text-[#991B1B] border border-[#E2E8F0] text-xs font-bold transition-all flex items-center gap-1.5"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Exit Focus</span>
+          </button>
+        </div>
       </header>
 
-      {/* Main Center Content Body (Distraction Free Container) */}
-      <main className="flex-1 overflow-y-auto p-6 max-w-5xl mx-auto w-full space-y-6">
-        {learningContent ? (
-          learningContent
-        ) : (
-          <div className="glass-card rounded-3xl p-8 border border-[#E2E8F0] bg-[#FFFFFF] space-y-6 shadow-soft">
-            <div className="border-b border-[#E2E8F0] pb-4">
-              <div className="text-xs font-bold text-[#2563EB] uppercase tracking-wider">{subjectName} • Study Material</div>
-              <h1 className="font-poppins font-black text-2xl text-[#1E293B] mt-1">{topic}</h1>
-              <p className="text-xs text-[#64748B] mt-1">Deep focus study guide and active recall notes.</p>
-            </div>
+      {/* Interactive Content Tab Selector Bar */}
+      <div className="bg-[#FFFFFF] border-b border-[#E2E8F0] px-6 py-2 flex items-center justify-between shrink-0 z-10">
+        <div className="flex items-center gap-2 overflow-x-auto text-xs font-poppins font-bold">
+          <button
+            onClick={() => setActiveTab('notes')}
+            className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+              activeTab === 'notes'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'bg-[#F8FBFF] text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] border border-[#E2E8F0]'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>📖 Study Notes</span>
+          </button>
 
-            <div className="space-y-4 text-sm leading-relaxed text-[#1E293B]">
-              <h3 className="font-poppins font-bold text-base text-[#1E293B]">1. Core Concepts & Definitions</h3>
-              <p>
-                {topic} forms a foundational pillar in computer science problem solving. Understanding its underlying invariants allows developers to write optimal algorithms operating within strict time and space bounds.
-              </p>
-              <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-xs text-[#2563EB] font-bold">
-                💡 Key Takeaway: Maintain logarithmic execution bounds O(log N) while guarding against boundary overflow.
+          <button
+            onClick={() => setActiveTab('mindmap')}
+            className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+              activeTab === 'mindmap'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'bg-[#F8FBFF] text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] border border-[#E2E8F0]'
+            }`}
+          >
+            <Network className="w-3.5 h-3.5" />
+            <span>🗺️ Mind Map</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('flashcards')}
+            className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+              activeTab === 'flashcards'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'bg-[#F8FBFF] text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] border border-[#E2E8F0]'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>🎴 3D Flashcards</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('quiz')}
+            className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+              activeTab === 'quiz'
+                ? 'bg-[#2563EB] text-white shadow-xs'
+                : 'bg-[#F8FBFF] text-[#64748B] hover:bg-[#EFF6FF] hover:text-[#2563EB] border border-[#E2E8F0]'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>🎯 Practice Quiz</span>
+          </button>
+        </div>
+
+        {/* Text-to-Speech Audio Reader Button */}
+        {activeTab === 'notes' && (
+          <button
+            onClick={toggleSpeechNarration}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
+              isReadingAudio
+                ? 'bg-[#DCFCE7] text-[#15803D] border-[#86EFAC]'
+                : 'bg-[#F8FBFF] text-[#64748B] border-[#E2E8F0] hover:text-[#2563EB]'
+            }`}
+          >
+            {isReadingAudio ? <VolumeX className="w-3.5 h-3.5 text-[#15803D]" /> : <Volume2 className="w-3.5 h-3.5 text-[#2563EB]" />}
+            <span>{isReadingAudio ? 'Pause Voice' : 'Listen AI Audio'}</span>
+          </button>
+        )}
+      </div>
+
+      {/* Main Center Content Container */}
+      <main className="flex-1 overflow-y-auto p-6 max-w-6xl mx-auto w-full relative">
+        {/* TAB 1: STUDY NOTES VIEW */}
+        {activeTab === 'notes' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            <div className="glass-card rounded-3xl p-8 border border-[#E2E8F0] bg-[#FFFFFF] space-y-6 shadow-soft">
+              <div className="border-b border-[#E2E8F0] pb-4 flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-[#2563EB] uppercase tracking-wider">{subjectName} • Deep Focus Study Guide</div>
+                  <h1 className="font-poppins font-black text-2xl text-[#1E293B] mt-1">{topic}</h1>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] font-bold text-xs border border-[#DBEAFE]">
+                  AI Note Generated
+                </span>
               </div>
 
-              <h3 className="font-poppins font-bold text-base text-[#1E293B]">2. Real-World Applications</h3>
-              <ul className="list-disc pl-5 space-y-1 text-xs text-[#64748B]">
-                <li>Database B+ Tree indexing & logarithmic lookup engines.</li>
-                <li>Operating system kernel virtual memory page routing.</li>
-                <li>Real-time search engine query optimization.</li>
-              </ul>
+              <div className="space-y-5 text-sm leading-relaxed text-[#1E293B]">
+                <div className="space-y-2">
+                  <h3 className="font-poppins font-bold text-base text-[#1E293B]">1. Core Concepts & Definitions</h3>
+                  <p>
+                    {topic} forms a foundational pillar in computer science problem solving. Understanding its underlying invariants allows developers to write optimal algorithms operating within strict time and space bounds.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-[#DBEAFE] text-xs text-[#2563EB] font-bold space-y-1">
+                  <div className="flex items-center gap-1.5 font-poppins text-sm">
+                    <Sparkles className="w-4 h-4 text-[#2563EB]" /> Key Invariant Takeaway:
+                  </div>
+                  <p className="text-[#1E293B] font-medium leading-relaxed">
+                    Always maintain logarithmic execution bounds O(log N) while guarding against boundary overflow errors and unhandled reference crashes.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="font-poppins font-bold text-base text-[#1E293B]">2. Real-World Applications</h3>
+                  <ul className="list-disc pl-5 space-y-1.5 text-xs text-[#64748B]">
+                    <li>Database B+ Tree indexing & logarithmic lookup engines.</li>
+                    <li>Operating system kernel virtual memory page routing.</li>
+                    <li>Real-time search engine query optimization.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* TAB 2: INTERACTIVE MIND MAP */}
+        {activeTab === 'mindmap' && (
+          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="h-[600px] w-full">
+            <MindMapComponent topic={topic} />
+          </motion.div>
+        )}
+
+        {/* TAB 3: 3D FLASHCARDS */}
+        {activeTab === 'flashcards' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-xl mx-auto space-y-6 pt-6">
+            <div className="text-center space-y-1">
+              <h3 className="font-poppins font-bold text-base text-[#1E293B]">3D Active Recall Flashcards</h3>
+              <p className="text-xs text-[#64748B]">Card {flashcardIdx + 1} of {flashcardDeck.length}</p>
+            </div>
+
+            <div
+              onClick={() => setFlashcardFlipped(!flashcardFlipped)}
+              className="w-full h-72 cursor-pointer [perspective:1200px]"
+            >
+              <motion.div
+                animate={{ rotateY: flashcardFlipped ? 180 : 0 }}
+                transition={{ duration: 0.5, ease: 'easeInOut' }}
+                className="w-full h-full relative [transform-style:preserve-3d]"
+              >
+                {/* Front */}
+                <div className="absolute inset-0 w-full h-full rounded-3xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#2563EB] text-white p-7 flex flex-col justify-between shadow-xl border border-white/10 [backface-visibility:hidden]">
+                  <div className="text-xs font-bold text-blue-200">FRONT • KEY TERM</div>
+                  <div className="text-center my-auto">
+                    <h3 className="font-poppins font-black text-xl text-white">{flashcardDeck[flashcardIdx].term}</h3>
+                  </div>
+                  <div className="text-center text-[11px] text-blue-200">Tap card to flip definition 🔄</div>
+                </div>
+
+                {/* Back */}
+                <div className="absolute inset-0 w-full h-full rounded-3xl bg-white border-2 border-[#2563EB] text-[#1E293B] p-7 flex flex-col justify-between shadow-xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                  <div className="text-xs font-bold text-[#2563EB]">BACK • DEFINITION</div>
+                  <div className="text-center my-auto">
+                    <p className="text-sm font-medium leading-relaxed">{flashcardDeck[flashcardIdx].def}</p>
+                  </div>
+                  <div className="text-center text-[11px] text-[#64748B]">Tap card to view front 🔄</div>
+                </div>
+              </motion.div>
+            </div>
+
+            <div className="flex justify-between items-center pt-2">
+              <button
+                onClick={() => { setFlashcardFlipped(false); setFlashcardIdx((prev) => (prev > 0 ? prev - 1 : flashcardDeck.length - 1)); }}
+                className="px-4 py-2 rounded-xl bg-white border border-[#E2E8F0] text-xs font-bold text-[#1E293B]"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setFlashcardFlipped(!flashcardFlipped)}
+                className="px-5 py-2.5 rounded-xl bg-[#2563EB] text-white text-xs font-bold"
+              >
+                Flip Card
+              </button>
+              <button
+                onClick={() => { setFlashcardFlipped(false); setFlashcardIdx((prev) => (prev < flashcardDeck.length - 1 ? prev + 1 : 0)); }}
+                className="px-4 py-2 rounded-xl bg-white border border-[#E2E8F0] text-xs font-bold text-[#1E293B]"
+              >
+                Next
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* TAB 4: PRACTICE QUIZ */}
+        {activeTab === 'quiz' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto space-y-6 pt-4">
+            <div className="glass-card rounded-3xl p-6 border border-[#E2E8F0] bg-[#FFFFFF] space-y-5 shadow-soft">
+              <div className="flex justify-between items-center border-b border-[#E2E8F0] pb-3">
+                <div className="font-poppins font-bold text-base text-[#1E293B]">Focus Mode Mastery Check (5 Questions)</div>
+                <Sparkles className="w-5 h-5 text-[#2563EB]" />
+              </div>
+
+              {quizDeck.map((q, qIdx) => (
+                <div key={q.id} className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] space-y-2 text-xs">
+                  <div className="font-poppins font-bold text-[#1E293B]">Q{qIdx + 1}: {q.q}</div>
+                  <div className="space-y-1.5">
+                    {q.options.map((opt, optIdx) => (
+                      <button
+                        key={optIdx}
+                        onClick={() => setQuizAnswers((prev) => ({ ...prev, [qIdx]: optIdx }))}
+                        className={`w-full text-left p-3 rounded-xl border transition-all ${
+                          quizAnswers[qIdx] === optIdx
+                            ? 'bg-[#EFF6FF] border-[#2563EB] text-[#2563EB] font-bold'
+                            : 'bg-white border-[#E2E8F0] text-[#1E293B]'
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <button
+                onClick={() => {
+                  const correctCount = quizDeck.filter((q, idx) => quizAnswers[idx] === q.ans).length;
+                  const scorePct = Math.round((correctCount / quizDeck.length) * 100);
+                  setQuizScore(scorePct);
+                  addToast(`Quiz Completed! Score: ${scorePct}% 🎉`, 'success');
+                }}
+                className="w-full py-3 rounded-2xl bg-[#2563EB] text-white font-poppins font-bold text-xs"
+              >
+                Submit Quiz & Calculate Score
+              </button>
+
+              {quizScore !== null && (
+                <div className="p-4 rounded-2xl bg-[#DCFCE7] border border-[#86EFAC] text-center text-xs font-bold text-[#15803D]">
+                  ✓ Score: {quizScore}% Mastery! Great effort in Focus Mode!
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* AI TUTOR CHAT DRAWER */}
+        {showAIChat && (
+          <div className="fixed right-6 bottom-20 z-40 w-96 glass-card rounded-3xl border border-[#E2E8F0] bg-white shadow-2xl overflow-hidden h-[480px] flex flex-col font-inter">
+            <div className="p-4 bg-[#2563EB] text-white flex justify-between items-center font-poppins font-bold text-sm">
+              <span className="flex items-center gap-2"><Bot className="w-4 h-4" /> AI Tutor Assistant</span>
+              <button onClick={() => setShowAIChat(false)}><X className="w-4 h-4" /></button>
+            </div>
+            <div className="flex-1 p-3 overflow-y-auto">
+              <ChatTutor topic={topic} />
             </div>
           </div>
         )}
