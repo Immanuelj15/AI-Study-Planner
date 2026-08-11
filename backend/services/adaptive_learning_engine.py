@@ -46,6 +46,27 @@ class AdaptiveLearningEngine:
             db.add(profile)
             db.commit()
             db.refresh(profile)
+        else:
+            # Self-healing check for legacy pre-existing rows in SQLite
+            quiz_count = db.query(QuizResult).filter(QuizResult.user_id == user_id).count()
+            dirty = False
+            if quiz_count == 0:
+                if profile.average_quiz_score != 0.0 or profile.improvement_trend == "Stable":
+                    profile.average_quiz_score = 0.0
+                    profile.average_quiz_time = 0.0
+                    profile.improvement_trend = "New Student"
+                    dirty = True
+            
+            if profile.average_reading_time == 120.0 and profile.mindmap_usage == 1 and profile.revision_frequency == 1:
+                profile.average_reading_time = 0.0
+                profile.mindmap_usage = 0
+                profile.revision_frequency = 0
+                dirty = True
+
+            if dirty:
+                db.commit()
+                db.refresh(profile)
+
         return profile
 
     def update_telemetry_event(self, db: Session, user_id: int, event_type: str, duration_seconds: float = 0.0, score: float = None, topic: str = None) -> StudentLearningProfile:

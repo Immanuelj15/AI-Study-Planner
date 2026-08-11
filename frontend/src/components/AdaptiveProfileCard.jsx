@@ -52,6 +52,9 @@ export default function AdaptiveProfileCard() {
   const currentStyleConfig = styleColors[profileData.learning_style] || styleColors.Mixed;
   const StyleIcon = currentStyleConfig.icon;
 
+  const hasQuizData = profileData.average_quiz_score > 0;
+  const hasReadingData = profileData.average_reading_time > 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -105,7 +108,7 @@ export default function AdaptiveProfileCard() {
           <div className="text-[10px] font-bold uppercase tracking-wider text-[#64748B]">Classification</div>
           <div className="font-poppins font-black text-sm text-[#2563EB] mt-1 flex items-center gap-1.5 truncate">
             <TrendingUp className="w-4 h-4 text-[#2563EB]" />
-            <span className="truncate">{profileData.improvement_trend}</span>
+            <span className="truncate">{profileData.improvement_trend || "New Student"}</span>
           </div>
         </div>
 
@@ -122,19 +125,23 @@ export default function AdaptiveProfileCard() {
       {/* Behavioral Telemetry Stats Bar */}
       <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0] grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
         <div>
-          <div className="font-poppins font-bold text-lg text-[#2563EB]">{profileData.average_quiz_score}%</div>
+          <div className="font-poppins font-bold text-lg text-[#2563EB]">
+            {hasQuizData ? `${profileData.average_quiz_score}%` : '0%'}
+          </div>
           <div className="text-[10px] font-bold text-[#64748B] uppercase">Quiz Accuracy</div>
         </div>
         <div>
-          <div className="font-poppins font-bold text-lg text-[#0EA5E9]">{intFormat(profileData.average_reading_time)}s</div>
+          <div className="font-poppins font-bold text-lg text-[#0EA5E9]">
+            {hasReadingData ? `${intFormat(profileData.average_reading_time)}s` : '0s'}
+          </div>
           <div className="text-[10px] font-bold text-[#64748B] uppercase">Avg Reading Time</div>
         </div>
         <div>
-          <div className="font-poppins font-bold text-lg text-[#8B5CF6]">{profileData.mindmap_usage}</div>
+          <div className="font-poppins font-bold text-lg text-[#8B5CF6]">{profileData.mindmap_usage || 0}</div>
           <div className="text-[10px] font-bold text-[#64748B] uppercase">Mindmap Views</div>
         </div>
         <div>
-          <div className="font-poppins font-bold text-lg text-[#22C55E]">{profileData.revision_frequency}</div>
+          <div className="font-poppins font-bold text-lg text-[#22C55E]">{profileData.revision_frequency || 0}</div>
           <div className="text-[10px] font-bold text-[#64748B] uppercase">Revisions Done</div>
         </div>
       </div>
