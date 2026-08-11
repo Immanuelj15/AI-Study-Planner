@@ -50,8 +50,8 @@ export default function LoadingSkeleton({ text = "Preparing Your Study Plan..." 
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveStep((prev) => (prev < agentsList.length - 1 ? prev + 1 : prev));
-    }, 750);
+      setActiveStep((prev) => (prev < agentsList.length ? prev + 1 : prev));
+    }, 650);
 
     return () => clearInterval(timer);
   }, []);
