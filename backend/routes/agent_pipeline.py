@@ -21,7 +21,8 @@ def execute_research(
     req: ResearchRequest,
     current_user: User = Depends(get_current_user)
 ):
-    result = autogen_manager.research_agent.execute(req.topic)
+    diff_clean = (req.difficulty or "Medium").strip().capitalize()
+    result = autogen_manager.research_agent.execute(req.topic, difficulty=diff_clean)
     return result
 
 
@@ -31,12 +32,13 @@ def execute_summarize(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    diff_clean = (req.difficulty or "Medium").strip().capitalize()
     # Fetch research if not provided
     research_content = req.research_content
     if not research_content:
-        research_content = autogen_manager.research_agent.execute(req.topic)
+        research_content = autogen_manager.research_agent.execute(req.topic, difficulty=diff_clean)
 
-    summary_data = autogen_manager.summarizer_agent.execute(research_content)
+    summary_data = autogen_manager.summarizer_agent.execute(research_content, difficulty=diff_clean)
     
     # Save to database
     summary_obj = Summary(
@@ -274,18 +276,23 @@ def chat_tutor(
     # Track chat usage in adaptive profile
     adaptive_engine.update_telemetry_event(db, current_user.id, "chat")
 
-    # Generate personalized AI Tutor response using Groq / Research LLM with student profile context
+    diff_clean = (req.difficulty or "Medium").strip().capitalize()
+    
+    # Generate personalized AI Tutor response using Groq / Research LLM with student profile & difficulty level
     tutor_prompt = f"System Context: You are a friendly, encouraging AI Study Tutor for student '{current_user.name}'. " \
+                   f"The topic difficulty level target is '{diff_clean}'. " \
                    f"The student's adaptive learning style is '{profile_obj.learning_style}' and speed is '{profile_obj.learning_speed}'. " \
                    f"Topic: {req.topic}. Student Question: {req.question}. " \
-                   f"Provide a clear, direct, easy-to-understand answer tailored to their learning level with concrete examples."
+                   f"Provide a clear, direct, helpfully tailored answer at the '{diff_clean}' difficulty level with concrete examples. " \
+                   f"NOTE: If the student explicitly asks to 'explain this simply' or requests beginner language, honor the student's request regardless of difficulty setting."
 
-    llm_reply = generate_text(
+    res_tuple = generate_text(
         prompt=tutor_prompt,
-        system_prompt="You are an expert AI Study Tutor. Answer questions directly, concisely, and helpfully."
+        system_prompt=f"You are an expert AI Study Tutor. Answer questions directly, concisely, and helpfully tailored to the {diff_clean} difficulty target."
     )
+    llm_reply = res_tuple[0] if isinstance(res_tuple, tuple) else res_tuple
 
     if not llm_reply or "API call failed" in llm_reply or len(llm_reply.strip()) < 10:
-        llm_reply = f"Great question about {req.topic}! '{req.question}' is a fundamental concept in {req.topic} designed to optimize system performance and maintain key operational invariants."
+        llm_reply = f"Great question about {req.topic}! '{req.question}' is a fundamental concept in {req.topic} ({diff_clean} level) designed to optimize system performance and maintain key operational invariants."
 
     return {"reply": llm_reply}

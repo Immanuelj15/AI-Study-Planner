@@ -47,6 +47,7 @@ class SubjectResponse(BaseModel):
 class ChatTutorRequest(BaseModel):
     topic: str
     question: str
+    difficulty: Optional[str] = "Medium"
 
 class ChatTutorResponse(BaseModel):
     reply: str
@@ -57,6 +58,7 @@ class PlanGenerationRequest(BaseModel):
     exam_date: str
     daily_hours: float
     subjects: List[str]
+    difficulty: Optional[str] = "Medium"
 
 class StudyPlanResponse(BaseModel):
     id: int
@@ -76,6 +78,7 @@ class StudyPlanResponse(BaseModel):
 # --- Multi-Agent Schemas ---
 class ResearchRequest(BaseModel):
     topic: str
+    difficulty: Optional[str] = "Medium"
 
 class ResearchOutput(BaseModel):
     topic: str
@@ -89,6 +92,7 @@ class SummarizeRequest(BaseModel):
     subject_id: int
     topic: str
     research_content: Optional[Dict[str, Any]] = None
+    difficulty: Optional[str] = "Medium"
 
 class SummaryResponse(BaseModel):
     id: Optional[int] = None
@@ -98,12 +102,13 @@ class SummaryResponse(BaseModel):
     bullet_points: List[str]
     mindmap_json: Dict[str, Any]
 
+
 class QuizGenerationRequest(BaseModel):
     subject_id: int
     topic: str
     summary_text: Optional[str] = None
     difficulty: Optional[str] = "Medium"
-    num_questions: Optional[int] = 5
+    num_questions: Optional[int] = 15
 
 class QuizItem(BaseModel):
     id: Optional[int] = None

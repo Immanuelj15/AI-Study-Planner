@@ -49,9 +49,9 @@ export const subjectsAPI = {
 };
 
 export const agentAPI = {
-  research: (topic) => api.post('/research', { topic }),
+  research: (topic, difficulty = "Medium") => api.post('/research', { topic, difficulty }),
   summarize: (data) => api.post('/summarize', data),
-  generateMindmap: (topic) => api.post('/generate-mindmap', { topic }),
+  generateMindmap: (topic, difficulty = "Medium") => api.post('/generate-mindmap', { topic, difficulty }),
   generateQuiz: (data) => api.post('/generate-quiz', data),
   generatePlan: (data) => api.post('/generate-plan', data),
   getStudyPlan: () => api.get('/study-plan'),

@@ -16,28 +16,41 @@ class ResearchAgent:
     def __init__(self, name: str = "Research_Agent"):
         self.name = name
 
-    def execute(self, topic: str) -> dict:
-        logger.info(f"[{self.name}] Initiating research on topic: {topic}")
+    def execute(self, topic: str, difficulty: str = "Medium") -> dict:
+        diff_clean = (difficulty or "Medium").strip().capitalize()
+        if diff_clean not in ["Easy", "Medium", "Hard"]:
+            diff_clean = "Medium"
+
+        logger.info(f"[{self.name}] Initiating difficulty-aware research on '{topic}' (Level: {diff_clean})")
         
+        depth_instruction = "BEGINNER LEVEL: Focus on simple definitions, intuitive analogies, basic building blocks, and introductory examples. Avoid complex mathematical proofs or heavy edge cases."
+        if diff_clean == "Medium":
+            depth_instruction = "INTERMEDIATE LEVEL: Focus on core algorithms, standard implementation patterns, practical applications, and time/space complexity analysis."
+        elif diff_clean == "Hard":
+            depth_instruction = "ADVANCED LEVEL: Focus on internal architectural mechanics, lower/upper bound proofs, concurrency invariants, optimization trade-offs, and complex interview-level edge cases."
+
         system_prompt = (
             "You are an expert AI Academic Research Agent. Output ONLY valid, raw JSON with no markdown wrapping or extra text."
         )
         
         prompt = f"""
-Given the study topic: "{topic}"
+Given the study topic: "{topic}" (Difficulty Target: {diff_clean})
 
-Conduct comprehensive academic research and return a JSON object with EXACTLY this structure:
+Research Depth Directive: {depth_instruction}
+
+Conduct difficulty-tailored academic research and return a JSON object with EXACTLY this structure:
 {{
   "topic": "{topic}",
-  "concepts": ["Concept 1", "Concept 2", "Concept 3", "Concept 4"],
-  "definitions": ["Core definition 1", "Core definition 2"],
+  "difficulty": "{diff_clean}",
+  "concepts": ["Concept 1 tailored to {diff_clean}", "Concept 2", "Concept 3", "Concept 4"],
+  "definitions": ["Core definition 1 for {diff_clean} level", "Core definition 2"],
   "examples": ["Practical code or scenario example 1", "Practical scenario example 2"],
-  "formulas": ["Key formula / algorithm equation 1", "Key equation 2"],
-  "interview_questions": ["Key interview question 1 with brief answer", "Key interview question 2 with brief answer"]
+  "formulas": ["Key formula / equation 1", "Key equation 2"],
+  "interview_questions": ["Technical interview question 1 ({diff_clean} level)", "Technical question 2"]
 }}
 """
         from services.llm_gateway import LLMGateway
-        cache_key = LLMGateway.generate_cache_key(self.name, topic)
+        cache_key = LLMGateway.generate_cache_key(self.name, topic, diff_clean)
         response_str, source = LLMGateway.execute_json(
             agent_name=self.name,
             prompt=prompt,

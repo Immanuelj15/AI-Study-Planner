@@ -25,21 +25,24 @@ export default function SummaryViewer() {
     }
   }, [topicParam, subjectIdParam]);
 
+  const difficultyParam = searchParams.get('difficulty') || 'Medium';
+
   const fetchSummary = async (searchTopic, subId) => {
     if (!searchTopic || !searchTopic.trim()) return;
     setLoading(true);
     try {
       // Step 1: Agent 1 Research
-      const researchRes = await agentAPI.research(searchTopic);
+      const researchRes = await agentAPI.research(searchTopic, difficultyParam);
       // Step 2: Agent 2 Summarizer
       const summarizeRes = await agentAPI.summarize({
         subject_id: subId,
         topic: searchTopic,
-        research_content: researchRes.data
+        research_content: researchRes.data,
+        difficulty: difficultyParam
       });
       setSummaryData(summarizeRes.data);
       adaptiveAPI.trackEvent({ event_type: 'reading', duration_seconds: 120 }).catch(() => {});
-      addToast('Class Notes Ready 📘 Happy Learning!', 'success');
+      addToast(`Class Notes Ready (${difficultyParam} Level) 📘 Happy Learning!`, 'success');
     } catch (err) {
       console.error(err);
       addToast('Something went wrong. Please try again.', 'error');

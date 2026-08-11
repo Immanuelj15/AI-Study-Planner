@@ -16,13 +16,17 @@ class SummarizerAgent:
     def __init__(self, name: str = "Summarizer_Agent"):
         self.name = name
 
-    def execute(self, research_data: Dict[str, Any], student_profile: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    def execute(self, research_data: Dict[str, Any], student_profile: Optional[Dict[str, Any]] = None, difficulty: str = "Medium") -> Dict[str, Any]:
         topic = research_data.get("topic", "Study Topic")
-        logger.info(f"[{self.name}] Summarizing research for topic: {topic}")
+        diff_clean = (difficulty or research_data.get("difficulty") or "Medium").strip().capitalize()
+        if diff_clean not in ["Easy", "Medium", "Hard"]:
+            diff_clean = "Medium"
+
+        logger.info(f"[{self.name}] Summarizing research for topic: '{topic}' (Difficulty Target: {diff_clean})")
         
         system_prompt = (
             f"You are an expert AI Educator & Mind Map Generator. "
-            f"Generate accurate, topic-specific concepts and explanations tailored ONLY to '{topic}'. "
+            f"Generate accurate, topic-specific concepts and explanations tailored ONLY to '{topic}' at the '{diff_clean}' difficulty level. "
             f"Do NOT output generic or irrelevant OS/DB placeholders."
         )
 
@@ -30,25 +34,31 @@ class SummarizerAgent:
         learning_speed = student_profile.get("learning_speed", "Medium") if student_profile else "Medium"
         trend = student_profile.get("improvement_trend", "Stable") if student_profile else "Stable"
 
-        style_instruction = ""
+        diff_directive = "EASY DIFFICULTY: Use simple beginner-friendly vocabulary, clear step-by-step explanations, and fundamental real-world analogies."
+        if diff_clean == "Medium":
+            diff_directive = "MEDIUM DIFFICULTY: Use standard technical terminology, core computational principles, practical implementation examples, and time/space complexity bounds."
+        elif diff_clean == "Hard":
+            diff_directive = "HARD DIFFICULTY: Use advanced domain terminology, deep architectural mechanics, concurrency invariants, lower/upper bound trade-offs, and challenging technical interview edge cases."
+
+        style_instruction = f"{diff_directive} "
         if learning_speed == "Fast" or trend == "Fast Learner":
-            style_instruction = "Tailor for a FAST LEARNER: Use concise notes, highlight advanced invariants, architectural edge cases, and high-frequency technical interview tips."
+            style_instruction += "Tailor for a FAST LEARNER: High-density notes, concise key takeaways, and advanced architectural edge cases."
         elif learning_speed == "Slow" or trend == "Struggling Learner" or trend == "Late Bloomer":
-            style_instruction = "Tailor for a STRUGGLING/SLOW LEARNER: Use step-by-step simple English, clear foundational definitions, multiple real-world analogies, and encouraging guidance."
+            style_instruction += "Tailor for a STRUGGLING/SLOW LEARNER: Step-by-step guidance, clear foundational definitions, and supportive explanations."
         elif learning_style == "Visual":
-            style_instruction = "Tailor for a VISUAL LEARNER: Generate enhanced mindmap nodes with rich visual metaphors and clear hierarchical connections."
+            style_instruction += "Tailor for a VISUAL LEARNER: Rich visual metaphors and clear hierarchical mind map node descriptions."
         elif learning_style == "Practice":
-            style_instruction = "Tailor for a PRACTICE LEARNER: Provide actionable code examples, hands-on exercises, and scenario challenges."
+            style_instruction += "Tailor for a PRACTICE LEARNER: Hands-on code snippets, scenario challenges, and practical exercises."
 
         prompt = f"""
-Given research data on "{topic}":
+Given research data on "{topic}" (Target Level: {diff_clean}):
 {json.dumps(research_data, indent=2)}
 
 Adaptation Directive: {style_instruction}
 
-Create tailored study notes and an educational React Flow mind map JSON specifically explaining "{topic}".
+Create tailored study notes, 4 bullet takeaways, and an educational React Flow mind map JSON specifically explaining "{topic}" at the {diff_clean} level.
 For mind map nodes:
-- Ensure every sub-node contains a title AND a 1-line accurate concept explanation tailored to "{topic}" separated by \\n.
+- Ensure every sub-node contains a title AND a 1-line accurate concept explanation tailored to "{topic}" at the {diff_clean} level separated by \\n.
 - DO NOT use generic OS or DB indexing placeholders unless the topic is actually Operating Systems or Databases.
 
 Return ONLY valid JSON with this EXACT structure:
@@ -80,7 +90,7 @@ Return ONLY valid JSON with this EXACT structure:
 }}
 """
         from services.llm_gateway import LLMGateway
-        cache_key = LLMGateway.generate_cache_key(self.name, topic, learning_style)
+        cache_key = LLMGateway.generate_cache_key(self.name, topic, diff_clean, learning_style)
         response_str, source = LLMGateway.execute_json(
             agent_name=self.name,
             prompt=prompt,

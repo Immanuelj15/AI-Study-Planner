@@ -43,14 +43,16 @@ export default function MindMapViewer() {
     }
   };
 
+  const difficultyParam = searchParams.get('difficulty') || 'Medium';
+
   const fetchMindMap = async (searchTopic) => {
     if (!searchTopic || !searchTopic.trim()) return;
     setLoading(true);
     try {
-      const res = await agentAPI.generateMindmap(searchTopic.trim());
+      const res = await agentAPI.generateMindmap(searchTopic.trim(), difficultyParam);
       setMindmapData(res.data.mindmap_json);
       adaptiveAPI.trackEvent({ event_type: 'mindmap' }).catch(() => {});
-      addToast('Interactive Learning Hub Ready! Click any node to study! 🧠', 'success');
+      addToast(`Interactive Learning Hub Ready (${difficultyParam} Level)! Click any node to study! 🧠`, 'success');
     } catch (err) {
       console.error(err);
       addToast('Something went wrong. Please try again.', 'error');
