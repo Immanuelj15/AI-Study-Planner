@@ -79,8 +79,14 @@ Return ONLY valid JSON with this EXACT structure:
   }}
 }}
 """
-        res_val = call_groq_llm(prompt, system_prompt, agent_name=self.name)
-        response_str, source = res_val if isinstance(res_val, tuple) else (res_val, "REAL_GROQ")
+        from services.llm_gateway import LLMGateway
+        cache_key = LLMGateway.generate_cache_key(self.name, topic, learning_style)
+        response_str, source = LLMGateway.execute_json(
+            agent_name=self.name,
+            prompt=prompt,
+            system_prompt=system_prompt,
+            cache_key=cache_key
+        )
         if response_str:
             try:
                 parsed = json.loads(response_str)

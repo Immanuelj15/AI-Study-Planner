@@ -176,3 +176,19 @@ class AIUsageLog(Base):
     error_type = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
 
+
+class AICache(Base):
+    __tablename__ = "ai_cache"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cache_key = Column(String(255), unique=True, index=True, nullable=False)
+    agent_name = Column(String(100), nullable=False, index=True)
+    content_type = Column(String(50), default="json")
+    response_data = Column(Text, nullable=False)
+    model = Column(String(100), default="llama-3.3-70b-versatile")
+    prompt_version = Column(String(50), default="v1")
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    last_accessed_at = Column(DateTime, default=datetime.datetime.utcnow)
+    hit_count = Column(Integer, default=0)
+
