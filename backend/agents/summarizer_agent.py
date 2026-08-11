@@ -72,12 +72,12 @@ Return ONLY valid JSON with this EXACT structure:
   ],
   "mindmap_json": {{
     "nodes": [
-      {{ "id": "root", "data": {{ "label": "🎯 {topic}" }}, "position": {{ "x": 380, "y": 30 }} }},
-      {{ "id": "def", "data": {{ "label": "📖 Core Definition\\nAccurate 1-line definition of {topic}" }}, "position": {{ "x": 80, "y": 170 }} }},
-      {{ "id": "concepts", "data": {{ "label": "💡 Key Principles\\nCore mechanisms governing {topic}" }}, "position": {{ "x": 380, "y": 170 }} }},
-      {{ "id": "apps", "data": {{ "label": "🚀 Real-World Applications\\nHow {topic} is applied in production systems" }}, "position": {{ "x": 680, "y": 170 }} }},
-      {{ "id": "math", "data": {{ "label": "⚡ Math & Metrics\\nKey equations and complexity bounds for {topic}" }}, "position": {{ "x": 220, "y": 310 }} }},
-      {{ "id": "interview", "data": {{ "label": "💼 Interview Takeaway\\nKey technical question & solution for {topic}" }}, "position": {{ "x": 540, "y": 310 }} }}
+      {{ "id": "root", "data": {{ "label": "{topic}" }}, "position": {{ "x": 380, "y": 30 }} }},
+      {{ "id": "def", "data": {{ "label": "Core Definition\\nAccurate 1-line definition of {topic}" }}, "position": {{ "x": 80, "y": 170 }} }},
+      {{ "id": "concepts", "data": {{ "label": "Key Principles\\nCore mechanisms governing {topic}" }}, "position": {{ "x": 380, "y": 170 }} }},
+      {{ "id": "apps", "data": {{ "label": "Real-World Applications\\nHow {topic} is applied in production systems" }}, "position": {{ "x": 680, "y": 170 }} }},
+      {{ "id": "math", "data": {{ "label": "Math & Metrics\\nKey equations and complexity bounds for {topic}" }}, "position": {{ "x": 220, "y": 310 }} }},
+      {{ "id": "interview", "data": {{ "label": "Interview Takeaway\\nKey technical question & solution for {topic}" }}, "position": {{ "x": 540, "y": 310 }} }}
     ],
     "edges": [
       {{ "id": "e-root-def", "source": "root", "target": "def", "animated": true }},
@@ -172,32 +172,32 @@ Return ONLY valid JSON with this EXACT structure:
             "nodes": [
                 {
                     "id": "root",
-                    "data": {"label": f"🎯 {topic}"},
+                    "data": {"label": f"{topic}"},
                     "position": {"x": 380, "y": 30}
                 },
                 {
                     "id": "def",
-                    "data": {"label": f"📖 Core Definition\n{def_short}"},
+                    "data": {"label": f"Core Definition\n{def_short}"},
                     "position": {"x": 80, "y": 170}
                 },
                 {
                     "id": "concepts",
-                    "data": {"label": f"💡 Key Principles\n{concept_short}"},
+                    "data": {"label": f"Key Principles\n{concept_short}"},
                     "position": {"x": 380, "y": 170}
                 },
                 {
                     "id": "apps",
-                    "data": {"label": f"🚀 Applications\n{app_short}"},
+                    "data": {"label": f"Applications\n{app_short}"},
                     "position": {"x": 680, "y": 170}
                 },
                 {
                     "id": "math",
-                    "data": {"label": f"⚡ Math & Complexity\n{math_short}"},
+                    "data": {"label": f"Math & Complexity\n{math_short}"},
                     "position": {"x": 220, "y": 310}
                 },
                 {
                     "id": "interview",
-                    "data": {"label": f"💼 Interview Focus\n{interview_short}"},
+                    "data": {"label": f"Interview Focus\n{interview_short}"},
                     "position": {"x": 540, "y": 310}
                 }
             ],

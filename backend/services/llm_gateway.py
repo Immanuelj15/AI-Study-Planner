@@ -134,20 +134,20 @@ class LLMGateway:
         if cache_key:
             cached_data, is_hit = cls.get_cached_response(cache_key)
             if is_hit:
-                logger.info(f"[{agent_name}] 🔵 LLM Gateway: Cache Hit! Returning cached JSON.")
+                logger.info(f"[{agent_name}] LLM Gateway: Cache Hit! Returning cached JSON.")
                 cls.log_usage(agent_name, 0, 0, 0, 1.0, "200 OK (CACHED)", "CACHE", 0, 1, user_id=user_id)
                 return cached_data, "CACHE"
 
         # 2. Check Token Budget
         today_tokens = cls.get_today_tokens_used()
         if today_tokens >= GROQ_DAILY_TOKEN_BUDGET:
-            logger.warning(f"[{agent_name}] 🟡 LLM Gateway: TOKEN_BUDGET_EXCEEDED ({today_tokens}/{GROQ_DAILY_TOKEN_BUDGET}). Using fallback.")
+            logger.warning(f"[{agent_name}] LLM Gateway: TOKEN_BUDGET_EXCEEDED ({today_tokens}/{GROQ_DAILY_TOKEN_BUDGET}). Using fallback.")
             cls.log_usage(agent_name, 0, 0, 0, 0.0, "BUDGET_EXCEEDED", "FALLBACK", 1, 0, error_type="Application token budget exhausted", user_id=user_id)
             return "", "FALLBACK"
 
         api_key = settings.GROQ_API_KEY or os.environ.get("GROQ_API_KEY", "")
         if not api_key or api_key.startswith("gsk_demo"):
-            logger.info(f"[{agent_name}] 🟡 LLM Gateway: API key demo mode. Using fallback.")
+            logger.info(f"[{agent_name}] LLM Gateway: API key demo mode. Using fallback.")
             return "", "FALLBACK"
 
         # 3. Call Groq with Transient Retry Logic (Max 2 retries)
@@ -190,7 +190,7 @@ class LLMGateway:
                     cls.save_to_cache(cache_key, agent_name, clean_json, "json")
 
                 cls.log_usage(agent_name, p_tokens, c_tokens, t_tokens, elapsed_ms, "200 OK", "REAL_GROQ", 0, 0, user_id=user_id)
-                logger.info(f"[{agent_name}] 🟢 LLM Gateway: Successful Real Groq Call ({t_tokens} tokens, {elapsed_ms}ms)")
+                logger.info(f"[{agent_name}] LLM Gateway: Successful Real Groq Call ({t_tokens} tokens, {elapsed_ms}ms)")
                 return clean_json, "REAL_GROQ"
 
             except Exception as e:
@@ -199,7 +199,7 @@ class LLMGateway:
 
                 # HTTP 429 Quota Exceeded -> NO RETRY, IMMEDIATELY LOG & FALLBACK
                 if "429" in err_msg or "rate_limit" in err_msg.lower():
-                    logger.warning(f"[{agent_name}] 🟡 LLM Gateway HTTP 429 Rate Limit Exceeded. Using smart fallback.")
+                    logger.warning(f"[{agent_name}] LLM Gateway HTTP 429 Rate Limit Exceeded. Using smart fallback.")
                     cls.log_usage(agent_name, 0, 0, 0, elapsed_ms, "429 RATE_LIMIT", "FALLBACK", 1, 0, error_type=err_msg[:250], user_id=user_id)
                     return "", "FALLBACK"
 
@@ -209,7 +209,7 @@ class LLMGateway:
                     logger.info(f"[{agent_name}] Transient LLM error ({err_msg}). Retrying in {backoff:.2f}s (Attempt {attempt+1}/{max_retries})...")
                     time.sleep(backoff)
                 else:
-                    logger.warning(f"[{agent_name}] 🟡 LLM Gateway Call Failed after {max_retries} retries: {err_msg}")
+                    logger.warning(f"[{agent_name}] LLM Gateway Call Failed after {max_retries} retries: {err_msg}")
                     cls.log_usage(agent_name, 0, 0, 0, elapsed_ms, "API_ERROR", "FALLBACK", 1, 0, error_type=err_msg[:250], user_id=user_id)
 
         return "", "FALLBACK"
