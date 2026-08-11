@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
-import { agentAPI, subjectsAPI } from '../services/api';
+import { agentAPI, subjectsAPI, adaptiveAPI } from '../services/api';
 import MindMapComponent from '../components/MindMapComponent';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import ChatTutor from '../components/ChatTutor';
@@ -49,6 +49,7 @@ export default function MindMapViewer() {
     try {
       const res = await agentAPI.generateMindmap(searchTopic.trim());
       setMindmapData(res.data.mindmap_json);
+      adaptiveAPI.trackEvent({ event_type: 'mindmap' }).catch(() => {});
       addToast('Interactive Learning Hub Ready! Click any node to study! 🧠', 'success');
     } catch (err) {
       console.error(err);

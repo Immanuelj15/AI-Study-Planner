@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
-import { agentAPI } from '../services/api';
+import { agentAPI, adaptiveAPI } from '../services/api';
 import SummaryCard from '../components/SummaryCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { useToast } from '../context/ToastContext';
@@ -38,6 +38,7 @@ export default function SummaryViewer() {
         research_content: researchRes.data
       });
       setSummaryData(summarizeRes.data);
+      adaptiveAPI.trackEvent({ event_type: 'reading', duration_seconds: 120 }).catch(() => {});
       addToast('Class Notes Ready 📘 Happy Learning!', 'success');
     } catch (err) {
       console.error(err);
