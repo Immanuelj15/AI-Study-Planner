@@ -554,18 +554,36 @@ export default function FocusModeContainer({
             </div>
 
             {/* Interruption Stats Summary */}
-            <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-slate-800/80 border border-slate-700 text-xs">
-              <div>
-                <div className="text-[10px] font-bold uppercase text-slate-400">Time Spent</div>
-                <div className="font-poppins font-bold text-blue-400 text-base mt-1">{formatTime(secondsElapsed)}</div>
+            <div className="space-y-3 p-4 rounded-2xl bg-slate-800/80 border border-slate-700 text-xs">
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <div className="text-[10px] font-bold uppercase text-slate-400">Time Spent</div>
+                  <div className="font-poppins font-bold text-blue-400 text-base mt-1">{formatTime(secondsElapsed)}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold uppercase text-slate-400">Interruptions</div>
+                  <div className="font-poppins font-bold text-amber-400 text-base mt-1">{totalInterruptions}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold uppercase text-slate-400">Progress</div>
+                  <div className="font-poppins font-bold text-emerald-400 text-base mt-1">{progressPct}%</div>
+                </div>
               </div>
-              <div>
-                <div className="text-[10px] font-bold uppercase text-slate-400">Interruptions</div>
-                <div className="font-poppins font-bold text-amber-400 text-base mt-1">{totalInterruptions}</div>
-              </div>
-              <div>
-                <div className="text-[10px] font-bold uppercase text-slate-400">Progress</div>
-                <div className="font-poppins font-bold text-emerald-400 text-base mt-1">{progressPct}%</div>
+
+              {/* Detailed Breakdown */}
+              <div className="pt-2 border-t border-slate-700/80 grid grid-cols-3 gap-2 text-[10px] font-medium text-slate-300">
+                <div className="p-1.5 rounded-lg bg-slate-900/60 text-center">
+                  <span className="text-slate-400 block text-[9px]">Tab Switches</span>
+                  <span className="font-bold text-amber-300">{tabSwitchCount}</span>
+                </div>
+                <div className="p-1.5 rounded-lg bg-slate-900/60 text-center">
+                  <span className="text-slate-400 block text-[9px]">Window Blurs</span>
+                  <span className="font-bold text-amber-300">{blurCount}</span>
+                </div>
+                <div className="p-1.5 rounded-lg bg-slate-900/60 text-center">
+                  <span className="text-slate-400 block text-[9px]">Fullscreen Exits</span>
+                  <span className="font-bold text-amber-300">{fullscreenExitCount}</span>
+                </div>
               </div>
             </div>
 
@@ -621,22 +639,40 @@ export default function FocusModeContainer({
             </div>
 
             {/* Session Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs text-center p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
-              <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                <div className="text-[10px] text-[#64748B] font-bold uppercase">Planned</div>
-                <div className="font-poppins font-bold text-[#1E293B] mt-0.5">{plannedMinutes} mins</div>
+            <div className="space-y-3 p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs text-center">
+                <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Planned</div>
+                  <div className="font-poppins font-bold text-[#1E293B] mt-0.5">{plannedMinutes} mins</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Focused</div>
+                  <div className="font-poppins font-bold text-[#2563EB] mt-0.5">{formatTime(secondsElapsed)}</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Interruptions</div>
+                  <div className="font-poppins font-bold text-[#D97706] mt-0.5">{totalInterruptions}</div>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
+                  <div className="text-[10px] text-[#64748B] font-bold uppercase">Completion</div>
+                  <div className="font-poppins font-bold text-[#22C55E] mt-0.5">{Math.min(100, Math.round((secondsElapsed / (plannedMinutes * 60)) * 100))}%</div>
+                </div>
               </div>
-              <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                <div className="text-[10px] text-[#64748B] font-bold uppercase">Focused</div>
-                <div className="font-poppins font-bold text-[#2563EB] mt-0.5">{formatTime(secondsElapsed)}</div>
-              </div>
-              <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                <div className="text-[10px] text-[#64748B] font-bold uppercase">Interruptions</div>
-                <div className="font-poppins font-bold text-[#D97706] mt-0.5">{totalInterruptions}</div>
-              </div>
-              <div className="p-2.5 rounded-xl bg-white border border-[#E2E8F0]">
-                <div className="text-[10px] text-[#64748B] font-bold uppercase">Completion</div>
-                <div className="font-poppins font-bold text-[#22C55E] mt-0.5">{Math.min(100, Math.round((secondsElapsed / (plannedMinutes * 60)) * 100))}%</div>
+
+              {/* Detailed Breakdown */}
+              <div className="pt-2 border-t border-[#E2E8F0] grid grid-cols-3 gap-2 text-[10px] font-medium text-[#64748B]">
+                <div className="p-1.5 rounded-lg bg-white border border-[#E2E8F0] text-center">
+                  <span className="text-[#64748B] block text-[9px]">Tab Switches</span>
+                  <span className="font-bold text-[#D97706]">{tabSwitchCount}</span>
+                </div>
+                <div className="p-1.5 rounded-lg bg-white border border-[#E2E8F0] text-center">
+                  <span className="text-[#64748B] block text-[9px]">Window Blurs</span>
+                  <span className="font-bold text-[#D97706]">{blurCount}</span>
+                </div>
+                <div className="p-1.5 rounded-lg bg-white border border-[#E2E8F0] text-center">
+                  <span className="text-[#64748B] block text-[9px]">Fullscreen Exits</span>
+                  <span className="font-bold text-[#D97706]">{fullscreenExitCount}</span>
+                </div>
               </div>
             </div>
 
