@@ -17,7 +17,7 @@ from services.rag_service import rag_service
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/rag", tags=["RAG (Retrieval-Augmented Generation)"])
+router = APIRouter(prefix="/rag", tags=["RAG (Retrieval-Augmented Generation)"])
 
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "uploaded_documents")
 os.makedirs(UPLOAD_DIR, exist_ok=True)

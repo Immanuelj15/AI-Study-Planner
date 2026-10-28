@@ -64,6 +64,7 @@ app.include_router(analytics.router)
 app.include_router(adaptive.router)
 app.include_router(focus.router)
 app.include_router(rag.router)
+app.include_router(rag.router, prefix="/api")
 
 @app.get("/")
 def root():
