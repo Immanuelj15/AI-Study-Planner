@@ -35,6 +35,7 @@ class User(Base):
     repetition_schedules = relationship("SpacedRepetitionSchedule", back_populates="user", cascade="all, delete-orphan")
     assignments = relationship("AssignmentSubmission", back_populates="user", cascade="all, delete-orphan")
     achievements = relationship("StudentAchievement", back_populates="user", cascade="all, delete-orphan")
+    llm_configs = relationship("LLMProviderConfig", back_populates="user", cascade="all, delete-orphan")
 
 
 class Subject(Base):
@@ -180,6 +181,8 @@ class AIUsageLog(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    college_id = Column(String(100), nullable=True, index=True)
+    provider = Column(String(50), default="groq")
     agent_name = Column(String(100), nullable=False, index=True)
     model = Column(String(100), default="llama-3.3-70b-versatile")
     prompt_tokens = Column(Integer, default=0)
@@ -429,4 +432,22 @@ class StudentAchievement(Base):
     earned_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     user = relationship("User", back_populates="achievements")
+ 
+ 
+class LLMProviderConfig(Base):
+    __tablename__ = "llm_provider_configs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
+    college_id = Column(String(100), nullable=True, index=True)
+    scope = Column(String(50), default="personal", index=True)  # personal, college
+    provider = Column(String(50), nullable=False)  # groq, openai, gemini, openrouter, ollama
+    encrypted_api_key = Column(Text, nullable=True)  # Fernet encrypted
+    model_name = Column(String(100), nullable=False)
+    api_base_url = Column(String(255), nullable=True)  # For ollama (e.g. http://localhost:11434) or custom
+    is_active = Column(Integer, default=1)  # 1 for active, 0 for disabled
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship("User", back_populates="llm_configs")
 

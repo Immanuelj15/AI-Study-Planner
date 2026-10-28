@@ -68,7 +68,13 @@ Return your response in pure JSON format with these exact keys:
 }}
 Do NOT wrap with markdown code fences. Return valid JSON only."""
 
-        res = generate_text(prompt=prompt, system_prompt="You are a strict yet encouraging university academic reviewer.")
+        res = generate_text(
+            prompt=prompt,
+            system_prompt="You are a strict yet encouraging university academic reviewer.",
+            agent_name="Assignment_Evaluator",
+            user_id=user.id if user else None,
+            college_id=user.college_id if user else None
+        )
         raw_text = res[0] if isinstance(res, tuple) else res
 
         # Parse JSON

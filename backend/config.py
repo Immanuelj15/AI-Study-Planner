@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
     DATABASE_URL: str = "sqlite:///./study_planner.db"
+    LLM_ENCRYPTION_KEY: str = os.getenv("LLM_ENCRYPTION_KEY", "")
+    DEFAULT_LLM_PROVIDER: str = "groq"
+    DEFAULT_LLM_MODEL: str = "llama-3.3-70b-versatile"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

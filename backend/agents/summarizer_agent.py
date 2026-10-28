@@ -16,7 +16,7 @@ class SummarizerAgent:
     def __init__(self, name: str = "Summarizer_Agent"):
         self.name = name
 
-    def execute(self, research_data: Dict[str, Any], student_profile: Optional[Dict[str, Any]] = None, difficulty: str = "Medium", rag_context: Optional[str] = None) -> Dict[str, Any]:
+    def execute(self, research_data: Dict[str, Any], student_profile: Optional[Dict[str, Any]] = None, difficulty: str = "Medium", rag_context: Optional[str] = None, user_id: Optional[int] = None) -> Dict[str, Any]:
         topic = research_data.get("topic", "Study Topic")
         diff_clean = (difficulty or research_data.get("difficulty") or "Medium").strip().capitalize()
         if diff_clean not in ["Easy", "Medium", "Hard"]:
@@ -97,7 +97,8 @@ Return ONLY valid JSON with this EXACT structure:
             agent_name=self.name,
             prompt=prompt,
             system_prompt=system_prompt,
-            cache_key=cache_key
+            cache_key=cache_key,
+            user_id=user_id
         )
         if response_str:
             try:

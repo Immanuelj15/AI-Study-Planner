@@ -201,7 +201,8 @@ Please generate a comprehensive, structured response at the {diff_clean} difficu
             prompt=user_prompt,
             system_prompt=system_prompt,
             cache_key=cache_key,
-            user_id=user.id
+            user_id=user.id,
+            college_id=user.college_id
         )
 
         # If LLM returned empty or fallback (e.g. rate limit or demo key)

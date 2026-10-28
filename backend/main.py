@@ -8,7 +8,7 @@ from services.auth import get_password_hash
 from routes import (
     auth, subjects, agent_pipeline, quiz, dashboard, analytics,
     adaptive, focus, rag, weakness, exam_prep, faculty, revision,
-    question_paper, assignment, study_groups, gamification
+    question_paper, assignment, study_groups, gamification, llm_config
 )
 from database.init_rag_db import init_rag_tables
 
@@ -76,7 +76,8 @@ routers_to_register = [
     question_paper.router,
     assignment.router,
     study_groups.router,
-    gamification.router
+    gamification.router,
+    llm_config.router
 ]
 
 for r in routers_to_register:

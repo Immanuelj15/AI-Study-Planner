@@ -150,4 +150,16 @@ export const gamificationAPI = {
   recordActivity: (activityType) => api.post('/gamification/record-activity', null, { params: { activity_type: activityType } }),
 };
 
+export const llmConfigAPI = {
+  getProviders: () => api.get('/llm/providers'),
+  getConfig: () => api.get('/llm/config'),
+  saveConfig: (data) => api.post('/llm/config', data),
+  deleteConfig: () => api.delete('/llm/config'),
+  testConnection: (data) => api.post('/llm/test-connection', data),
+  getCollegeConfig: () => api.get('/llm/college-config'),
+  saveCollegeConfig: (data) => api.post('/llm/college-config', data),
+  deleteCollegeConfig: () => api.delete('/llm/college-config'),
+  getUsage: () => api.get('/llm/usage'),
+};
+
 export default api;

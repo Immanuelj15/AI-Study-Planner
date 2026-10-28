@@ -26,7 +26,8 @@ class QuizAgent:
         num_questions: int = 15,
         existing_questions: List[str] = None,
         student_profile: Optional[Dict[str, Any]] = None,
-        rag_context: Optional[str] = None
+        rag_context: Optional[str] = None,
+        user_id: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         if existing_questions is None:
             existing_questions = []
@@ -95,7 +96,8 @@ Return ONLY a JSON object with this exact structure:
             agent_name=self.name,
             prompt=prompt,
             system_prompt=system_prompt,
-            cache_key=cache_key
+            cache_key=cache_key,
+            user_id=user_id
         )
         parsed_questions = []
 

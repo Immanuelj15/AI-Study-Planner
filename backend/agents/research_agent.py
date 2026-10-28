@@ -16,7 +16,7 @@ class ResearchAgent:
     def __init__(self, name: str = "Research_Agent"):
         self.name = name
 
-    def execute(self, topic: str, difficulty: str = "Medium", rag_context: str = None) -> dict:
+    def execute(self, topic: str, difficulty: str = "Medium", rag_context: str = None, user_id: int = None) -> dict:
         diff_clean = (difficulty or "Medium").strip().capitalize()
         if diff_clean not in ["Easy", "Medium", "Hard"]:
             diff_clean = "Medium"
@@ -58,7 +58,8 @@ Conduct difficulty-tailored academic research and return a JSON object with EXAC
             agent_name=self.name,
             prompt=prompt,
             system_prompt=system_prompt,
-            cache_key=cache_key
+            cache_key=cache_key,
+            user_id=user_id
         )
         
         if response_str:

@@ -22,7 +22,8 @@ class SchedulerAgent:
         subjects: List[Dict[str, Any]],
         exam_date_str: str,
         daily_hours: float,
-        student_profile: Optional[Dict[str, Any]] = None
+        student_profile: Optional[Dict[str, Any]] = None,
+        user_id: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         logger.info(f"[{self.name}] Generating study schedule for {len(subjects)} subjects up to exam: {exam_date_str}")
         
@@ -74,7 +75,8 @@ Return ONLY a JSON object with this exact structure:
             agent_name=self.name,
             prompt=prompt,
             system_prompt=system_prompt,
-            cache_key=cache_key
+            cache_key=cache_key,
+            user_id=user_id
         )
         if response_str:
             try:

@@ -22,7 +22,7 @@ def execute_research(
     current_user: User = Depends(get_current_user)
 ):
     diff_clean = (req.difficulty or "Medium").strip().capitalize()
-    result = autogen_manager.research_agent.execute(req.topic, difficulty=diff_clean)
+    result = autogen_manager.research_agent.execute(req.topic, difficulty=diff_clean, user_id=current_user.id)
     return result
 
 
@@ -36,9 +36,9 @@ def execute_summarize(
     # Fetch research if not provided
     research_content = req.research_content
     if not research_content:
-        research_content = autogen_manager.research_agent.execute(req.topic, difficulty=diff_clean)
+        research_content = autogen_manager.research_agent.execute(req.topic, difficulty=diff_clean, user_id=current_user.id)
 
-    summary_data = autogen_manager.summarizer_agent.execute(research_content, difficulty=diff_clean)
+    summary_data = autogen_manager.summarizer_agent.execute(research_content, difficulty=diff_clean, user_id=current_user.id)
     
     # Save to database
     summary_obj = Summary(
@@ -67,8 +67,8 @@ def generate_mindmap(
     req: ResearchRequest,
     current_user: User = Depends(get_current_user)
 ):
-    research_data = autogen_manager.research_agent.execute(req.topic)
-    summary_data = autogen_manager.summarizer_agent.execute(research_data)
+    research_data = autogen_manager.research_agent.execute(req.topic, user_id=current_user.id)
+    summary_data = autogen_manager.summarizer_agent.execute(research_data, user_id=current_user.id)
     return {
         "topic": req.topic,
         "mindmap_json": summary_data.get("mindmap_json", {})
@@ -95,7 +95,8 @@ def generate_quiz(
         summary_text=req.summary_text or "",
         difficulty=req.difficulty or "Medium",
         num_questions=15,
-        existing_questions=existing_questions
+        existing_questions=existing_questions,
+        user_id=current_user.id
     )
 
     saved_quizzes = []
@@ -170,7 +171,8 @@ def generate_study_plan(
         subjects=subject_objs,
         exam_date_str=req.exam_date,
         daily_hours=req.daily_hours,
-        student_profile=profile_dict
+        student_profile=profile_dict,
+        user_id=current_user.id
     )
 
     created_plans = []
@@ -323,7 +325,8 @@ def chat_tutor(
 
     res_tuple = generate_text(
         prompt=tutor_prompt,
-        system_prompt=f"You are an expert AI Study Tutor. Answer questions directly, helpfully, adhering to depth: {depth_val} and {lang_instruction}"
+        system_prompt=f"You are an expert AI Study Tutor. Answer questions directly, helpfully, adhering to depth: {depth_val} and {lang_instruction}",
+        user_id=current_user.id
     )
     llm_reply = res_tuple[0] if isinstance(res_tuple, tuple) else res_tuple
 

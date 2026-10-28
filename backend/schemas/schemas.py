@@ -225,3 +225,48 @@ class FocusSessionResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
+# --- Multi-Provider LLM Schemas ---
+class LLMProviderConfigRequest(BaseModel):
+    provider: str
+    api_key: Optional[str] = None  # Blank if unchanged or not required
+    model_name: str
+    api_base_url: Optional[str] = None
+
+class LLMProviderConfigResponse(BaseModel):
+    id: Optional[int] = None
+    scope: str
+    provider: str
+    model_name: str
+    api_base_url: Optional[str] = None
+    masked_api_key: Optional[str] = None
+    has_api_key: bool = False
+    is_active: bool = True
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+class LLMActiveConfigResponse(BaseModel):
+    effective_provider: str
+    effective_model: str
+    effective_scope: str  # "PERSONAL", "COLLEGE", "PLATFORM_DEFAULT"
+    masked_api_key: Optional[str] = None
+    has_key: bool = False
+    personal_config: Optional[LLMProviderConfigResponse] = None
+    college_config: Optional[LLMProviderConfigResponse] = None
+    platform_default_provider: str
+    platform_default_model: str
+
+class LLMTestConnectionRequest(BaseModel):
+    provider: str
+    api_key: Optional[str] = None
+    model_name: str
+    api_base_url: Optional[str] = None
+    use_stored_key: Optional[bool] = False
+
+class LLMTestConnectionResponse(BaseModel):
+    success: bool
+    message: str
+    latency_ms: float
+    provider: str
+    model: str
+

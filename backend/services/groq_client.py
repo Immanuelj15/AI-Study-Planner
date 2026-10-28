@@ -57,15 +57,15 @@ def get_today_token_usage() -> int:
 
 from services.llm_gateway import LLMGateway
 
-def call_groq_llm(prompt: str, system_prompt: str = "You are an expert AI tutor and study planner.", agent_name: str = "Agent", user_id: int = None) -> tuple[str, str]:
+def call_groq_llm(prompt: str, system_prompt: str = "You are an expert AI tutor and study planner.", agent_name: str = "Agent", user_id: int = None, college_id: str = None) -> tuple[str, str]:
     """
     Delegates JSON requests to the centralized production LLMGateway.
     """
-    return LLMGateway.execute_json(agent_name=agent_name, prompt=prompt, system_prompt=system_prompt, user_id=user_id)
+    return LLMGateway.execute_json(agent_name=agent_name, prompt=prompt, system_prompt=system_prompt, user_id=user_id, college_id=college_id)
 
 
-def generate_text(prompt: str, system_prompt: str = "You are an expert AI Study Tutor.", agent_name: str = "AI_Tutor", user_id: int = None) -> tuple[str, str]:
+def generate_text(prompt: str, system_prompt: str = "You are an expert AI Study Tutor.", agent_name: str = "AI_Tutor", user_id: int = None, college_id: str = None) -> tuple[str, str]:
     """
     Delegates text Q&A requests to the centralized production LLMGateway.
     """
-    return LLMGateway.execute_text(agent_name=agent_name, prompt=prompt, system_prompt=system_prompt, user_id=user_id)
+    return LLMGateway.execute_text(agent_name=agent_name, prompt=prompt, system_prompt=system_prompt, user_id=user_id, college_id=college_id)
