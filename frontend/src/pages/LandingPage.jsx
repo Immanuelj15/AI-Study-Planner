@@ -1159,73 +1159,107 @@ export default function LandingPage() {
 
 
       {/* =========================================================
-          SECTION 8: FINAL CTA (MODERN LUXURY AI STUDIO AESTHETIC)
+          SECTION 8: FINAL CTA (MODERN LUXURY AI STUDIO AESTHETIC WITH VISUAL)
           ========================================================= */}
       <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-        <div className="rounded-3xl p-10 sm:p-16 lg:p-20 bg-[#0B0F19] text-white text-center space-y-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+        <div className="rounded-3xl p-8 sm:p-12 lg:p-14 bg-[#0B0F19] text-white border border-slate-800 shadow-2xl relative overflow-hidden">
           
           {/* Ambient Ethereal Glow & Technical Grid */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-blue-600/30 via-indigo-600/15 to-transparent blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-1/4 w-[600px] h-[350px] bg-gradient-to-b from-blue-600/25 via-indigo-600/15 to-transparent blur-3xl pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:32px_32px] opacity-25 pointer-events-none" />
 
-          {/* Badge */}
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              <span>Start Learning for Free Today</span>
-            </div>
-          </div>
-
-          {/* Heading */}
-          <div className="space-y-4 max-w-2xl mx-auto relative z-10">
-            <h2 className="font-poppins text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15]">
-              Ready to Transform the<br className="hidden sm:inline" />{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-300">
-                Way You Learn?
-              </span>
-            </h2>
-            <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
-              Start your personalized learning journey with AI-powered study tools designed for your academic success.
-            </p>
-          </div>
-
-          {/* Trust Checkmarks */}
-          <div className="relative z-10 flex flex-wrap items-center justify-center gap-6 text-xs font-medium text-slate-300 pt-1">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                <Check className="w-3 h-3 stroke-[3]" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+            
+            {/* Left Content (7 Cols) */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+                <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                <span>Start Learning for Free Today</span>
               </div>
-              <span>Free syllabus onboarding</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
-                <Check className="w-3 h-3 stroke-[3]" />
-              </div>
-              <span>6 Autonomous AI agents</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center">
-                <Check className="w-3 h-3 stroke-[3]" />
-              </div>
-              <span>No credit card required</span>
-            </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="pt-2 relative z-10 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              to="/register"
-              className="px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-poppins font-bold text-sm shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all flex items-center gap-2 group"
-            >
-              <span>Get Started for Free</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              to="/login"
-              className="px-6 py-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 hover:text-white font-poppins font-semibold text-sm border border-slate-700/80 backdrop-blur-md transition-all"
-            >
-              Sign In to Account
-            </Link>
+              {/* Heading */}
+              <h2 className="font-poppins text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-[1.15]">
+                Ready to Transform the<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-300">
+                  Way You Learn?
+                </span>
+              </h2>
+
+              {/* Description */}
+              <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg">
+                Start your personalized learning journey with AI-powered study tools designed for your academic success.
+              </p>
+
+              {/* Trust Checkmarks */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-medium text-slate-300 pt-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  </div>
+                  <span>Free syllabus onboarding</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  </div>
+                  <span>6 Autonomous AI agents</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center">
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  </div>
+                  <span>No credit card required</span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Link
+                  to="/register"
+                  className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-poppins font-bold text-sm shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all flex items-center gap-2 group"
+                >
+                  <span>Get Started for Free</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  to="/login"
+                  className="px-5 py-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 hover:text-white font-poppins font-semibold text-sm border border-slate-700/80 backdrop-blur-md transition-all"
+                >
+                  Sign In to Account
+                </Link>
+              </div>
+
+            </div>
+
+            {/* Right Visual Image (5 Cols) */}
+            <div className="lg:col-span-5 relative flex justify-center">
+              <div className="relative group max-w-sm sm:max-w-md w-full">
+                {/* Glowing border glow effect behind image */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-600 rounded-3xl blur-lg opacity-40 group-hover:opacity-60 transition duration-500" />
+                
+                {/* Image Card Container */}
+                <div className="relative rounded-2xl overflow-hidden border border-blue-500/30 shadow-2xl bg-slate-900/90">
+                  <img
+                    src="/cta-illustration.jpg"
+                    alt="AI Study Platform Interface"
+                    className="w-full h-auto object-cover transform group-hover:scale-102 transition duration-500"
+                    loading="lazy"
+                  />
+
+                  {/* Floating Metric Pill Overlay */}
+                  <div className="absolute bottom-3 left-3 right-3 p-2.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-700/60 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="font-bold text-slate-200">Autonomous Study Engine</span>
+                    </div>
+                    <span className="text-[11px] font-extrabold text-blue-400">98% Mastery</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
         </div>
