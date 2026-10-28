@@ -10,6 +10,10 @@ class User(Base):
     name = Column(String(100), nullable=False)
     email = Column(String(150), unique=True, index=True, nullable=False)
     password = Column(String(255), nullable=False)
+    role = Column(String(50), default="Student") # Student, Faculty, College Admin
+    college_id = Column(String(100), default="College_Main", index=True)
+    department = Column(String(100), default="Computer Science")
+    semester = Column(Integer, default=1)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     subjects = relationship("Subject", back_populates="user", cascade="all, delete-orphan")
@@ -18,6 +22,8 @@ class User(Base):
     learning_profile = relationship("StudentLearningProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     focus_sessions = relationship("FocusSession", back_populates="user", cascade="all, delete-orphan")
     ai_logs = relationship("AIUsageLog", backref="user", cascade="all, delete-orphan")
+    rag_documents = relationship("RAGDocument", back_populates="owner", cascade="all, delete-orphan")
+    rag_queries = relationship("RAGQueryLog", back_populates="user", cascade="all, delete-orphan")
 
 
 class Subject(Base):
@@ -191,4 +197,53 @@ class AICache(Base):
     expires_at = Column(DateTime, nullable=False, index=True)
     last_accessed_at = Column(DateTime, default=datetime.datetime.utcnow)
     hit_count = Column(Integer, default=0)
+
+
+class RAGDocument(Base):
+    __tablename__ = "rag_documents"
+
+    id = Column(Integer, primary_key=True, index=True)
+    document_id = Column(String(64), unique=True, index=True, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    college_id = Column(String(100), nullable=False, index=True)
+    department = Column(String(100), nullable=True)
+    course_name = Column(String(150), nullable=True)
+    semester = Column(Integer, nullable=True)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=True)
+    subject_name = Column(String(150), nullable=False, index=True)
+    unit_number = Column(Integer, nullable=True)
+    academic_year = Column(String(50), nullable=True)
+    document_type = Column(String(100), default="Syllabus") # Syllabus, Subject Notes, Unit Material, Question Paper, Faculty Resource
+    filename = Column(String(255), nullable=False)
+    file_path = Column(String(500), nullable=False)
+    file_size_bytes = Column(Integer, default=0)
+    upload_date = Column(DateTime, default=datetime.datetime.utcnow)
+    processing_status = Column(String(50), default="Uploaded", index=True) # Uploaded, Processing, Ready, Failed
+    error_message = Column(Text, nullable=True)
+    total_chunks = Column(Integer, default=0)
+    is_official = Column(Integer, default=0) # 1 if uploaded by Faculty/Admin, 0 if personal Student upload
+    is_scanned_pdf = Column(Integer, default=0)
+    ocr_applied = Column(Integer, default=0)
+
+    owner = relationship("User", back_populates="rag_documents")
+    subject = relationship("Subject")
+
+
+class RAGQueryLog(Base):
+    __tablename__ = "rag_query_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    college_id = Column(String(100), nullable=False, index=True)
+    subject_name = Column(String(150), nullable=False)
+    unit_number = Column(Integer, nullable=True)
+    difficulty = Column(String(50), default="Medium")
+    query_text = Column(Text, nullable=False)
+    retrieved_chunks_count = Column(Integer, default=0)
+    response_text = Column(Text, nullable=False)
+    sources_json = Column(Text, nullable=True) # JSON array of citations
+    tokens_used = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
+
+    user = relationship("User", back_populates="rag_queries")
 

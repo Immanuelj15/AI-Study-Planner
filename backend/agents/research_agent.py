@@ -16,18 +16,20 @@ class ResearchAgent:
     def __init__(self, name: str = "Research_Agent"):
         self.name = name
 
-    def execute(self, topic: str, difficulty: str = "Medium") -> dict:
+    def execute(self, topic: str, difficulty: str = "Medium", rag_context: str = None) -> dict:
         diff_clean = (difficulty or "Medium").strip().capitalize()
         if diff_clean not in ["Easy", "Medium", "Hard"]:
             diff_clean = "Medium"
 
-        logger.info(f"[{self.name}] Initiating difficulty-aware research on '{topic}' (Level: {diff_clean})")
+        logger.info(f"[{self.name}] Initiating difficulty-aware research on '{topic}' (Level: {diff_clean}, RAG={bool(rag_context)})")
         
         depth_instruction = "BEGINNER LEVEL: Focus on simple definitions, intuitive analogies, basic building blocks, and introductory examples. Avoid complex mathematical proofs or heavy edge cases."
         if diff_clean == "Medium":
             depth_instruction = "INTERMEDIATE LEVEL: Focus on core algorithms, standard implementation patterns, practical applications, and time/space complexity analysis."
         elif diff_clean == "Hard":
             depth_instruction = "ADVANCED LEVEL: Focus on internal architectural mechanics, lower/upper bound proofs, concurrency invariants, optimization trade-offs, and complex interview-level edge cases."
+
+        rag_directive = f"\nCOLLEGE SYLLABUS CONTEXT:\n{rag_context}\nGround concepts, definitions, and formulas directly in the above syllabus material where applicable.\n" if rag_context else ""
 
         system_prompt = (
             "You are an expert AI Academic Research Agent. Output ONLY valid, raw JSON with no markdown wrapping or extra text."
@@ -37,7 +39,7 @@ class ResearchAgent:
 Given the study topic: "{topic}" (Difficulty Target: {diff_clean})
 
 Research Depth Directive: {depth_instruction}
-
+{rag_directive}
 Conduct difficulty-tailored academic research and return a JSON object with EXACTLY this structure:
 {{
   "topic": "{topic}",
@@ -50,7 +52,8 @@ Conduct difficulty-tailored academic research and return a JSON object with EXAC
 }}
 """
         from services.llm_gateway import LLMGateway
-        cache_key = LLMGateway.generate_cache_key(self.name, topic, diff_clean)
+        cache_suffix = f":rag={hash(rag_context)}" if rag_context else ""
+        cache_key = LLMGateway.generate_cache_key(self.name, topic, diff_clean, cache_suffix)
         response_str, source = LLMGateway.execute_json(
             agent_name=self.name,
             prompt=prompt,

@@ -25,7 +25,8 @@ class QuizAgent:
         difficulty: str = "Medium",
         num_questions: int = 15,
         existing_questions: List[str] = None,
-        student_profile: Optional[Dict[str, Any]] = None
+        student_profile: Optional[Dict[str, Any]] = None,
+        rag_context: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         if existing_questions is None:
             existing_questions = []
@@ -50,7 +51,7 @@ class QuizAgent:
             elif style == "Practice":
                 profile_style_prompt = "Focus heavily on real-world scenario-based problem solving and hands-on coding questions."
 
-        logger.info(f"[{self.name}] Generating {num_questions} unique questions for '{topic}' (Adapted Difficulty: {effective_difficulty})")
+        logger.info(f"[{self.name}] Generating {num_questions} unique questions for '{topic}' (Adapted Difficulty: {effective_difficulty}, RAG={bool(rag_context)})")
 
         existing_set = set(q.strip().lower() for q in existing_questions if q)
         
@@ -60,6 +61,8 @@ class QuizAgent:
         if existing_set:
             sample_avoid = list(existing_set)[:10]
             avoid_clause = f"\nDO NOT reuse any of these previously asked questions:\n- " + "\n- ".join(sample_avoid)
+
+        rag_clause = f"\nGROUNDING SYLLABUS MATERIAL:\n{rag_context}\nEnsure questions test concepts explicitly covered in this college syllabus material.\n" if rag_context else ""
 
         prompt = f"""
 Generate EXACTLY {num_questions} unique quiz questions for the topic: "{topic}" (Difficulty: {effective_difficulty}).

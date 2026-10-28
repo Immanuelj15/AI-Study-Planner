@@ -83,4 +83,18 @@ export const focusAPI = {
   getAnalytics: () => api.get('/focus/analytics'),
 };
 
+export const ragAPI = {
+  uploadDocument: (formData) => api.post('/rag/documents/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  getDocuments: () => api.get('/rag/documents'),
+  getDocument: (docId) => api.get(`/rag/documents/${docId}`),
+  deleteDocument: (docId) => api.delete(`/rag/documents/${docId}`),
+  reprocessDocument: (docId) => api.post(`/rag/documents/${docId}/reprocess`),
+  query: (data) => api.post('/rag/query', data),
+  getSubjects: () => api.get('/rag/subjects'),
+  getUnits: (subjectName) => api.get('/rag/units', { params: { subject_name: subjectName } }),
+  getHealth: () => api.get('/rag/health'),
+};
+
 export default api;

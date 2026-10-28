@@ -14,12 +14,14 @@ import {
   ChevronRight,
   Bot,
   Brain,
-  Sparkles
+  Sparkles,
+  GraduationCap
 } from 'lucide-react';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/subjects', label: 'Subjects', icon: BookOpen },
+  { path: '/materials', label: 'College Syllabus (RAG)', icon: GraduationCap },
   { path: '/study-planner', label: 'Study Planner', icon: Calendar },
   { path: '/summary', label: 'Notes & Research', icon: FileText },
   { path: '/mindmap', label: 'Mind Map Hub', icon: Network },

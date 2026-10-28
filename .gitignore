@@ -60,6 +60,10 @@ venv.bak/
 # SQLite database
 *.db
 *.sqlite3
+chroma_storage/
+backend/chroma_storage/
+uploaded_documents/
+backend/uploaded_documents/
 
 # Node dependencies
 node_modules/

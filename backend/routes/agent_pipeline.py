@@ -271,6 +271,8 @@ def chat_tutor(
 ):
     from services.adaptive_learning_engine import adaptive_engine
     from services.groq_client import generate_text
+    from services.rag_service import rag_service
+
     profile_obj = adaptive_engine.get_or_create_profile(db, current_user.id)
     
     # Track chat usage in adaptive profile
@@ -278,7 +280,26 @@ def chat_tutor(
 
     diff_clean = (req.difficulty or "Medium").strip().capitalize()
     
-    # Generate personalized AI Tutor response using Groq / Research LLM with student profile & difficulty level
+    # If student enabled RAG or explicitly asked from syllabus/materials
+    is_rag_request = req.use_rag or "syllabus" in req.question.lower() or "unit" in req.question.lower()
+    
+    if is_rag_request:
+        subj = req.subject_name or req.topic
+        rag_res = rag_service.answer_question(
+            db=db,
+            user=current_user,
+            question=req.question,
+            subject_name=subj,
+            unit_number=req.unit_number,
+            difficulty=diff_clean
+        )
+        return {
+            "reply": rag_res["answer"],
+            "is_grounded": rag_res["is_grounded"],
+            "sources": rag_res["sources"]
+        }
+
+    # Standard conversational AI Tutor flow
     tutor_prompt = f"System Context: You are a friendly, encouraging AI Study Tutor for student '{current_user.name}'. " \
                    f"The topic difficulty level target is '{diff_clean}'. " \
                    f"The student's adaptive learning style is '{profile_obj.learning_style}' and speed is '{profile_obj.learning_speed}'. " \
@@ -295,4 +316,8 @@ def chat_tutor(
     if not llm_reply or "API call failed" in llm_reply or len(llm_reply.strip()) < 10:
         llm_reply = f"Great question about {req.topic}! '{req.question}' is a fundamental concept in {req.topic} ({diff_clean} level) designed to optimize system performance and maintain key operational invariants."
 
-    return {"reply": llm_reply}
+    return {
+        "reply": llm_reply,
+        "is_grounded": False,
+        "sources": []
+    }

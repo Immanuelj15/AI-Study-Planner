@@ -48,9 +48,14 @@ class ChatTutorRequest(BaseModel):
     topic: str
     question: str
     difficulty: Optional[str] = "Medium"
+    use_rag: Optional[bool] = False
+    unit_number: Optional[int] = None
+    subject_name: Optional[str] = None
 
 class ChatTutorResponse(BaseModel):
     reply: str
+    is_grounded: Optional[bool] = False
+    sources: Optional[List[Dict[str, Any]]] = []
 
 
 # --- Study Plan Schemas ---

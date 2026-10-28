@@ -5,7 +5,8 @@ from database.base import Base
 from database.session import engine, SessionLocal
 from models.models import User
 from services.auth import get_password_hash
-from routes import auth, subjects, agent_pipeline, quiz, dashboard, analytics, adaptive, focus
+from routes import auth, subjects, agent_pipeline, quiz, dashboard, analytics, adaptive, focus, rag
+from database.init_rag_db import init_rag_tables
 
 # Configure Logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -14,6 +15,7 @@ logger = logging.getLogger("StudyPlannerAPI")
 # Create Database Tables automatically
 logger.info("Initializing SQLite database tables...")
 Base.metadata.create_all(bind=engine)
+init_rag_tables()
 
 app = FastAPI(
     title="AI Multi-Agent Study Planner API",
@@ -31,7 +33,9 @@ def seed_demo_user():
             demo_user = User(
                 name="Demo Student",
                 email="demo@studyplanner.ai",
-                password=hashed_pw
+                password=hashed_pw,
+                role="Student",
+                college_id="College_Main"
             )
             db.add(demo_user)
             db.commit()
@@ -59,6 +63,7 @@ app.include_router(dashboard.router)
 app.include_router(analytics.router)
 app.include_router(adaptive.router)
 app.include_router(focus.router)
+app.include_router(rag.router)
 
 @app.get("/")
 def root():

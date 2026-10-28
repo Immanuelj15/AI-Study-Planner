@@ -16,13 +16,13 @@ class SummarizerAgent:
     def __init__(self, name: str = "Summarizer_Agent"):
         self.name = name
 
-    def execute(self, research_data: Dict[str, Any], student_profile: Optional[Dict[str, Any]] = None, difficulty: str = "Medium") -> Dict[str, Any]:
+    def execute(self, research_data: Dict[str, Any], student_profile: Optional[Dict[str, Any]] = None, difficulty: str = "Medium", rag_context: Optional[str] = None) -> Dict[str, Any]:
         topic = research_data.get("topic", "Study Topic")
         diff_clean = (difficulty or research_data.get("difficulty") or "Medium").strip().capitalize()
         if diff_clean not in ["Easy", "Medium", "Hard"]:
             diff_clean = "Medium"
 
-        logger.info(f"[{self.name}] Summarizing research for topic: '{topic}' (Difficulty Target: {diff_clean})")
+        logger.info(f"[{self.name}] Summarizing research for topic: '{topic}' (Difficulty Target: {diff_clean}, RAG={bool(rag_context)})")
         
         system_prompt = (
             f"You are an expert AI Educator & Mind Map Generator. "
@@ -49,6 +49,8 @@ class SummarizerAgent:
             style_instruction += "Tailor for a VISUAL LEARNER: Rich visual metaphors and clear hierarchical mind map node descriptions."
         elif learning_style == "Practice":
             style_instruction += "Tailor for a PRACTICE LEARNER: Hands-on code snippets, scenario challenges, and practical exercises."
+
+        rag_section = f"\nCOLLEGE SYLLABUS GROUNDING MATERIAL:\n{rag_context}\nStrictly ground key takeaways and mind map nodes on the above college syllabus topics.\n" if rag_context else ""
 
         prompt = f"""
 Given research data on "{topic}" (Target Level: {diff_clean}):

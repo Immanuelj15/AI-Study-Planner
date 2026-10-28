@@ -21,6 +21,7 @@ import QuizPage from './pages/QuizPage';
 import QuizResult from './pages/QuizResult';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
+import CollegeMaterials from './pages/CollegeMaterials';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -72,6 +73,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout><Subjects /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/materials"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><CollegeMaterials /></AppLayout>
                   </ProtectedRoute>
                 }
               />
