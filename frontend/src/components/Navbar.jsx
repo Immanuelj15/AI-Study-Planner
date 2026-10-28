@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { dashboardAPI } from '../services/api';
-import { Flame, LogOut, Search, Sparkles, Bot, Command } from 'lucide-react';
+import { Flame, LogOut, Search, Sparkles, Bot, Command, Languages } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { authAPI, dashboardAPI } from '../services/api';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -11,6 +11,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const [streakCount, setStreakCount] = useState(0);
+  const [currentLang, setCurrentLang] = useState(localStorage.getItem('preferred_language') || 'en');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +27,9 @@ export default function Navbar() {
 
   useEffect(() => {
     if (user) {
+      if (user.preferred_language) {
+        setCurrentLang(user.preferred_language);
+      }
       dashboardAPI.getDashboard()
         .then((res) => {
           if (res.data && typeof res.data.study_streak_days === 'number') {
@@ -35,6 +39,19 @@ export default function Navbar() {
         .catch((err) => console.error("Streak fetch error:", err));
     }
   }, [user]);
+
+  const toggleLanguage = async () => {
+    const nextLang = currentLang === 'en' ? 'ta' : 'en';
+    setCurrentLang(nextLang);
+    localStorage.setItem('preferred_language', nextLang);
+    if (user) {
+      try {
+        await authAPI.updateLanguage(nextLang);
+      } catch (e) {
+        console.error("Language update error:", e);
+      }
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -101,6 +118,16 @@ export default function Navbar() {
 
       {/* 3. Right Status Controls & User Profile */}
       <div className="flex items-center gap-3">
+        {/* Multilingual Switcher: English / Tamil */}
+        <button
+          onClick={toggleLanguage}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-inter font-bold hover:bg-blue-100 transition shadow-2xs"
+          title="Toggle Language: English / தமிழ்"
+        >
+          <Languages className="w-3.5 h-3.5 text-blue-600" />
+          <span>{currentLang === 'ta' ? 'தமிழ் (TA)' : 'English (EN)'}</span>
+        </button>
+
         <div className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#D97706] text-xs font-inter font-bold shadow-xs">
           <Flame className="w-4 h-4 fill-[#F59E0B] text-[#D97706] animate-bounce" />
           <span>{streakCount} Day Streak</span>

@@ -79,6 +79,44 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 def get_profile(current_user: User = Depends(get_current_user)):
     return current_user
 
+@router.patch("/language")
+def update_language(
+    language: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Update student preferred learning language (en, ta)."""
+    lang_clean = "ta" if "ta" in language.lower() or "tamil" in language.lower() else "en"
+    current_user.preferred_language = lang_clean
+    db.commit()
+    db.refresh(current_user)
+    return {"status": "success", "preferred_language": current_user.preferred_language}
+
+@router.patch("/profile")
+def update_user_profile(
+    role: str = None,
+    college_id: str = None,
+    department: str = None,
+    semester: int = None,
+    section: str = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Update user academic information and role."""
+    if role:
+        current_user.role = role
+    if college_id:
+        current_user.college_id = college_id
+    if department:
+        current_user.department = department
+    if semester:
+        current_user.semester = semester
+    if section:
+        current_user.section = section
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
 @router.get("/users", response_model=List[UserResponse])
 def get_all_users(db: Session = Depends(get_db)):
     """Fetch all registered users from database"""

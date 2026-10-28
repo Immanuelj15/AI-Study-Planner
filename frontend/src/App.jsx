@@ -22,6 +22,15 @@ import QuizResult from './pages/QuizResult';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import CollegeMaterials from './pages/CollegeMaterials';
+import WeaknessAnalysis from './pages/WeaknessAnalysis';
+import ExamPreparation from './pages/ExamPreparation';
+import FacultyDashboard from './pages/FacultyDashboard';
+import SmartRevision from './pages/SmartRevision';
+import QuestionPaperAnalyzer from './pages/QuestionPaperAnalyzer';
+import AssignmentEvaluator from './pages/AssignmentEvaluator';
+import StudyGroups from './pages/StudyGroups';
+import OfflineStudy from './pages/OfflineStudy';
+import Achievements from './pages/Achievements';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -81,6 +90,78 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <AppLayout><CollegeMaterials /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/weakness"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><WeaknessAnalysis /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/exam-prep"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><ExamPreparation /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/faculty-analytics"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><FacultyDashboard /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/revision"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><SmartRevision /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/question-papers"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><QuestionPaperAnalyzer /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assignments"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><AssignmentEvaluator /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/study-groups"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><StudyGroups /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/offline-study"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><OfflineStudy /></AppLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/achievements"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout><Achievements /></AppLayout>
                   </ProtectedRoute>
                 }
               />

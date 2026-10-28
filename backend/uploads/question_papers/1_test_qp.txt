@@ -1,0 +1,6 @@
+B.E./B.Tech. DEGREE EXAMINATIONS
+CS8492 - DATABASE MANAGEMENT SYSTEMS
+1. State the purpose of a database management system. [2 marks]
+2. Define 3NF and BCNF with examples. [8 marks]
+3. Explain query execution plans and cost estimation. [13 marks]
+4. Discuss ACID properties and concurrency control algorithms. [15 marks]

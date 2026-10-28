@@ -299,22 +299,39 @@ def chat_tutor(
             "sources": rag_res["sources"]
         }
 
+    # Depth adjustment
+    depth_val = (req.depth or "Intermediate").capitalize()
+    depth_instructions = {
+        "Simple": "Explain simply like I am a beginner using intuitive analogies, everyday examples, and plain language.",
+        "Intermediate": "Provide a comprehensive, structured college-level explanation with step-by-step examples.",
+        "Advanced": "Provide rigorous technical depth, system architecture, performance trade-offs, and edge cases."
+    }.get(depth_val, "Provide a comprehensive, structured college-level explanation.")
+
+    # Language preference
+    lang_pref = req.language or current_user.preferred_language or "en"
+    is_tamil = lang_pref == "ta" or "tamil" in req.question.lower() or "தமிழில்" in req.question
+    lang_instruction = "Respond in clear, fluent Tamil (தமிழ்). Keep important technical terms in English in parentheses for clarity (e.g., 'தரவுத்தளம் (Database)')." if is_tamil else "Respond in clear, fluent English."
+
     # Standard conversational AI Tutor flow
     tutor_prompt = f"System Context: You are a friendly, encouraging AI Study Tutor for student '{current_user.name}'. " \
                    f"The topic difficulty level target is '{diff_clean}'. " \
+                   f"Target Depth: {depth_val}. {depth_instructions} " \
+                   f"Language Instruction: {lang_instruction} " \
                    f"The student's adaptive learning style is '{profile_obj.learning_style}' and speed is '{profile_obj.learning_speed}'. " \
                    f"Topic: {req.topic}. Student Question: {req.question}. " \
-                   f"Provide a clear, direct, helpfully tailored answer at the '{diff_clean}' difficulty level with concrete examples. " \
-                   f"NOTE: If the student explicitly asks to 'explain this simply' or requests beginner language, honor the student's request regardless of difficulty setting."
+                   f"Provide a clear, direct, helpfully tailored answer honoring the depth and language instructions."
 
     res_tuple = generate_text(
         prompt=tutor_prompt,
-        system_prompt=f"You are an expert AI Study Tutor. Answer questions directly, concisely, and helpfully tailored to the {diff_clean} difficulty target."
+        system_prompt=f"You are an expert AI Study Tutor. Answer questions directly, helpfully, adhering to depth: {depth_val} and {lang_instruction}"
     )
     llm_reply = res_tuple[0] if isinstance(res_tuple, tuple) else res_tuple
 
     if not llm_reply or "API call failed" in llm_reply or len(llm_reply.strip()) < 10:
-        llm_reply = f"Great question about {req.topic}! '{req.question}' is a fundamental concept in {req.topic} ({diff_clean} level) designed to optimize system performance and maintain key operational invariants."
+        if is_tamil:
+            llm_reply = f"{req.topic} பற்றிய அருமையான கேள்வி! '{req.question}' என்பது {req.topic}-ன் ஒரு முக்கிய கருத்தாகும். இது அமைப்பின் செயல்திறனை (performance) மேம்படுத்த உதவுகிறது."
+        else:
+            llm_reply = f"Great question about {req.topic}! '{req.question}' is a fundamental concept in {req.topic} ({depth_val} level) designed to optimize system performance and maintain key operational invariants."
 
     return {
         "reply": llm_reply,

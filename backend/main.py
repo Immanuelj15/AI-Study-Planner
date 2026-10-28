@@ -5,7 +5,11 @@ from database.base import Base
 from database.session import engine, SessionLocal
 from models.models import User
 from services.auth import get_password_hash
-from routes import auth, subjects, agent_pipeline, quiz, dashboard, analytics, adaptive, focus, rag
+from routes import (
+    auth, subjects, agent_pipeline, quiz, dashboard, analytics,
+    adaptive, focus, rag, weakness, exam_prep, faculty, revision,
+    question_paper, assignment, study_groups, gamification
+)
 from database.init_rag_db import init_rag_tables
 
 # Configure Logging
@@ -54,17 +58,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include Routers
-app.include_router(auth.router)
-app.include_router(subjects.router)
-app.include_router(agent_pipeline.router)
-app.include_router(quiz.router)
-app.include_router(dashboard.router)
-app.include_router(analytics.router)
-app.include_router(adaptive.router)
-app.include_router(focus.router)
-app.include_router(rag.router)
-app.include_router(rag.router, prefix="/api")
+# Include Routers (Direct & with /api prefix for proxy compatibility)
+routers_to_register = [
+    auth.router,
+    subjects.router,
+    agent_pipeline.router,
+    quiz.router,
+    dashboard.router,
+    analytics.router,
+    adaptive.router,
+    focus.router,
+    rag.router,
+    weakness.router,
+    exam_prep.router,
+    faculty.router,
+    revision.router,
+    question_paper.router,
+    assignment.router,
+    study_groups.router,
+    gamification.router
+]
+
+for r in routers_to_register:
+    app.include_router(r)
+    app.include_router(r, prefix="/api")
 
 @app.get("/")
 def root():

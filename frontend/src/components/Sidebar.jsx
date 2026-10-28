@@ -15,15 +15,31 @@ import {
   Bot,
   Brain,
   Sparkles,
-  GraduationCap
+  GraduationCap,
+  AlertTriangle,
+  Flame,
+  RotateCcw,
+  FileCheck,
+  Users,
+  HardDrive,
+  Award,
+  BarChart2
 } from 'lucide-react';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/subjects', label: 'Subjects', icon: BookOpen },
   { path: '/materials', label: 'College Syllabus (RAG)', icon: GraduationCap },
+  { path: '/weakness', label: 'My Weak Topics', icon: AlertTriangle },
+  { path: '/exam-prep', label: 'Exam Preparation', icon: Flame },
+  { path: '/revision', label: 'Smart Revision', icon: RotateCcw },
+  { path: '/question-papers', label: 'Question Papers', icon: FileText },
+  { path: '/assignments', label: 'Assignment Review', icon: FileCheck },
+  { path: '/study-groups', label: 'Peer Study Groups', icon: Users },
+  { path: '/offline-study', label: 'Offline Vault', icon: HardDrive },
+  { path: '/achievements', label: 'Achievements', icon: Award },
+  { path: '/faculty-analytics', label: 'Faculty Analytics', icon: BarChart2 },
+  { path: '/subjects', label: 'Subjects', icon: BookOpen },
   { path: '/study-planner', label: 'Study Planner', icon: Calendar },
-  { path: '/summary', label: 'Notes & Research', icon: FileText },
   { path: '/mindmap', label: 'Mind Map Hub', icon: Network },
   { path: '/quiz', label: 'Quiz Engine', icon: ClipboardCheck },
   { path: '/analytics', label: 'Analytics', icon: BarChart3 },
@@ -61,7 +77,7 @@ export default function Sidebar() {
         </div>
 
         {/* Navigation Items List */}
-        <div className="space-y-1">
+        <div className="space-y-1 overflow-y-auto max-h-[calc(100vh-200px)] pr-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (

@@ -16,6 +16,13 @@ class UserResponse(BaseModel):
     id: int
     name: str
     email: str
+    role: Optional[str] = "Student"
+    college_id: Optional[str] = "College_Main"
+    department: Optional[str] = "Computer Science"
+    semester: Optional[int] = 1
+    preferred_language: Optional[str] = "en"
+    streak_count: Optional[int] = 1
+    xp_points: Optional[int] = 100
     created_at: datetime
 
     class Config:
@@ -48,6 +55,8 @@ class ChatTutorRequest(BaseModel):
     topic: str
     question: str
     difficulty: Optional[str] = "Medium"
+    depth: Optional[str] = "Intermediate" # Simple, Intermediate, Advanced
+    language: Optional[str] = "en" # en, ta
     use_rag: Optional[bool] = False
     unit_number: Optional[int] = None
     subject_name: Optional[str] = None
