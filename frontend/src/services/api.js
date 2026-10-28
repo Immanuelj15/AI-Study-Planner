@@ -29,7 +29,7 @@ api.interceptors.response.use(
     if (originalRequest && (error.code === 'ERR_NETWORK' || error.message?.includes('Network Error')) && !originalRequest._retry) {
       originalRequest._retry = true;
       const currentUrl = originalRequest.baseURL || '';
-      const fallbackTarget = currentUrl.includes('8001') ? 'http://127.0.0.1:8000' : 'http://127.0.0.1:8001';
+      const fallbackTarget = currentUrl.includes('8000') ? 'http://127.0.0.1:8001' : 'http://127.0.0.1:8000';
       originalRequest.baseURL = fallbackTarget;
       return axios(originalRequest);
     }
