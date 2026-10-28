@@ -836,6 +836,61 @@ export default function LandingPage() {
 
             </div>
           </div>
+
+          {/* Visual Showcase Spotlight Banner */}
+          <div className="rounded-3xl p-6 sm:p-10 bg-slate-50/80 border border-slate-200/90 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-5 relative flex justify-center">
+              <div className="relative group max-w-sm w-full">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-sky-400 rounded-3xl blur-md opacity-30 group-hover:opacity-50 transition" />
+                <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-white">
+                  <img
+                    src="/student-journey.jpg"
+                    alt="Student studying with AI Tutor Companion"
+                    className="w-full h-auto object-cover transform group-hover:scale-102 transition duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute bottom-3 left-3 right-3 p-2 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 text-[11px] text-white flex items-center justify-between">
+                    <span className="font-bold flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                      Friendly AI Study Companion
+                    </span>
+                    <span className="text-[10px] text-emerald-400 font-bold">24/7 Available</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 space-y-4 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/70 text-blue-700 text-xs font-bold uppercase tracking-wider">
+                <Bot className="w-3.5 h-3.5" />
+                <span>Autonomous Student Workflow</span>
+              </div>
+              <h3 className="font-poppins text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Designed to Remove Exam Stress & Rebuild Confidence
+              </h3>
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                Whether you have 4 weeks or 4 days until exam day, StudyAI adapts to your schedule. The platform breaks down complex engineering modules, builds memory flashcards, and explains difficult theorems step-by-step.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-semibold text-slate-700">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>College syllabus mapped to Units 1-5</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Automatic SuperMemo-2 Spaced Intervals</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Interactive 15-question diagnostic tests</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Offline study vault & calendar sync (.ics)</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -856,6 +911,56 @@ export default function LandingPage() {
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
             Multiple AI agents work together to support your learning journey.
           </p>
+        </div>
+
+        {/* Multi-Agent Orchestration Visual Spotlight */}
+        <div className="rounded-3xl p-6 sm:p-8 bg-[#0B0F19] text-white border border-slate-800 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
+          <div className="absolute top-0 right-1/3 w-[400px] h-[250px] bg-gradient-to-b from-blue-600/20 via-indigo-600/10 to-transparent blur-2xl pointer-events-none" />
+          
+          <div className="lg:col-span-5 relative flex justify-center">
+            <div className="relative group max-w-sm w-full">
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 rounded-2xl blur-md opacity-40 group-hover:opacity-60 transition" />
+              <div className="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 shadow-lg">
+                <img
+                  src="/multi-agent-system.jpg"
+                  alt="Multi-Agent AI Neural Platform"
+                  className="w-full h-auto object-cover transform group-hover:scale-102 transition duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute bottom-3 left-3 right-3 p-2 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-[11px] text-white flex items-center justify-between">
+                  <span className="font-bold flex items-center gap-1.5 text-blue-400">
+                    <Brain className="w-3.5 h-3.5" />
+                    Neural Agent Orchestration
+                  </span>
+                  <span className="text-[10px] text-sky-300 font-mono">AutoGen Core</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 space-y-4 text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Coordinated Multi-Agent Intelligence</span>
+            </div>
+            <h3 className="font-poppins text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Six Specialized AI Agents Working Concurrently for You
+            </h3>
+            <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+              Unlike single-prompt chatbots, StudyAI uses Microsoft AutoGen multi-agent framework. Each agent is a specialist: the Research Agent investigates syllabus concepts, the Summarizer crafts notes, the Scheduler paces your timetable, and the Quiz Master challenges your retention.
+            </p>
+            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-semibold text-slate-300">
+              <span className="px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/70 text-blue-300">
+                ⚡ SHA-256 Semantic Caching
+              </span>
+              <span className="px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/70 text-emerald-300">
+                🛡️ Llama-3.3-70B Gateway
+              </span>
+              <span className="px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700/70 text-purple-300">
+                🎯 Context-Aware Agent Handoffs
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* 6 AI Agents Grid / Connected Workflow */}
@@ -1079,12 +1184,33 @@ export default function LandingPage() {
             </div>
 
             {/* Right: Learning Progress Interactive Visual Preview */}
-            <div className="lg:col-span-6">
-              <div className="p-6 sm:p-8 rounded-3xl bg-slate-50 border border-slate-200/90 shadow-md space-y-6">
-                <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+            <div className="lg:col-span-6 space-y-6">
+              
+              {/* 3D Analytics Graphic Showcase Card */}
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-sky-400 rounded-3xl blur-md opacity-30 group-hover:opacity-50 transition" />
+                <div className="relative rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-slate-900">
+                  <img
+                    src="/adaptive-analytics.jpg"
+                    alt="Educational Analytics & Performance Dashboard"
+                    className="w-full h-auto object-cover transform group-hover:scale-102 transition duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute bottom-3 left-3 right-3 p-2.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-[11px] text-white flex items-center justify-between">
+                    <span className="font-bold flex items-center gap-1.5 text-blue-400">
+                      <Target className="w-3.5 h-3.5" />
+                      Dynamic Mastery Telemetry
+                    </span>
+                    <span className="text-[10px] text-emerald-400 font-extrabold uppercase">95% Verified Score</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 rounded-3xl bg-slate-50 border border-slate-200/90 shadow-sm space-y-5">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <div>
                     <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider">Student Profile Snapshot</span>
-                    <h3 className="font-poppins font-black text-lg text-slate-900">CS8492 • Database Systems</h3>
+                    <h3 className="font-poppins font-black text-base text-slate-900">CS8492 • Database Systems</h3>
                   </div>
                   <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">
                     Active Adaptive Mode
@@ -1092,12 +1218,12 @@ export default function LandingPage() {
                 </div>
 
                 {/* Topic Mastery Bar */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <div className="flex justify-between text-xs font-bold">
                     <span className="text-slate-700">Topic Mastery Breakdown</span>
                     <span className="text-blue-600">82% Verified</span>
                   </div>
-                  <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full w-[82%]" />
                   </div>
                 </div>
