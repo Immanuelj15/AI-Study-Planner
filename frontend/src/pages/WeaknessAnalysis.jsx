@@ -125,53 +125,45 @@ export default function WeaknessAnalysis() {
       ) : (
         <>
           {/* Summary Metric Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-red-100 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-red-50 text-red-600">
-                  <AlertTriangle className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-2xl font-extrabold text-slate-800">{data?.summary?.weak_count || 0}</div>
-                  <div className="text-xs font-semibold text-slate-500">Weak Topics</div>
-                </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+            <div className="bg-white p-5 rounded-2xl border border-red-100 shadow-xs h-full flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-red-50 text-red-600 shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-2xl font-extrabold text-slate-800">{data?.summary?.weak_count || 0}</div>
+                <div className="text-xs font-semibold text-slate-500 truncate">Weak Topics</div>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-amber-100 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600">
-                  <RefreshCw className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-2xl font-extrabold text-slate-800">{data?.summary?.needs_revision_count || 0}</div>
-                  <div className="text-xs font-semibold text-slate-500">Needs Revision</div>
-                </div>
+            <div className="bg-white p-5 rounded-2xl border border-amber-100 shadow-xs h-full flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600 shrink-0">
+                <RefreshCw className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-2xl font-extrabold text-slate-800">{data?.summary?.needs_revision_count || 0}</div>
+                <div className="text-xs font-semibold text-slate-500 truncate">Needs Revision</div>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
-                  <CheckCircle className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-2xl font-extrabold text-slate-800">{data?.summary?.strong_count || 0}</div>
-                  <div className="text-xs font-semibold text-slate-500">Strong Topics</div>
-                </div>
+            <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-xs h-full flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 shrink-0">
+                <CheckCircle className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-2xl font-extrabold text-slate-800">{data?.summary?.strong_count || 0}</div>
+                <div className="text-xs font-semibold text-slate-500 truncate">Strong Topics</div>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600">
-                  <Target className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-slate-500">Recommended Next</div>
-                  <div className="text-sm font-extrabold text-blue-600 truncate max-w-[150px]">
-                    {data?.summary?.recommended_next_topic || 'All Complete'}
-                  </div>
+            <div className="bg-white p-5 rounded-2xl border border-blue-100 shadow-xs h-full flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                <Target className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-semibold text-slate-500 truncate">Recommended Next</div>
+                <div className="text-sm font-extrabold text-blue-600 truncate">
+                  {data?.summary?.recommended_next_topic || 'All Complete'}
                 </div>
               </div>
             </div>

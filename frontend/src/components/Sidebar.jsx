@@ -55,7 +55,7 @@ export default function Sidebar() {
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
       className={`glass-card border-r border-[#E2E8F0] p-3.5 flex flex-col justify-between hidden md:flex transition-all duration-300 min-h-[calc(100vh-65px)] bg-[#FFFFFF] ${
-        collapsed ? 'w-18' : 'w-60'
+        collapsed ? 'w-20' : 'w-64'
       }`}
     >
       <div className="space-y-4">

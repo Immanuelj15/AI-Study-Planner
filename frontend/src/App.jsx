@@ -47,7 +47,7 @@ const AppLayout = ({ children }) => {
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full overflow-x-hidden">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-[1536px] mx-auto w-full overflow-x-hidden">
           {children}
         </main>
       </div>

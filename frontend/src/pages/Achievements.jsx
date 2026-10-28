@@ -74,10 +74,10 @@ export default function Achievements() {
       ) : (
         <>
           {/* Key Stat Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-amber-200/60 shadow-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+            <div className="bg-white p-5 rounded-2xl border border-amber-200/60 shadow-xs h-full flex items-center">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600">
+                <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600 shrink-0">
                   <Flame className="w-6 h-6 animate-pulse" />
                 </div>
                 <div>
@@ -87,9 +87,9 @@ export default function Achievements() {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-purple-200/60 shadow-xs">
+            <div className="bg-white p-5 rounded-2xl border border-purple-200/60 shadow-xs h-full flex items-center">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600">
+                <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600 shrink-0">
                   <Star className="w-6 h-6" />
                 </div>
                 <div>
@@ -99,9 +99,9 @@ export default function Achievements() {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-blue-200/60 shadow-xs">
+            <div className="bg-white p-5 rounded-2xl border border-blue-200/60 shadow-xs h-full flex items-center">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600">
+                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600 shrink-0">
                   <Zap className="w-6 h-6" />
                 </div>
                 <div>
@@ -111,9 +111,9 @@ export default function Achievements() {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-emerald-200/60 shadow-xs">
+            <div className="bg-white p-5 rounded-2xl border border-emerald-200/60 shadow-xs h-full flex items-center">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
+                <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 shrink-0">
                   <Award className="w-6 h-6" />
                 </div>
                 <div>
@@ -155,7 +155,7 @@ export default function Achievements() {
               Verified Achievement Badges
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4.5 items-stretch">
               {data?.badges?.map((b) => {
                 const IconComponent = ICON_MAP[b.icon] || Award;
                 return (

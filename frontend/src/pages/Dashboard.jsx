@@ -36,7 +36,12 @@ import {
   ArrowRight,
   PlayCircle,
   BarChart3,
-  Trophy
+  Trophy,
+  GraduationCap,
+  RotateCcw,
+  FileText,
+  FileCheck,
+  Users
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -54,6 +59,73 @@ const itemVariants = {
   hidden: { opacity: 0, y: 15 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
 };
+
+const academicModules = [
+  {
+    title: 'College Syllabus RAG',
+    desc: 'Ask grounded questions from official course documents with page citations.',
+    path: '/materials',
+    icon: GraduationCap,
+    badge: 'RAG Grounded',
+    color: 'bg-blue-50 text-blue-600 border-blue-200'
+  },
+  {
+    title: 'My Weak Topics',
+    desc: 'Multi-signal weakness detection with personalized notes and worked examples.',
+    path: '/weakness',
+    icon: AlertTriangle,
+    badge: 'Diagnostics',
+    color: 'bg-amber-50 text-amber-600 border-amber-200'
+  },
+  {
+    title: 'Exam Prep Sprint',
+    desc: 'Day-by-day study roadmap adapted to syllabus units and remaining days.',
+    path: '/exam-prep',
+    icon: Flame,
+    badge: 'Exam Sprint',
+    color: 'bg-red-50 text-red-600 border-red-200'
+  },
+  {
+    title: 'Smart Spaced Revision',
+    desc: 'SuperMemo-2 spaced intervals (Day 1, 3, 7, 14) and interactive recall deck.',
+    path: '/revision',
+    icon: RotateCcw,
+    badge: 'SuperMemo-2',
+    color: 'bg-indigo-50 text-indigo-600 border-indigo-200'
+  },
+  {
+    title: 'Question Paper Analyzer',
+    desc: 'Reverse-engineer university previous papers and view topic frequency charts.',
+    path: '/question-papers',
+    icon: FileText,
+    badge: 'Past Papers',
+    color: 'bg-sky-50 text-sky-600 border-sky-200'
+  },
+  {
+    title: 'Assignment Evaluator',
+    desc: 'Practice conceptual feedback, missing points, and practice score estimates.',
+    path: '/assignments',
+    icon: FileCheck,
+    badge: 'AI Review',
+    color: 'bg-emerald-50 text-emerald-600 border-emerald-200'
+  },
+  {
+    title: 'Peer Study Groups',
+    desc: 'Form subject squads with your college classmates and plan study goals.',
+    path: '/study-groups',
+    icon: Users,
+    badge: 'Collaborative',
+    color: 'bg-purple-50 text-purple-600 border-purple-200'
+  },
+  {
+    title: 'Academic Achievements',
+    desc: 'Track unbroken daily study streaks, earned XP points, and verified badges.',
+    path: '/achievements',
+    icon: Trophy,
+    badge: 'Gamification',
+    color: 'bg-yellow-50 text-yellow-700 border-yellow-200'
+  }
+];
 
 export default function Dashboard() {
   const [metrics, setMetrics] = useState(null);
@@ -287,6 +359,58 @@ export default function Dashboard() {
               <ProgressCard metrics={metrics} />
             </motion.div>
           </div>
+
+          {/* 3. Academic Learning Modules Grid */}
+          <motion.div variants={itemVariants} className="space-y-4 pt-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
+              <div>
+                <h3 className="font-poppins font-bold text-base text-slate-800 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-blue-600" />
+                  <span>Academic Learning Modules</span>
+                </h3>
+                <p className="text-xs text-slate-500 font-inter">
+                  Direct access to syllabus RAG, weakness diagnosis, exam prep roadmaps, and revision tools
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+              {academicModules.map((mod, i) => {
+                const Icon = mod.icon;
+                return (
+                  <motion.div
+                    key={i}
+                    whileHover={{ y: -3 }}
+                    className="p-5 rounded-2xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-md transition-all flex flex-col justify-between h-full space-y-4"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className={`p-2.5 rounded-xl border ${mod.color}`}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                          {mod.badge}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <h4 className="font-poppins font-bold text-sm text-slate-800 line-clamp-1">{mod.title}</h4>
+                        <p className="text-xs text-slate-500 font-inter leading-relaxed line-clamp-2">{mod.desc}</p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => navigate(mod.path)}
+                      className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-600 border border-slate-200 text-xs font-bold transition flex items-center justify-center gap-1.5"
+                    >
+                      <span>Open Module</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
         </div>
       )}
 

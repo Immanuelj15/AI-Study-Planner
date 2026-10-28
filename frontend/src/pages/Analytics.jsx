@@ -55,8 +55,8 @@ export default function Analytics() {
       </div>
 
       {/* KPI Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+        <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF] h-full flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#2563EB]">
             <span className="text-[10px] font-inter font-bold uppercase">Average Score</span>
             <Award className="w-4 h-4 text-[#2563EB]" />
@@ -69,7 +69,7 @@ export default function Analytics() {
           </div>
         </div>
 
-        <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF]">
+        <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF] h-full flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#22C55E]">
             <span className="text-[10px] font-inter font-bold uppercase">Quizzes Completed</span>
             <Target className="w-4 h-4 text-[#22C55E]" />
@@ -82,7 +82,7 @@ export default function Analytics() {
           </div>
         </div>
 
-        <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF]">
+        <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF] h-full flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#F59E0B]">
             <span className="text-[10px] font-inter font-bold uppercase">Active Streak</span>
             <Flame className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
@@ -95,7 +95,7 @@ export default function Analytics() {
           </div>
         </div>
 
-        <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF]">
+        <div className="glass-card p-5 rounded-2xl border border-[#E2E8F0] space-y-1 bg-[#FFFFFF] h-full flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#38BDF8]">
             <span className="text-[10px] font-inter font-bold uppercase">Hours Completed</span>
             <Activity className="w-4 h-4 text-[#38BDF8]" />
@@ -126,7 +126,7 @@ export default function Analytics() {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-center text-xs items-stretch">
           <div className="p-4 rounded-2xl bg-[#F8FBFF] border border-[#E2E8F0]">
             <div className="font-poppins font-black text-xl text-[#2563EB]">{focusStats?.total_focus_minutes || 0} Mins</div>
             <div className="text-[10px] font-bold text-[#64748B] uppercase mt-0.5">Total Focus Time</div>

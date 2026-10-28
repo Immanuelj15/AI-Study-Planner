@@ -116,27 +116,27 @@ export default function SmartRevision() {
           <div className="lg:col-span-5 space-y-4">
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
               {/* Tab Selector */}
-              <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 p-1 bg-slate-100 rounded-xl">
                 <button
                   onClick={() => setActiveTab('due')}
-                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition ${
-                    activeTab === 'due' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600'
+                  className={`flex-1 min-w-[90px] py-2 px-2 rounded-lg text-xs font-bold transition text-center ${
+                    activeTab === 'due' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   Due Today ({scheduleData?.summary?.due_today || 0})
                 </button>
                 <button
                   onClick={() => setActiveTab('overdue')}
-                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition ${
-                    activeTab === 'overdue' ? 'bg-white text-red-600 shadow-xs' : 'text-slate-600'
+                  className={`flex-1 min-w-[90px] py-2 px-2 rounded-lg text-xs font-bold transition text-center ${
+                    activeTab === 'overdue' ? 'bg-white text-red-600 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   Overdue ({scheduleData?.summary?.overdue || 0})
                 </button>
                 <button
                   onClick={() => setActiveTab('upcoming')}
-                  className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition ${
-                    activeTab === 'upcoming' ? 'bg-white text-slate-800 shadow-xs' : 'text-slate-600'
+                  className={`flex-1 min-w-[90px] py-2 px-2 rounded-lg text-xs font-bold transition text-center ${
+                    activeTab === 'upcoming' ? 'bg-white text-slate-800 shadow-xs' : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   Upcoming ({scheduleData?.summary?.upcoming || 0})
@@ -222,29 +222,29 @@ export default function SmartRevision() {
                     </div>
                   </div>
 
-                  {/* Recall Feedback Buttons */}
-                  <div className="space-y-3">
-                    <div className="text-xs font-bold text-slate-600 text-center uppercase">
-                      How was your recall of this concept?
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <button
-                        onClick={() => handleReviewFeedback(false)}
-                        className="py-3 px-4 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center gap-2 transition"
-                      >
-                        <XCircle className="w-4 h-4" />
-                        Struggled / Forgot (Reset to Day 1)
-                      </button>
+                    {/* Recall Feedback Buttons */}
+                    <div className="space-y-3">
+                      <div className="text-xs font-bold text-slate-600 text-center uppercase tracking-wider">
+                        How was your recall of this concept?
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <button
+                          onClick={() => handleReviewFeedback(false)}
+                          className="py-3 px-4 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center gap-2 transition text-center"
+                        >
+                          <XCircle className="w-4 h-4 shrink-0" />
+                          <span>Struggled / Forgot (Reset Day 1)</span>
+                        </button>
 
-                      <button
-                        onClick={() => handleReviewFeedback(true)}
-                        className="py-3 px-4 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center gap-2 transition"
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                        Recalled Confidently (Increase Interval)
-                      </button>
+                        <button
+                          onClick={() => handleReviewFeedback(true)}
+                          className="py-3 px-4 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center gap-2 transition text-center"
+                        >
+                          <CheckCircle className="w-4 h-4 shrink-0" />
+                          <span>Recalled Confidently (Increase Interval)</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
 
                   {/* Card Navigation */}
                   <div className="flex justify-between items-center pt-2">

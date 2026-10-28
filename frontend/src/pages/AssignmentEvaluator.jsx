@@ -134,8 +134,8 @@ export default function AssignmentEvaluator() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="sm:col-span-2">
                   <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Assignment Title / Topic</label>
                   <input
                     type="text"

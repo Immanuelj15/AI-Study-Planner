@@ -131,54 +131,46 @@ export default function FacultyDashboard() {
       ) : (
         <>
           {/* Key Metric Overview Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-2xl font-extrabold text-slate-800">{data?.total_students || 0}</div>
-                  <div className="text-xs font-semibold text-slate-500">Total Enrolled</div>
-                </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs h-full flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+                <Users className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-2xl font-extrabold text-slate-800">{data?.total_students || 0}</div>
+                <div className="text-xs font-semibold text-slate-500 truncate">Total Enrolled</div>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
-                  <BarChart2 className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-2xl font-extrabold text-slate-800">{data?.average_quiz_score || 0}%</div>
-                  <div className="text-xs font-semibold text-slate-500">Average Quiz Score</div>
-                </div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs h-full flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 shrink-0">
+                <BarChart2 className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-2xl font-extrabold text-slate-800">{data?.average_quiz_score || 0}%</div>
+                <div className="text-xs font-semibold text-slate-500 truncate">Average Quiz Score</div>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600">
-                  <TrendingUp className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-2xl font-extrabold text-slate-800">{data?.participation_rate || 0}%</div>
-                  <div className="text-xs font-semibold text-slate-500">Student Participation</div>
-                </div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs h-full flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-purple-50 text-purple-600 shrink-0">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-2xl font-extrabold text-slate-800">{data?.participation_rate || 0}%</div>
+                <div className="text-xs font-semibold text-slate-500 truncate">Student Participation</div>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-red-100 shadow-xs">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-red-50 text-red-600">
-                  <ShieldAlert className="w-5 h-5" />
+            <div className="bg-white p-5 rounded-2xl border border-red-100 shadow-xs h-full flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-red-50 text-red-600 shrink-0">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-2xl font-extrabold text-red-600">
+                  {data?.status_distribution?.['At Risk'] || 0}
                 </div>
-                <div>
-                  <div className="text-2xl font-extrabold text-red-600">
-                    {data?.status_distribution?.['At Risk'] || 0}
-                  </div>
-                  <div className="text-xs font-semibold text-slate-500">Needs Support (At Risk)</div>
-                </div>
+                <div className="text-xs font-semibold text-slate-500 truncate">Needs Support (At Risk)</div>
               </div>
             </div>
           </div>

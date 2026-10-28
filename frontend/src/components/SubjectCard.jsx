@@ -15,7 +15,7 @@ export default function SubjectCard({ subject }) {
   return (
     <motion.div
       whileHover={{ y: -4 }}
-      className="glass-card glass-card-hover p-6 rounded-3xl flex flex-col justify-between border border-[#E2E8F0] bg-[#FFFFFF]"
+      className="glass-card glass-card-hover p-6 rounded-3xl h-full flex flex-col justify-between border border-[#E2E8F0] bg-[#FFFFFF]"
     >
       <div>
         <div className="flex items-center justify-between mb-4">
