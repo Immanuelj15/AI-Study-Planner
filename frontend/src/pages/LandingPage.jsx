@@ -56,79 +56,79 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#F8FBFF] text-[#1E293B] font-inter selection:bg-blue-600 selection:text-white relative overflow-x-hidden">
       
       {/* =========================================================
-          SECTION 1: STICKY NAVBAR
+          SECTION 1: STICKY FLOATING GLASS NAVBAR
           ========================================================= */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-all">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      <header className="sticky top-0 z-50 pt-3 px-4 sm:px-6 lg:px-8 transition-all">
+        <div className="max-w-6xl mx-auto bg-white/80 backdrop-blur-xl border border-slate-200/90 shadow-sm shadow-slate-200/60 rounded-2xl px-4 sm:px-6 h-16 flex items-center justify-between">
           
           {/* Left: Logo & Brand */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white shadow-sm shadow-blue-500/25 group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-blue-700 to-sky-500 flex items-center justify-center text-white shadow-sm shadow-blue-500/25 group-hover:scale-105 group-hover:shadow-md transition-all">
               <GraduationCap className="w-5 h-5" />
             </div>
-            <div className="flex flex-col">
+            <div className="flex items-center gap-2">
               <span className="font-poppins font-black text-xl text-slate-900 tracking-tight leading-none">
                 Study<span className="text-blue-600">AI</span>
               </span>
-              <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase mt-0.5">
-                Adaptive Learning
+              <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-200/80 uppercase tracking-wider">
+                Platform
               </span>
             </div>
           </Link>
 
-          {/* Center: Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+          {/* Center: Desktop Refined Navigation Pill Cluster */}
+          <nav className="hidden md:flex items-center gap-1 bg-slate-100/70 p-1 rounded-xl border border-slate-200/60 text-xs font-semibold text-slate-600">
             <a 
               href="#home" 
               onClick={(e) => scrollToSection(e, 'home')} 
-              className="hover:text-blue-600 transition-colors"
+              className="px-3.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-white hover:shadow-xs transition-all"
             >
               Home
             </a>
             <a 
               href="#features" 
               onClick={(e) => scrollToSection(e, 'features')} 
-              className="hover:text-blue-600 transition-colors"
+              className="px-3.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-white hover:shadow-xs transition-all"
             >
               Features
             </a>
             <a 
               href="#how-it-works" 
               onClick={(e) => scrollToSection(e, 'how-it-works')} 
-              className="hover:text-blue-600 transition-colors"
+              className="px-3.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-white hover:shadow-xs transition-all"
             >
               How It Works
             </a>
             <a 
               href="#multi-agent" 
               onClick={(e) => scrollToSection(e, 'multi-agent')} 
-              className="hover:text-blue-600 transition-colors"
+              className="px-3.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-white hover:shadow-xs transition-all"
             >
               Multi-Agent AI
             </a>
             <a 
               href="#about" 
               onClick={(e) => scrollToSection(e, 'about')} 
-              className="hover:text-blue-600 transition-colors"
+              className="px-3.5 py-1.5 rounded-lg hover:text-blue-600 hover:bg-white hover:shadow-xs transition-all"
             >
               About
             </a>
           </nav>
 
           {/* Right: Auth Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2">
             <Link
               to="/login"
-              className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-blue-600 hover:bg-slate-100 transition"
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-100/80 transition-all"
             >
               Login
             </Link>
             <Link
               to="/register"
-              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm shadow-blue-500/20 hover:shadow-md transition flex items-center gap-1.5"
+              className="px-4.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-sm shadow-blue-500/25 hover:shadow-md hover:shadow-blue-500/35 transition-all flex items-center gap-1.5 group"
             >
               <span>Get Started</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
 
@@ -146,44 +146,44 @@ export default function LandingPage() {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-slate-200 bg-white px-4 py-5 space-y-4 shadow-lg overflow-hidden"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="md:hidden mt-2 max-w-6xl mx-auto rounded-2xl border border-slate-200/90 bg-white/95 backdrop-blur-xl px-4 py-5 space-y-4 shadow-xl overflow-hidden"
             >
-              <nav className="flex flex-col space-y-3 text-sm font-semibold text-slate-700">
+              <nav className="flex flex-col space-y-2 text-sm font-semibold text-slate-700">
                 <a 
                   href="#home" 
                   onClick={(e) => scrollToSection(e, 'home')} 
-                  className="px-2 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600"
+                  className="px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition"
                 >
                   Home
                 </a>
                 <a 
                   href="#features" 
                   onClick={(e) => scrollToSection(e, 'features')} 
-                  className="px-2 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600"
+                  className="px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition"
                 >
                   Features
                 </a>
                 <a 
                   href="#how-it-works" 
                   onClick={(e) => scrollToSection(e, 'how-it-works')} 
-                  className="px-2 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600"
+                  className="px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition"
                 >
                   How It Works
                 </a>
                 <a 
                   href="#multi-agent" 
                   onClick={(e) => scrollToSection(e, 'multi-agent')} 
-                  className="px-2 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600"
+                  className="px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition"
                 >
                   Multi-Agent AI
                 </a>
                 <a 
                   href="#about" 
                   onClick={(e) => scrollToSection(e, 'about')} 
-                  className="px-2 py-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600"
+                  className="px-3 py-2 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition"
                 >
                   About
                 </a>
@@ -198,7 +198,7 @@ export default function LandingPage() {
                 </Link>
                 <Link
                   to="/register"
-                  className="w-full py-2.5 text-center text-xs font-bold text-white rounded-xl bg-blue-600 hover:bg-blue-700 shadow-sm"
+                  className="w-full py-2.5 text-center text-xs font-bold text-white rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm"
                 >
                   Get Started for Free
                 </Link>
@@ -1159,36 +1159,70 @@ export default function LandingPage() {
 
 
       {/* =========================================================
-          SECTION 8: FINAL CTA
+          SECTION 8: FINAL CTA (MODERN LUXURY AI STUDIO AESTHETIC)
           ========================================================= */}
-      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto">
-        <div className="rounded-3xl p-8 sm:p-14 lg:p-16 bg-gradient-to-br from-blue-600 via-blue-700 to-sky-600 text-white text-center space-y-6 shadow-xl relative overflow-hidden">
+      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+        <div className="rounded-3xl p-10 sm:p-16 lg:p-20 bg-[#0B0F19] text-white text-center space-y-8 border border-slate-800 shadow-2xl relative overflow-hidden">
           
-          {/* Subtle Decorative Pattern */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_60%)] pointer-events-none" />
+          {/* Ambient Ethereal Glow & Technical Grid */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-blue-600/30 via-indigo-600/15 to-transparent blur-3xl pointer-events-none" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:32px_32px] opacity-25 pointer-events-none" />
 
+          {/* Badge */}
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+              <span>Start Learning for Free Today</span>
+            </div>
+          </div>
+
+          {/* Heading */}
           <div className="space-y-4 max-w-2xl mx-auto relative z-10">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-100 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">
-              Start Free Today
-            </span>
-            <h2 className="font-poppins text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-              Ready to Transform the Way You Learn?
+            <h2 className="font-poppins text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15]">
+              Ready to Transform the<br className="hidden sm:inline" />{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-300">
+                Way You Learn?
+              </span>
             </h2>
-            <p className="text-blue-100 text-sm sm:text-base leading-relaxed">
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
               Start your personalized learning journey with AI-powered study tools designed for your academic success.
             </p>
           </div>
 
+          {/* Trust Checkmarks */}
+          <div className="relative z-10 flex flex-wrap items-center justify-center gap-6 text-xs font-medium text-slate-300 pt-1">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                <Check className="w-3 h-3 stroke-[3]" />
+              </div>
+              <span>Free syllabus onboarding</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                <Check className="w-3 h-3 stroke-[3]" />
+              </div>
+              <span>6 Autonomous AI agents</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center">
+                <Check className="w-3 h-3 stroke-[3]" />
+              </div>
+              <span>No credit card required</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
           <div className="pt-2 relative z-10 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/register"
-              className="px-8 py-4 rounded-2xl bg-white hover:bg-blue-50 text-blue-700 font-poppins font-bold text-sm shadow-lg transition-transform hover:scale-105"
+              className="px-8 py-4 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-poppins font-bold text-sm shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all flex items-center gap-2 group"
             >
-              Get Started for Free
+              <span>Get Started for Free</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               to="/login"
-              className="px-6 py-4 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-poppins font-semibold text-sm border border-white/30 backdrop-blur-md transition"
+              className="px-6 py-4 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 hover:text-white font-poppins font-semibold text-sm border border-slate-700/80 backdrop-blur-md transition-all"
             >
               Sign In to Account
             </Link>
